@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.persistency\migrations\20180608051828_v3.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Order.Persistency.Migrations
+{
+    public partial class v3 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;double&gt;(
+                name: &quot;SubTotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;,
+                nullable: false,
+                defaultValue: 0.0);
+
+            migrationBuilder.AddColumn&lt;double&gt;(
+                name: &quot;TaxValue&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;,
+                nullable: false,
+                defaultValue: 0.0);
+
+            migrationBuilder.AddColumn&lt;double&gt;(
+                name: &quot;TotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;,
+                nullable: false,
+                defaultValue: 0.0);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;SubTotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;TaxValue&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;TotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,10,0],[9,13,14,36,0],[16,13,21,36,0],[23,13,28,36,0],[29,9,29,10,0],[32,9,32,10,0],[33,13,36,33,0],[38,13,41,33,0],[43,13,46,33,0],[47,9,47,10,0]]);
+    </script>
+  </body>
+</html>

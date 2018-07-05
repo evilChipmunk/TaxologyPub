@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\registercontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+
+using System.Threading.Tasks;
+using AutoMapper;
+using Customer.DTO;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Authentication;
+using Shared.Service;
+using Taxology.Site.Models;
+using Taxology.Site.Services;
+using Taxology.Site.ViewComponents;
+
+namespace Taxology.Site.Controllers
+{
+    public class RegisterController : BaseWebController
+    { 
+        private readonly IMapper mapper;
+        private readonly ICustomerRestService customerService; 
+        private readonly SignInManager&lt;SiteUser&gt; signInManager;
+        private readonly AnoymousIdHandler anonHandler;
+        private readonly UserManager&lt;SiteUser&gt; userManager;
+
+        public RegisterController(
+            UserManager&lt;SiteUser&gt; userManager,  IMapper mapper, ICustomerRestService customerService,
+              SignInManager&lt;SiteUser&gt; signInManager, AnoymousIdHandler anonHandler) 
+            : base(userManager)
+        { 
+            this.mapper = mapper;
+            this.customerService = customerService; 
+            this.signInManager = signInManager;
+            this.anonHandler = anonHandler;
+            this.userManager = userManager;
+        }
+
+        [HttpGet]
+        public async Task&lt;IActionResult&gt; Index()
+        {
+            return View(new RegisterModel());
+        }
+
+        [HttpPost(Name = &quot;Register&quot;)]
+        [ValidateModel]
+        public async Task&lt;IActionResult&gt; Register(RegisterModel model)
+        {
+
+            //TODO add saga -- not needed here unless cart creation is moved here
+            var registerDTO = mapper.Map&lt;RegisteredUserDTO&gt;(model);
+            registerDTO.AnonymousId = anonHandler.GetAnonId();
+             
+            var customer = await customerService.Create(registerDTO);
+
+            if (ModelState.IsValid)
+            {
+                var user = new SiteUser {UserName = model.Email, Email = model.Email, Name = model.FirstName, CustomerId = customer.Id};
+                var result = await userManager.CreateAsync(user, model.Password);
+               // await signInManager.SignInAsync(user, false);
+
+                if (result.Succeeded)
+                {
+                    await signInManager.PasswordSignInAsync(user, model.Password, true, false);
+                    anonHandler.RemoveAnonymousId(); 
+                }
+            }
+
+
+            return RedirectToActionPermanent(&quot;Index&quot;, &quot;Home&quot;);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,15,26,32,0],[27,9,27,10,0],[28,13,28,34,0],[29,13,29,52,0],[30,13,30,48,0],[31,13,31,44,0],[32,13,32,44,0],[33,9,33,10,0],[37,9,37,10,0],[38,13,38,46,0],[39,9,39,10,0],[44,9,44,10,0],[47,13,47,68,0],[48,13,48,63,0],[50,13,50,70,0],[52,13,52,36,0],[53,13,53,14,0],[54,17,54,137,0],[55,17,55,82,0],[58,17,58,38,0],[59,17,59,18,0],[60,21,60,96,0],[61,21,61,53,0],[62,17,62,18,0],[63,13,63,14,0],[66,13,66,63,0],[67,9,67,10,0]]);
+    </script>
+  </body>
+</html>

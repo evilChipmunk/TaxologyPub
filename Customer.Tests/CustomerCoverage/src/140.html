@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.dto\statedto.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace Shared.DTO
+{
+    public class StateDTO
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Abbreviation { get; set; }
+    }
+
+
+    public class MoneyDTO
+    {
+        public MoneyDTO()
+        {
+            Exchange = DefaultExchange.USD;
+        }
+
+        public MoneyDTO(double amount)
+        {
+            Amount = amount;
+            Exchange = DefaultExchange.USD;
+        }
+
+        public MoneyDTO(double amount, string exchange)
+        {
+            Amount = amount;
+            Exchange = exchange;
+        }
+
+        
+        public double Amount { get; set; }
+        public string Exchange { get; set; }
+    }
+
+    public static class DefaultExchange
+    {
+        public const string USD = &quot;USD&quot;;
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,26,7,30,0],[7,31,7,35,0],[9,30,9,34,0],[9,35,9,39,0],[11,38,11,42,0],[11,43,11,47,0],[17,9,17,26,0],[18,9,18,10,0],[19,13,19,44,0],[20,9,20,10,0],[22,9,22,39,0],[23,9,23,10,0],[24,13,24,29,0],[25,13,25,44,0],[26,9,26,10,0],[28,9,28,56,0],[29,9,29,10,0],[30,13,30,29,0],[31,13,31,33,0],[32,9,32,10,0],[35,32,35,36,0],[35,37,35,41,0],[36,34,36,38,0],[36,39,36,43,0]]);
+    </script>
+  </body>
+</html>

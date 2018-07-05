@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\startup.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+ 
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting; 
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions; 
+using Shared.Authentication;
+using Shared.Service;
+using Taxology.Site.Controllers;
+using Taxology.Site.Services;
+using Taxology.Site.ViewComponents;
+
+namespace Taxology.Site
+{
+
+
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+
+            RoutingConfiguration = new RoutingConfig();
+            Configuration.Bind(&quot;RoutingConfig&quot;, RoutingConfiguration);
+
+            //set all URLS to point to web api -- doesn&#39;t need to be separate here even if configuration allows it
+            RoutingConfiguration.CustomerService.URL = RoutingConfiguration.URL;
+            RoutingConfiguration.OrderService.URL = RoutingConfiguration.URL;
+            RoutingConfiguration.ProductService.URL = RoutingConfiguration.URL;
+            RoutingConfiguration.ShoppingCartService.URL = RoutingConfiguration.URL;
+            RoutingConfiguration.PurchasedProductService.URL = RoutingConfiguration.URL;
+
+        }
+
+        private IConfiguration Configuration { get; }
+        private RoutingConfig RoutingConfiguration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddScoped&lt;IRestClient, RestClient&gt;();
+            services.TryAddSingleton(RoutingConfiguration);
+
+            services.TryAddSingleton&lt;IHttpContextAccessor, HttpContextAccessor&gt;();
+            services.TryAddSingleton&lt;IActionContextAccessor, ActionContextAccessor&gt;();
+            services.AddDbContext&lt;SiteUserContext&gt;();
+            services.AddTransient&lt;IShoppingCartService, ShoppingCartService&gt;();
+            services.AddTransient&lt;IProductService, ProductService&gt;();
+            services.AddTransient&lt;AnoymousIdHandler&gt;();
+
+            services.AddTransient&lt;ICustomerRestService, CustomerRestService&gt;();
+            services.AddTransient&lt;IOrderRestService, OrderRestService&gt;();
+
+            services.AddTransient&lt;IServe, ServeA&gt;();
+            services.AddTransient&lt;IServe, ServeB&gt;();
+            services.AddTransient&lt;IServe, ServeC&gt;();
+
+            ConfigureAuth(services);
+
+            services.AddAutoMapper();
+
+            services.AddMvc();
+        }
+
+        public void ConfigureAuth(IServiceCollection services)
+        {
+
+            
+
+
+            services.AddIdentity&lt;SiteUser, IdentityRole&gt;(config =&gt;
+                {
+                    // If you change this, you need to change the regular expression in the Vue code too!
+                    config.Password.RequiredLength = 8;
+                    config.Password.RequireDigit = true;
+                    config.Password.RequireLowercase = true;
+                    config.Password.RequireUppercase = true;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.User.RequireUniqueEmail = true; 
+                    config.SignIn.RequireConfirmedEmail = false;
+                    config.Lockout.MaxFailedAccessAttempts = 10;
+ 
+                })
+                .AddEntityFrameworkStores&lt;SiteUserContext&gt;()
+                .AddDefaultTokenProviders();
+
+          //  services.AddIdentity&lt;SiteUser, IdentityRole&gt;();
+
+            //            CookieBuilder cookieBuilder = new CookieBuilder();
+            //            services.ConfigureApplicationCookie(options =&gt; options.AccessDeniedPath = &quot;/Home/AccessDenied&quot;);
+            //            app.UseAuthentication();
+
+            //
+            services.ConfigureApplicationCookie(config =&gt;
+            {
+                config.Events = new CookieAuthenticationEvents()
+                {
+                    OnRedirectToLogin = (ctx) =&gt;
+                    {
+
+                        string returnURL = ctx.Request.GetEncodedPathAndQuery();
+//                        returnUrl = IServer.UrlEncode(Request.UrlReferrer.PathAndQuery);
+//
+//                        string returnUrl = ctx.Request.QueryString[&quot;ReturnUrl&quot;];
+//                        // check if it exists, if not then redirect to default page
+//                        if (returnUrl == null) returnUrl = &quot;~/Default.aspx&quot;;
+//                        ctx.Response.Redirect(returnUrl);
+
+                        //  string returnURL = ctx.Request.
+                        ctx.Response.Redirect(&quot;/account/login?returnURL=&quot; + returnURL);
+                        //if (ctx.Request.Path.StartsWithSegments(&quot;/api&quot;) &amp;&amp; ctx.Response.StatusCode == 200)
+                        //{
+                        //    ctx.Response.StatusCode = 401;
+                        //}
+
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToAccessDenied = (ctx) =&gt;
+                    {
+                        if (ctx.Request.Path.StartsWithSegments(&quot;/api&quot;) &amp;&amp; ctx.Response.StatusCode == 200)
+                        {
+                            ctx.Response.StatusCode = 403;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+
+                };
+            }
+            ); 
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseBrowserLink();
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler(&quot;/Home/Error&quot;);
+            }
+
+            app.UseAuthentication();
+          
+            app.UseStaticFiles();
+
+            app.UseCookiePolicy();
+
+            app.UseErrorHandler();
+            //
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService&lt;IServiceScopeFactory&gt;().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService&lt;SiteUserContext&gt;();
+                var result = context.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
+                context.Database.Migrate(); 
+            }
+
+
+            app.UseMvc(routes =&gt;
+            {
+                routes.MapRoute(
+                    name: &quot;default&quot;,
+                    template: &quot;{controller=Home}/{action=Index}/{id?}&quot;);
+            });
+        }
+         
+    }
+
+
+
+    //public class Startup
+    //{
+    //    IHostingEnvironment _env;
+    //    IConfigurationRoot _config;
+    //    public Startup(IHostingEnvironment env)
+    //    {
+    //        _env = env;
+
+    //        var builder = new ConfigurationBuilder()
+    //            .SetBasePath(env.ContentRootPath)
+    //            .AddJsonFile(&quot;appsettings.json&quot;, false, true)
+    //            .AddEnvironmentVariables();
+
+    //        _config = builder.Build();
+    //    }
+
+    //    // This method gets called by the runtime. Use this method to add services to the container.
+    //    public void ConfigureServices(IServiceCollection services)
+    //    {
+    //        services.AddSingleton(_config);
+    //        services.AddMvc(opt =&gt;
+    //        {
+    //            opt.Filters.Add(new RequireHttpsAttribute());
+    //            if (!_env.IsProduction())
+    //            {
+    //                opt.SslPort = 44388;
+    //            }
+    //        });
+
+
+    //        services.AddIdentity&lt;PreTaxUser, IdentityRole&gt;();
+
+    //        //            CookieBuilder cookieBuilder = new CookieBuilder();
+    //        //            services.ConfigureApplicationCookie(options =&gt; options.AccessDeniedPath = &quot;/Home/AccessDenied&quot;);
+    //        //            app.UseAuthentication();
+
+    //        //
+    //        services.ConfigureApplicationCookie(config =&gt;
+    //        {
+    //            config.Events = new CookieAuthenticationEvents()
+    //            {
+    //                OnRedirectToLogin = (ctx) =&gt;
+    //                {
+    //                    if (ctx.Request.Path.StartsWithSegments(&quot;/api&quot;) &amp;&amp; ctx.Response.StatusCode == 200)
+    //                    {
+    //                        ctx.Response.StatusCode = 401;
+    //                    }
+
+    //                    return Task.CompletedTask;
+    //                },
+    //                OnRedirectToAccessDenied = (ctx) =&gt;
+    //                {
+    //                    if (ctx.Request.Path.StartsWithSegments(&quot;/api&quot;) &amp;&amp; ctx.Response.StatusCode == 200)
+    //                    {
+    //                        ctx.Response.StatusCode = 403;
+    //                    }
+
+    //                    return Task.CompletedTask;
+    //                }
+
+    //            };
+    //        }
+    //        ); 
+    //        services.AddCors(cfg =&gt;
+    //        {
+    //            cfg.AddPolicy(&quot;atomicpi&quot;, bldr =&gt;
+    //            {
+    //                bldr.AllowAnyHeader()
+    //                    .AllowAnyMethod()
+    //                    .WithOrigins(&quot;http://wildermuth.com&quot;);
+    //            });
+
+    //            cfg.AddPolicy(&quot;AnyGET&quot;, bldr =&gt;
+    //            {
+    //                bldr.AllowAnyHeader()
+    //                    .WithMethods(&quot;GET&quot;)
+    //                    .AllowAnyOrigin();
+    //            });
+    //        });
+
+    //        services.AddAuthorization(cfg =&gt;
+    //        {
+    //            cfg.AddPolicy(&quot;SuperUsers&quot;, p =&gt; p.RequireClaim(&quot;SuperUser&quot;, &quot;True&quot;));
+    //        });
+
+
+
+
+    //        services.AddAuthentication(options =&gt;
+    //        {
+    //            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    //            // options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    //        }
+    //            ).AddJwtBearer(cfg =&gt;
+    //            {
+    //                cfg.RequireHttpsMetadata = false;
+    //                cfg.SaveToken = true;
+
+    //                cfg.TokenValidationParameters = new TokenValidationParameters()
+    //                {
+    //                    ValidateLifetime = true,
+    //                    ValidIssuer = _config[&quot;Tokens:Issuer&quot;],
+    //                    ValidAudience = _config[&quot;Tokens:Audience&quot;],
+    //                    ValidateIssuerSigningKey = true,
+    //                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config[&quot;Tokens:Key&quot;]))
+    //                };
+    //            }
+    //        );
+    //    }
+
+    //    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    //    public void Configure(IApplicationBuilder app, IHostingEnvironment env , ILoggerFactory loggerFactory)
+    //    {
+
+
+    //        loggerFactory.AddConsole(_config.GetSection(&quot;Logging&quot;));
+    //        loggerFactory.AddDebug();
+
+    //        //  app.UseCors(cfg =&gt; { cfg.AllowAnyHeader(); }
+    //        if (env.IsDevelopment())
+    //        {
+    //            app.UseDeveloperExceptionPage();
+    //        }
+
+
+
+
+    //        app.UseAuthentication();
+
+    //        app.UseMvc(); 
+    //    }
+    //}
+
+
+
+
+
+
+    public interface IServe
+    {
+        string Id { get; set; }
+    }
+
+    public class ServeA : IServe
+    {
+        public string Id { get; set; }
+    }
+
+    public class ServeB : IServe
+    {
+        public string Id { get; set; }
+    }
+    public class ServeC : IServe
+    {
+        public string Id { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,9,27,53,0],[28,9,28,10,0],[29,13,29,43,0],[31,13,31,56,0],[32,13,32,71,0],[35,13,35,81,0],[36,13,36,78,0],[37,13,37,80,0],[38,13,38,85,0],[39,13,39,89,0],[41,9,41,10,0],[43,48,43,52,0],[44,54,44,58,0],[48,9,48,10,0],[49,13,49,59,0],[50,13,50,60,0],[52,13,52,83,0],[53,13,53,87,0],[54,13,54,54,0],[55,13,55,80,0],[56,13,56,70,0],[57,13,57,56,0],[59,13,59,80,0],[60,13,60,74,0],[62,13,62,53,0],[63,13,63,53,0],[64,13,64,53,0],[66,13,66,37,0],[68,13,68,38,0],[70,13,70,31,0],[71,9,71,10,0],[74,9,74,10,0],[79,13,80,17,0],[80,17,80,18,0],[80,18,82,21,0],[82,21,82,56,0],[82,56,83,21,0],[83,21,83,57,0],[83,57,84,21,0],[84,21,84,61,0],[84,61,85,21,0],[85,21,85,61,0],[85,61,86,21,0],[86,21,86,68,0],[86,68,87,21,0],[87,21,87,59,0],[87,59,88,21,0],[88,21,88,65,0],[88,65,89,21,0],[89,21,89,65,0],[89,65,91,17,0],[91,17,91,18,0],[91,18,93,45,0],[79,13,93,45,0],[102,13,103,13,0],[103,13,103,14,0],[103,14,104,17,0],[104,17,107,21,0],[107,21,107,22,0],[107,22,109,25,0],[109,25,109,81,0],[109,81,118,25,0],[118,25,118,88,0],[118,88,124,25,0],[124,25,124,51,0],[124,51,125,21,0],[125,21,125,22,0],[125,22,127,21,0],[127,21,127,22,0],[127,22,128,25,0],[128,25,128,107,0],[128,107,129,25,0],[129,25,129,26,0],[129,26,130,29,0],[130,29,130,59,0],[130,59,131,25,0],[131,25,131,26,0],[131,26,133,25,0],[133,25,133,51,0],[133,51,134,21,0],[134,21,134,22,0],[134,22,136,19,0],[104,17,136,19,0],[136,19,137,13,0],[137,13,137,14,0],[137,14,138,15,0],[102,13,138,15,0],[139,9,139,10,0],[143,9,143,10,0],[144,13,144,37,0],[145,13,145,14,0],[146,17,146,38,0],[147,17,147,49,0],[148,13,148,14,0],[150,13,150,14,0],[151,17,151,56,0],[152,13,152,14,0],[154,13,154,37,0],[156,13,156,34,0],[158,13,158,35,0],[160,13,160,35,0],[163,20,163,119,0],[164,13,164,14,0],[165,17,165,90,0],[166,17,166,93,0],[167,17,167,44,0],[168,13,168,14,0],[171,13,172,13,0],[172,13,172,14,0],[172,14,173,17,0],[173,17,175,73,0],[175,73,176,13,0],[176,13,176,14,0],[176,14,176,16,0],[171,13,176,16,0],[177,9,177,10,0],[328,28,328,32,0],[328,33,328,37,0],[333,28,333,32,0],[333,33,333,37,0],[337,28,337,32,0],[337,33,337,37,0]]);
+    </script>
+  </body>
+</html>

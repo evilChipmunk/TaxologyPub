@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\countries.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Shared.Domain
+{
+    public static class Countries
+    {
+        public static List&lt;Country&gt; los = new List&lt;Country&gt; {
+            //us
+            new Country(&quot;USA&quot;, &quot;United States of America&quot;),
+            new Country(&quot;CAN&quot;, &quot;Canada&quot;),
+          
+        };
+
+        public static List&lt;string&gt; Abbreviations()
+        {
+            return los.Select(s =&gt; s.Abbreviation).ToList();
+        }
+
+        public static List&lt;string&gt; Names()
+        {
+            return los.Select(s =&gt; s.Name).ToList();
+        }
+
+        public static string GetName(string abbreviation)
+        {
+            return los.Where(s =&gt; s.Abbreviation.Equals(abbreviation, StringComparison.CurrentCultureIgnoreCase)).Select(s =&gt; s.Name).FirstOrDefault();
+        }
+
+        public static string GetAbbreviation(string name)
+        {
+            return los.Where(s =&gt; s.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).Select(s =&gt; s.Abbreviation).FirstOrDefault();
+        }
+
+        public static List&lt;Country&gt; ToList()
+        {
+            return los;
+        }
+
+        public static Country GetByAbbreviation(string ab)
+        {
+            return los.FirstOrDefault(x =&gt; x.Abbreviation.Equals(ab));
+        }
+        public static Country GetByName(string name)
+        {
+            return los.FirstOrDefault(x =&gt; x.Name.Equals(name));
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,9,14,11,0],[17,9,17,10,0],[18,13,18,36,0],[18,36,18,50,0],[18,50,18,61,0],[18,13,18,61,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,36,0],[23,36,23,42,0],[23,42,23,53,0],[23,13,23,53,0],[24,9,24,10,0],[27,9,27,10,0],[28,13,28,35,0],[28,35,28,113,0],[28,113,28,127,0],[28,127,28,133,0],[28,133,28,152,0],[28,13,28,152,0],[29,9,29,10,0],[32,9,32,10,0],[33,13,33,35,0],[33,35,33,97,0],[33,97,33,111,0],[33,111,33,125,0],[33,125,33,144,0],[33,13,33,144,0],[34,9,34,10,0],[37,9,37,10,0],[38,13,38,24,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,43,44,0],[43,44,43,69,0],[43,69,43,71,0],[43,13,43,71,0],[44,9,44,10,0],[46,9,46,10,0],[47,13,47,44,0],[47,44,47,63,0],[47,63,47,65,0],[47,13,47,65,0],[48,9,48,10,0]]);
+    </script>
+  </body>
+</html>

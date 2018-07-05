@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\consumers\ggetcustomerordersconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Order.DTO;
+using Order.Persistency;
+
+namespace Order.Service.Consumers
+{
+    public class GetCustomerOrdersConsumer : IConsumer&lt;GetCustomerOrdersRequest&gt;
+    {
+        private readonly IOrderRepository repo;
+        private readonly IMapper mapper;
+
+        public GetCustomerOrdersConsumer(IOrderRepository repo, IMapper mapper)
+        {
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+
+        public async Task Consume(ConsumeContext&lt;GetCustomerOrdersRequest&gt; context)
+        {
+            var request = context.Message;
+
+            var orders = await repo.GetCustomerOrders(request.CustomerId);
+
+            GetCustomerOrdersResponse response;
+            if (orders != null)
+            {
+                var orderDTOs = mapper.Map&lt;IEnumerable&lt;OrderDTO&gt;&gt;(orders);
+
+                response = new GetCustomerOrdersResponse(orderDTOs);
+
+            }
+            else
+            {
+                response = new GetCustomerOrdersResponse();
+            }
+
+            await context.RespondAsync(response);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,80,0],[16,9,16,10,0],[17,13,17,30,0],[18,13,18,34,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,43,0],[25,13,25,75,0],[28,13,28,32,0],[29,13,29,14,0],[30,17,30,75,0],[32,17,32,69,0],[34,13,34,14,0],[36,13,36,14,0],[37,17,37,60,0],[38,13,38,14,0],[40,13,40,50,0],[41,9,41,10,0]]);
+    </script>
+  </body>
+</html>

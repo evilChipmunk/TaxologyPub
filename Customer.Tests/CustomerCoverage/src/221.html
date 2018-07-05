@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\autodata\automoqdataattribute.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoFixture;
+using AutoFixture.Xunit2;
+
+namespace Domain.Tests.Framework.AutoData
+{
+    internal class AutoMoqDataAttribute : AutoDataAttribute
+    {
+        public AutoMoqDataAttribute()
+            : base(new Fixture()
+                .Customize(new TestingConventions()))
+        {
+
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,15,10,54,1],[11,9,11,10,1],[13,9,13,10,1]]);
+    </script>
+  </body>
+</html>

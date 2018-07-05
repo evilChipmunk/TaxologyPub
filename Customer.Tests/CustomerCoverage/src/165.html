@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.dto\requests\addproductrequest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace ShoppingCart.DTO
+{
+    public class AddProductRequest
+    {
+        public AddProductRequest(Guid cartId, ShoppingCartProductDTO product)
+        {
+            this.CartId = cartId;
+            this.Product = product;
+        }
+        public Guid CartId { get; set; }
+        //  public Guid ProductId { get; set; }
+        public ShoppingCartProductDTO Product { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,78,0],[8,9,8,10,0],[9,13,9,34,0],[10,13,10,36,0],[11,9,11,10,0],[12,30,12,34,0],[12,35,12,39,0],[14,49,14,53,0],[14,54,14,58,0]]);
+    </script>
+  </body>
+</html>

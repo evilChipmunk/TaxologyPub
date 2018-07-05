@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\startup.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
+using Customer.DTO;
+using GreenPipes;
+using MassTransit;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Service;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+using ShoppingCart.Service.Consumers;
+using ShoppingCart.Service.Controllers;
+
+namespace ShoppingCart.Service
+{
+    public class Startup : SharedStartup
+    { 
+        private IBus massBus;
+     
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile(&quot;appsettings.json&quot;, true, true)
+                .AddJsonFile($&quot;appsettings.{env.EnvironmentName}.json&quot;, true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();  
+        }
+
+        public IConfiguration Configuration { get; }
+
+ 
+        public IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            // Add framework services. 
+            var builder = new ContainerBuilder(); 
+            builder.RegisterConsumers(Assembly.GetExecutingAssembly());
+
+            services.AddScoped&lt;IShoppingCartBuilder, ShoppingCartBuilder&gt;();
+
+            ConfigureMassTransit(builder,
+                (cfg, host) =&gt;
+                { 
+                    ConfigureEndpoint&lt;AddProductConsumer, AddProductRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;RemoveProductConsumer, RemoveProductRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;ClearCartConsumer, ClearCartRequest&gt;(host, cfg);
+                   // ConfigureEndpoint&lt;CreateShoppingCartConsumer, CreateShoppingCartRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;GetShoppingCartByCustomerConsumer, GetShoppingCartByCustomerRequest&gt;(host, cfg);
+
+                    string queueName = typeof(ICustomerCreatedNotification).Name;
+                    cfg.ReceiveEndpoint(host, queueName, e =&gt;
+                    {
+                        e.UseRetry(r =&gt; r.Immediate(5));
+                        e.Consumer(typeof(CustomerCreatedConsumer), type =&gt; container.Resolve&lt;CustomerCreatedConsumer&gt;());
+                    });
+                });
+
+
+            services.AddScoped&lt;ShoppingCartContext&gt;();
+            services.AddScoped&lt;IShoppingCartRepository, ShoppingCartRepository&gt;();
+  
+
+            services.AddMediatR(typeof(Startup));
+             
+            services.AddAutoMapper();
+
+            builder.Populate(services);
+            container = builder.Build();
+             
+            // Create the IServiceProvider based on the container.
+            return new AutofacServiceProvider(container);
+        }
+         
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            IApplicationLifetime lifetime)
+        {
+      
+            //resolve the bus from the container
+            massBus = SetBusLifetime(lifetime); 
+        } 
+    } 
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[26,9,26,78,0],[27,9,27,10,0],[28,13,32,44,0],[33,13,33,45,0],[34,9,34,10,0],[36,47,36,51,0],[40,9,40,10,0],[42,13,42,50,0],[43,13,43,72,0],[45,13,45,77,0],[47,13,49,17,0],[49,17,49,18,0],[49,18,50,21,0],[50,21,50,89,0],[50,89,51,21,0],[51,21,51,95,0],[51,95,52,21,0],[52,21,52,87,0],[52,87,54,21,0],[54,21,54,119,0],[54,119,56,21,0],[56,21,56,82,0],[56,82,57,21,0],[57,21,58,21,0],[58,21,58,22,0],[58,22,59,25,0],[59,25,59,41,0],[59,41,59,55,0],[59,55,59,57,0],[59,25,59,57,0],[59,57,60,25,0],[60,25,60,77,0],[60,77,60,121,0],[60,121,60,123,0],[60,25,60,123,0],[60,123,61,21,0],[61,21,61,22,0],[61,22,61,24,0],[57,21,61,24,0],[61,24,62,17,0],[62,17,62,18,0],[62,18,62,20,0],[47,13,62,20,0],[65,13,65,55,0],[66,13,66,83,0],[69,13,69,50,0],[71,13,71,38,0],[73,13,73,40,0],[74,13,74,41,0],[77,13,77,58,0],[78,9,78,10,0],[83,9,83,10,0],[86,13,86,48,0],[87,9,87,10,0]]);
+    </script>
+  </body>
+</html>

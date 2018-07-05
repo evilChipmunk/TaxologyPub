@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\services\productcataloglink.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.AspNetCore.Mvc;
+using Product.DTO;
+
+namespace Taxology.Site.Services
+{
+    public class ProductCatalogLink
+    {
+        private readonly IUrlHelper urlHelper; 
+
+        public ProductCatalogLink(IUrlHelper urlHelper)
+        {
+            this.urlHelper = urlHelper; 
+        }
+        public string GetLink(ProductDTO product)
+        { 
+
+            ///this is a horrible way of doing this - but its quick and cheap for this project
+            if (product.Name.ToLower().Contains(&quot;filing&quot;))
+            {
+                return this.urlHelper.Action(&quot;Filing&quot;, &quot;Products&quot;); 
+            }
+            else if (product.Name.ToLower().Contains(&quot;advice&quot;))
+            {
+                return this.urlHelper.Action(&quot;Advice&quot;, &quot;Products&quot;);
+                // return View(&quot;Advice&quot;, product);
+            }
+            else if (product.Name.ToLower().Contains(&quot;audit&quot;))
+            {
+                return this.urlHelper.Action(&quot;Audit&quot;, &quot;Products&quot;);
+                // return View(&quot;Audit&quot;, product);
+            }
+            else if (product.Name.ToLower().Contains(&quot;appraisal&quot;))
+            {
+                return this.urlHelper.Action(&quot;Appraisal&quot;, &quot;Products&quot;);
+                //  return View(&quot;Appraisal&quot;, product);
+            }
+
+            return &quot;&quot;;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,56,0],[11,9,11,10,0],[12,13,12,40,0],[13,9,13,10,0],[15,9,15,10,0],[18,13,18,59,0],[19,13,19,14,0],[20,17,20,68,0],[22,18,22,64,0],[23,13,23,14,0],[24,17,24,68,0],[27,18,27,63,0],[28,13,28,14,0],[29,17,29,67,0],[32,18,32,67,0],[33,13,33,14,0],[34,17,34,71,0],[38,13,38,23,0],[39,9,39,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\viewcomponents\orderconfirmationviewcomponent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Service;
+using Taxology.Site.Models;
+
+namespace Taxology.Site.ViewComponents
+{
+    public class OrderConfirmationViewComponent : ViewComponent
+    {
+        private readonly IRestClient restClient;
+        private readonly RoutingConfig routingConfig;
+        private readonly IMapper mapper;
+
+        public OrderConfirmationViewComponent(IRestClient restClient, RoutingConfig routingConfig, IMapper mapper)
+        {
+            this.restClient = restClient;
+            this.routingConfig = routingConfig;
+            this.mapper = mapper;
+        }
+
+        public async Task&lt;IViewComponentResult&gt; InvokeAsync(PurchaseModel model)
+        {
+            return View(model);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,115,0],[16,9,16,10,0],[17,13,17,42,0],[18,13,18,48,0],[19,13,19,34,0],[20,9,20,10,0],[23,9,23,10,0],[24,13,24,32,0],[25,9,25,10,0]]);
+    </script>
+  </body>
+</html>

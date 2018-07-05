@@ -1,0 +1,32 @@
+﻿@model Taxology.Site.Models.ProductAddedConfirmationModel
+
+@{
+    ViewData["Title"] = "AddedToCart";
+}
+
+<h2>AddedToCart</h2>
+
+<div>
+    <h4>ProductAddedConfirmationModel</h4>
+    <hr />
+    <dl class="dl-horizontal">
+    </dl>
+</div>
+
+<div>
+    <a asp-action="GoToCart">Go To Cart</a>
+</div>
+
+<h2>Suggested Products</h2>
+<div>
+    <table>
+        @foreach (var product in Model.SuggestedProducts)
+        {
+            <tr>
+                <td>@product.Name</td>
+            </tr>
+        }
+    </table>
+
+</div>
+ 

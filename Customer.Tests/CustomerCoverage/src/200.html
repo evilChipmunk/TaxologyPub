@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\controllers\productscontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using MassTransit;
+using Microsoft.AspNetCore.Mvc; 
+using Microsoft.Extensions.Logging;
+using Product.DTO;
+using Shared.Service; 
+
+
+namespace Taxology.WebAPI.Controllers
+{
+    [Produces(&quot;application/json&quot;)]
+    [Route(&quot;api/Products&quot;)]
+    public class ProductsController : BaseApiController 
+    {
+        private readonly IRequestClient&lt;GetAllProductsRequest, GetAllProductsResponse&gt; client;
+
+        public ProductsController(IRequestClientFactory clientFactory, ILoggerFactory loggerFactory) 
+            : base(loggerFactory)
+        {
+            this.client = clientFactory.Create &lt; GetAllProductsRequest, GetAllProductsResponse&gt;();
+        }
+        protected override ILogger CreateLogger()
+        {
+            return loggerFactory.CreateLogger&lt;ProductsController&gt;();
+        }
+          
+        [HttpGet(Name = &quot;getall&quot;)]
+        [ResponseCache(Duration = 3600)]
+        public async Task&lt;IActionResult&gt; GetAll()
+        {  
+            return await HandleAsync(async () =&gt; await client.Request(new GetAllProductsRequest())); 
+        }  
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,15,18,34,0],[19,9,19,10,0],[20,13,20,99,0],[21,9,21,10,0],[23,9,23,10,0],[24,13,24,69,0],[25,9,25,10,0],[30,9,30,10,0],[31,13,31,50,0],[31,50,31,99,0],[31,99,31,101,0],[31,13,31,101,0],[32,9,32,10,0]]);
+    </script>
+  </body>
+</html>

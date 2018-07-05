@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.domain\order.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Shared.Domain;
+
+namespace Order.Domain
+{
+    public class Order : BaseEntity
+    {
+
+        private Order()
+        {
+            products = new List&lt;Product&gt;();
+        }
+
+        public static Order Create(Customer customer, string address1, string address2,
+            string country, string phone, string stateAbbreviation, string zipCode,
+            double taxRate)
+        {
+            Guard.ForNull(customer, &quot;customer&quot;);
+
+            Order order = new Order(); 
+            order.Id = Guid.NewGuid();
+            order.State = SaveState.UnSaved;
+            order.OrderStatus = OrderStatus.Created;
+
+            order.CustomerId = customer.Id;
+            order.BillingAddress = BillingAddress.Create(order, address1, address2, country, phone,
+                stateAbbreviation, zipCode);
+            order.OrderDate = DateTime.Now;
+
+            //hack because EF Core isn&#39;t playing nice with Money object
+            //tried OwnsOne, which works fine if only one object in the database
+            //owns the value object, but in this project the Order &#39;owns&#39; 3 Money objects,
+            //and the Product &#39;owns&#39; 1 Money object. 
+            //also just tried to flat out ignore the properties in model builder and use
+            //backing doubles for the respective amounts and a string for the exchange,
+            //but it still wants to map the Money (which has no id so can&#39;t be mapped without
+            //being &#39;owned&#39;). whatever. not worth it. 
+
+
+            order.TaxRate = taxRate;
+            order.Tax = new Money(0).Amount;
+            order.Exchange = new Money(taxRate).Exchange;
+
+            order.AddEvent(new OrderCreatedEvent(order));
+            return order;
+        }
+
+        public DateTime OrderDate { get; private set; }
+
+        private List&lt;Product&gt; products;
+
+
+        private double subTotalAmount;
+        private double totalAmount;
+
+        public BillingAddress BillingAddress { get; private set; }
+        public Guid CustomerId { get; private set; }
+        public IEnumerable&lt;Product&gt; Products
+        {
+            get { return products.AsEnumerable();}
+            private set { products = new List&lt;Product&gt;(value); }
+        }
+
+
+        public string Exchange { get; private set; }
+
+        public double SubTotal
+        {
+            get
+            {
+                subTotalAmount = 0;
+
+                foreach (var product in Products)
+                {
+                      subTotalAmount += product.Price;
+                }
+
+                return subTotalAmount;
+            }
+            private set { subTotalAmount = value; }
+        }
+
+        public double Tax
+        {
+            get
+            { 
+                return SubTotal *  TaxRate;
+            }
+            private set { }
+        }
+
+        protected double TaxRate { get; private set; }
+
+        public double Total
+        {
+            get
+            {
+                return  SubTotal + Tax; 
+            }
+            private set { totalAmount = value; }
+        }
+
+
+        public OrderStatus OrderStatus { get; private set; }
+
+
+        public void Confirm()
+        {
+            this.OrderStatus = OrderStatus.Confirmed;  
+            this.AddEvent(new OrderConfirmedEvent(this));
+        }
+
+        public void Cancel()
+        {
+            this.OrderStatus = OrderStatus.Cancelled;
+            this.AddEvent(new OrderCanceledEvent(this));
+        }
+
+        public void AddProduct(Guid productId, string name, double price)
+        {
+            //either add a new product, or updated the quantity of an existing one
+            var foundProduct = products.FirstOrDefault(x =&gt; x.Id == productId);
+            if (foundProduct != null)
+            {
+                foundProduct.Quantity++;
+            }
+            else
+            {
+                this.products.Add(Product.Create(productId, name, price, this));
+            }
+        }
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,24,0],[12,9,12,10,0],[13,13,13,44,0],[14,9,14,10,0],[19,9,19,10,0],[20,13,20,49,0],[22,13,22,39,0],[23,13,23,39,0],[24,13,24,45,0],[25,13,25,53,0],[27,13,27,44,0],[28,13,29,45,0],[30,13,30,44,0],[42,13,42,37,0],[43,13,43,45,0],[44,13,44,58,0],[46,13,46,58,0],[47,13,47,26,0],[48,9,48,10,0],[50,37,50,41,0],[50,42,50,54,0],[58,48,58,52,0],[58,53,58,65,0],[59,34,59,38,0],[59,39,59,51,0],[62,17,62,18,0],[62,19,62,50,0],[62,50,62,51,0],[63,25,63,26,0],[63,27,63,63,0],[63,64,63,65,0],[67,34,67,38,0],[67,39,67,51,0],[72,13,72,14,0],[73,17,73,36,0],[75,17,75,24,0],[75,26,75,37,0],[75,38,75,40,0],[75,41,75,49,0],[76,17,76,18,0],[77,23,77,55,0],[78,17,78,18,0],[80,17,80,39,0],[81,13,81,14,0],[82,25,82,26,0],[82,27,82,50,0],[82,51,82,52,0],[88,13,88,14,0],[89,17,89,44,0],[90,13,90,14,0],[91,25,91,26,0],[91,27,91,28,0],[94,36,94,40,0],[94,41,94,53,0],[99,13,99,14,0],[100,17,100,40,0],[101,13,101,14,0],[102,25,102,26,0],[102,27,102,47,0],[102,48,102,49,0],[106,42,106,46,0],[106,47,106,59,0],[110,9,110,10,0],[111,13,111,54,0],[112,13,112,58,0],[113,9,113,10,0],[116,9,116,10,0],[117,13,117,54,0],[118,13,118,57,0],[119,9,119,10,0],[122,9,122,10,0],[124,13,124,61,0],[124,61,124,78,0],[124,78,124,80,0],[124,13,124,80,0],[125,13,125,38,0],[126,13,126,14,0],[127,17,127,41,0],[128,13,128,14,0],[130,13,130,14,0],[131,17,131,81,0],[132,13,132,14,0],[133,9,133,10,0]]);
+    </script>
+  </body>
+</html>

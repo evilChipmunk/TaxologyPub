@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.persistency\migrations\20180608042818_v1.designer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+// &lt;auto-generated /&gt;
+using Customer.Persistency;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
+using System;
+
+namespace Customer.Persistency.Migrations
+{
+    [DbContext(typeof(CustomerContext))]
+    [Migration(&quot;20180608042818_v1&quot;)]
+    partial class v1
+    {
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        {
+#pragma warning disable 612, 618
+            modelBuilder
+                .HasDefaultSchema(&quot;customers&quot;)
+                .HasAnnotation(&quot;ProductVersion&quot;, &quot;2.0.3-rtm-10026&quot;)
+                .HasAnnotation(&quot;SqlServer:ValueGenerationStrategy&quot;, SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity(&quot;Customer.Domain.Customer&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;)
+                        .ValueGeneratedOnAdd();
+
+                    b.Property&lt;string&gt;(&quot;Address1&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Address2&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Country&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Email&quot;);
+
+                    b.Property&lt;string&gt;(&quot;FirstName&quot;);
+
+                    b.Property&lt;string&gt;(&quot;LastName&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Phone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;StateAbbreviation&quot;);
+
+                    b.Property&lt;string&gt;(&quot;ZipCode&quot;);
+
+                    b.HasKey(&quot;Id&quot;);
+
+                    b.ToTable(&quot;Customer&quot;);
+                });
+#pragma warning restore 612, 618
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,10,0],[20,13,23,118,0],[25,13,26,17,0],[26,17,26,18,0],[26,18,27,21,0],[27,21,28,48,0],[28,48,30,21,0],[30,21,30,52,0],[30,52,32,21,0],[32,21,32,52,0],[32,52,34,21,0],[34,21,34,51,0],[34,51,36,21,0],[36,21,36,49,0],[36,49,38,21,0],[38,21,38,53,0],[38,53,40,21,0],[40,21,40,52,0],[40,52,42,21,0],[42,21,42,49,0],[42,49,44,21,0],[44,21,44,61,0],[44,61,46,21,0],[46,21,46,51,0],[46,51,48,21,0],[48,21,48,36,0],[48,36,50,21,0],[50,21,50,43,0],[50,43,51,17,0],[51,17,51,18,0],[51,18,51,20,0],[25,13,51,20,0],[53,9,53,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\homecontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Taxology.Site.Models;
+
+namespace Taxology.Site.Controllers
+{
+    public class HomeController : Controller
+    {
+        public HomeController(IEnumerable&lt;IServe&gt; services)
+        {
+            var servs = services;
+        }
+
+
+        public IActionResult Par()
+        {
+            return View();
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public async Task&lt;IActionResult&gt; About()
+        {  
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            ViewData[&quot;Message&quot;] = &quot;Your contact page.&quot;;
+
+            return View();
+        }
+         
+
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
+
+
+        public IActionResult Error(ErrorViewModel model)
+        {
+            return View(model);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,60,0],[15,9,15,10,0],[16,13,16,34,0],[17,9,17,10,0],[21,9,21,10,0],[22,13,22,27,0],[23,9,23,10,0],[26,9,26,10,0],[27,13,27,27,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,27,0],[33,9,33,10,0],[36,9,36,10,0],[37,13,37,56,0],[39,13,39,27,0],[40,9,40,10,0],[50,9,50,10,0],[51,13,51,32,0],[52,9,52,10,0]]);
+    </script>
+  </body>
+</html>

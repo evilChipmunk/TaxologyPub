@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\orderscontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Shared.Authentication;
+using Shared.Mapping;
+using Taxology.Site.Models;
+using Taxology.Site.Services;
+
+namespace Taxology.Site.Controllers
+{
+    public class OrdersController : BaseWebController
+    {
+        private readonly ICustomerRestService customerService;
+        private readonly IOrderRestService orderService;
+        private readonly IMapper mapper;
+
+        public OrdersController(UserManager&lt;SiteUser&gt; userManager, 
+            ICustomerRestService customerService, IOrderRestService orderService, IMapper mapper
+            ) : base(userManager)
+        {
+            this.customerService = customerService;
+            this.orderService = orderService;
+            this.mapper = mapper;
+        }
+
+        public async Task&lt;IActionResult&gt; Index()
+        {
+            var user = await GetSiteUser();
+
+            var customer = await customerService.GetCustomer(user.CustomerId);
+
+            var orders = await orderService.GetCustomerOrders(user.CustomerId);
+
+            var orderModels = mapper.Map&lt;IEnumerable&lt;OrderModel&gt;&gt;(orders);
+
+            var customerModel = mapper.Map&lt;CustomerModel&gt;(customer);
+
+            var model = new CustomerOrdersModel {Customer = customerModel, Orders = orderModels};
+
+            return View(model);
+        }
+    }
+
+
+    public class CustomerOrdersModel
+    {
+
+        public CustomerModel Customer { get; set; }
+        public IEnumerable&lt;OrderModel&gt; Orders { get; set; }
+
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,17,23,34,0],[24,9,24,10,0],[25,13,25,52,0],[26,13,26,46,0],[27,13,27,34,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,44,0],[34,13,34,79,0],[36,13,36,80,0],[38,13,38,75,0],[40,13,40,69,0],[42,13,42,98,0],[44,13,44,32,0],[45,9,45,10,0],[52,41,52,45,0],[52,46,52,50,0],[53,49,53,53,0],[53,54,53,58,0]]);
+    </script>
+  </body>
+</html>

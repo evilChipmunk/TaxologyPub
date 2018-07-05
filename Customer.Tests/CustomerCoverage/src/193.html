@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\removeproductconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using MassTransit;
+using Shared.DTO;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+
+namespace ShoppingCart.Service.Consumers
+{
+    public class RemoveProductConsumer : IConsumer&lt;RemoveProductRequest&gt;
+    {
+        private readonly IShoppingCartRepository repo;
+
+        public RemoveProductConsumer(IShoppingCartRepository repo)
+        {
+            this.repo = repo;
+        }
+        public async Task Consume(ConsumeContext&lt;RemoveProductRequest&gt; context)
+        {
+            var request = context.Message;
+             
+            var cart = await repo.GetCartByIdAsync(request.CartId);
+            cart.RemoveProduct(request.ProductId);
+
+            await repo.SaveAsync(cart);
+
+            var response = new RemoveProductResponse(true, ResponseAction.Deleted);
+
+            await context.RespondAsync(response);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,67,0],[14,9,14,10,0],[15,13,15,30,0],[16,9,16,10,0],[18,9,18,10,0],[19,13,19,43,0],[21,13,21,68,0],[22,13,22,51,0],[24,13,24,40,0],[26,13,26,84,0],[28,13,28,50,0],[29,9,29,10,0]]);
+    </script>
+  </body>
+</html>

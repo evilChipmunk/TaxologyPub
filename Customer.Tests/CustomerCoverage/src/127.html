@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\startup.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+ 
+using System;
+using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection; 
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection; 
+using AutoMapper; 
+using MassTransit;
+using MassTransit.Util;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Order.Domain;
+using Order.DTO;
+using Order.Persistency;
+using Order.Service.Builders;
+using Order.Service.Consumers;
+using Shared.Service;
+ 
+ 
+
+
+namespace Order.Service
+{
+    public class Startup : SharedStartup
+    { 
+        private IBus massBus;
+     
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile(&quot;appsettings.json&quot;, true, true)
+                .AddJsonFile($&quot;appsettings.{env.EnvironmentName}.json&quot;, true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();  
+        }
+
+        public IConfiguration Configuration { get; }
+
+ 
+        public IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            // Add framework services. 
+            var builder = new ContainerBuilder(); 
+            builder.RegisterConsumers(Assembly.GetExecutingAssembly());
+
+            ConfigureMassTransit(builder,
+                (cfg, host) =&gt;
+                { 
+                    ConfigureEndpoint&lt;GetBillingConsumer, GetBillingAddressRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;GetOpenOrderConsumer, GetOpenOrderRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;GetOrderConsumer, GetOrderRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;GetCustomerOrdersConsumer, GetCustomerOrdersRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;CreateOrderConsumer, CreateOrderRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;CompleteOrderConsumer, CompleteOrderRequest&gt;(host, cfg);
+                    ConfigureEndpoint&lt;CancelOrderConsumer, CancelOrderRequest&gt;(host, cfg); 
+                });
+     
+
+            services.AddScoped&lt;OrderContext&gt;();
+            services.AddScoped&lt;ICustomerRepository, CustomerRepository&gt;();
+            services.AddScoped&lt;IOrderRepository, OrderRepository&gt;();
+            services.AddScoped&lt;ITaxService, TaxService&gt;();
+            services.AddScoped&lt;IOrderBuilder, OrderBuilder&gt;();
+            services.AddScoped&lt;ICustomerBuilder, CustomerBuilder&gt;();
+        
+ 
+
+            services.AddMediatR(typeof(Startup));
+             
+            services.AddAutoMapper();
+
+            builder.Populate(services);
+            container = builder.Build();
+             
+            // Create the IServiceProvider based on the container.
+            return new AutofacServiceProvider(container);
+        }
+         
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            IApplicationLifetime lifetime)
+        {
+      
+            //resolve the bus from the container
+            massBus = SetBusLifetime(lifetime); 
+        } 
+    } 
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[35,9,35,78,0],[36,9,36,10,0],[37,13,41,44,0],[42,13,42,45,0],[43,9,43,10,0],[45,47,45,51,0],[49,9,49,10,0],[51,13,51,50,0],[52,13,52,72,0],[54,13,56,17,0],[56,17,56,18,0],[56,18,57,21,0],[57,21,57,96,0],[57,96,58,21,0],[58,21,58,93,0],[58,93,59,21,0],[59,21,59,85,0],[59,85,60,21,0],[60,21,60,103,0],[60,103,61,21,0],[61,21,61,91,0],[61,91,62,21,0],[62,21,62,95,0],[62,95,63,21,0],[63,21,63,91,0],[63,91,64,17,0],[64,17,64,18,0],[64,18,64,20,0],[54,13,64,20,0],[67,13,67,48,0],[68,13,68,75,0],[69,13,69,69,0],[70,13,70,59,0],[71,13,71,63,0],[72,13,72,69,0],[76,13,76,50,0],[78,13,78,38,0],[80,13,80,40,0],[81,13,81,41,0],[84,13,84,58,0],[85,9,85,10,0],[90,9,90,10,0],[93,13,93,48,0],[94,9,94,10,0]]);
+    </script>
+  </body>
+</html>

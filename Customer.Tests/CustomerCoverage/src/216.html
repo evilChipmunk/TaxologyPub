@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\customizations\cardcustomization.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using AutoFixture;
+using Domain.Tests.Framework.Customizations;
+
+namespace Domain.Tests.Framework.Customizations
+{
+    internal class CardCustomization : ICustomization
+    {
+        public void Customize(IFixture fixture)
+        {
+            fixture.Register(() =&gt;
+            {
+                var rand = new Random();
+
+                var name = fixture.Create&lt;string&gt;().Substring(0, rand.Next(1, 21));
+                var sommething = fixture.Create&lt;SomeObject&gt;(); 
+                var id =  fixture.Create&lt;Guid&gt;();
+
+                return new Card(id );
+            });
+        }
+    }
+}
+
+public class SomeObject
+{
+    public string SomeName { get; set; }
+}
+public class Card
+{
+    public Card(Guid id)
+    {
+        this.Id   = id;
+    }
+
+    public Guid Id { get; set; }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,0],[11,13,12,13,0],[12,13,12,14,0],[12,14,13,17,0],[13,17,13,41,0],[13,41,15,17,0],[15,17,15,84,0],[15,84,16,17,0],[16,17,16,63,0],[16,63,17,17,0],[17,17,17,50,0],[17,50,19,17,0],[19,17,19,38,0],[19,38,20,13,0],[20,13,20,14,0],[20,14,20,16,0],[11,13,20,16,0],[21,9,21,10,0],[27,30,27,34,0],[27,35,27,39,0],[31,5,31,25,0],[32,5,32,6,0],[33,9,33,24,0],[34,5,34,6,0],[36,22,36,26,0],[36,27,36,31,0]]);
+    </script>
+  </body>
+</html>

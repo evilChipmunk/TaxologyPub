@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.persistency\customerrepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore; 
+using System;
+using System.Collections.Generic; 
+using System.Threading.Tasks;
+using MediatR;
+
+
+namespace Customer.Persistency
+{
+
+    public interface ICustomerRepository
+    {
+        Task&lt;IEnumerable&lt;Customer.Domain.Customer&gt;&gt; GetCustomersAsync();
+        Task&lt;Domain.Customer&gt; GetCustomerByIdAsync(Guid id);
+        Task&lt;Domain.Customer&gt; SaveAsync(Domain.Customer customer);
+        void Delete(Guid id);
+    }
+
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly CustomerContext context;
+        private readonly IMediator mediator;
+
+        public CustomerRepository(CustomerContext context, IMediator mediator)
+        {
+            this.context = context;
+            this.mediator = mediator;
+        }
+
+        public async Task&lt;IEnumerable&lt;Customer.Domain.Customer&gt;&gt; GetCustomersAsync()
+        {
+            return await context.Customers.ToListAsync();
+        }
+
+        public async Task&lt;Domain.Customer&gt; GetCustomerByIdAsync(Guid id)
+        {
+            return await context.Customers.FindAsync(id);
+        }
+
+        public async Task&lt;Domain.Customer&gt; SaveAsync(Domain.Customer customer)
+        { 
+           return  await context.SaveAndPublishAsync(customer, context.Customers);    
+        }
+
+        public void Delete(Guid id)
+        {
+            var entity = Domain.Customer.CreateForDelete(id);
+            context.Delete(entity);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[24,9,24,79,0],[25,9,25,10,0],[26,13,26,36,0],[27,13,27,38,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,58,0],[33,9,33,10,0],[36,9,36,10,0],[37,13,37,58,0],[38,9,38,10,0],[41,9,41,10,0],[42,12,42,83,0],[43,9,43,10,0],[46,9,46,10,0],[47,13,47,62,0],[48,13,48,36,0],[49,9,49,10,0]]);
+    </script>
+  </body>
+</html>

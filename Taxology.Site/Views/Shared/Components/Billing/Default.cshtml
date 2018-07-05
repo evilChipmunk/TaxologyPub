@@ -1,0 +1,85 @@
+﻿@model Taxology.Site.Models.PurchaseModel
+
+ 
+@{
+    ViewData["Title"] = "View";
+}
+ 
+<hr />
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="SaveBilling" asp-controller="Purchase">
+
+                <input type="hidden" asp-for="CustomerId" />
+                <input type="hidden" asp-for="CartId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input asp-for="Billing.FirstName" class="form-control" />
+                    <span asp-validation-for="Billing.FirstName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="">Last Name</label>
+                    <input asp-for="Billing.LastName" class="form-control" />
+                    <span asp-validation-for="Billing.LastName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Phone</label>
+                    <input asp-for="Billing.Phone" class="form-control" />
+                    <span asp-validation-for="Billing.Phone" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Address</label>
+                    <input asp-for="Billing.Address1" class="form-control" />
+                    <span asp-validation-for="Billing.Address1" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Address Line Two</label>
+                    <input asp-for="Billing.Address2" class="form-control" />
+                    <span asp-validation-for="Billing.Address2" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Zip Code</label>
+                    <input asp-for="Billing.ZipCode" class="form-control" />
+                    <span asp-validation-for="Billing.ZipCode" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">State</label>
+                    <select asp-for="Billing.StateAbbreviation" class="form-control"
+                            asp-items="@(new SelectList(Model.Billing.StateList,"Abbreviation","Name"))"> 
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Country</label>
+                    <select asp-for="Billing.Country" class="form-control"
+                            asp-items="@(new SelectList(Model.Billing.CountryList,"Abbreviation","Name"))"> 
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <input type="submit" value="Continue" class="btn btn-default billingContinue pull-right" />
+                    @*<a id="billingsubmit" href="#" class="btn btn-default billingContinue">Continue</a>*@
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+</div>
+@section Scripts {
+     
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

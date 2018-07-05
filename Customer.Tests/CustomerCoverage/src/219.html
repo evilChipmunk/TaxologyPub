@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\customizations\statecustomization.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using AutoFixture;
+using Shared.Domain;
+
+namespace Domain.Tests.Framework.Customizations
+{
+    internal class StateCustomization : ICustomization
+    {
+        public void Customize(IFixture fixture)
+        {
+            fixture.Register(() =&gt;
+            {
+                var states = States.ToList();
+
+                var rand = new Random();
+
+                var stateIndex = rand.Next(0, states.Count - 1);
+
+                return states[stateIndex];
+            });
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,1],[11,13,12,13,1],[12,13,12,14,1],[12,14,13,17,1],[13,17,13,46,1],[13,46,15,17,1],[15,17,15,41,1],[15,41,17,17,1],[17,17,17,65,1],[17,65,19,17,1],[19,17,19,43,1],[19,43,20,13,1],[20,13,20,14,1],[20,14,20,16,1],[11,13,20,16,1],[21,9,21,10,1]]);
+    </script>
+  </body>
+</html>

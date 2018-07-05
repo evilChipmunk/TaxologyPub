@@ -1,0 +1,23 @@
+FROM microsoft/aspnetcore-build:2.0
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+
+EXPOSE 80
+
+WORKDIR /src
+COPY Taxology.sln ./
+COPY Customer.Console.Service/Customer.Console.Service.csproj Customer.Console.Service/
+COPY Customer.Domain/Customer.Domain.csproj Customer.Domain/
+COPY Customer.DTO/Customer.DTO.csproj Customer.DTO/
+COPY Customer.Persistency/Customer.Persistency.csproj Customer.Persistency/
+COPY Shared.Domain/Shared.Domain.csproj Shared.Domain/
+COPY Shared.DTO/Shared.DTO.csproj Shared.DTO/
+COPY Shared.Persistency/Shared.Persistency.csproj Shared.Persistency/
+COPY Shared.Service/Shared.Service.csproj Shared.Service/
+
+RUN dotnet restore -nowarn:msb3202,nu1503
+COPY . .
+WORKDIR /src/Customer.Console.Service
+RUN dotnet build Customer.Console.Service.csproj
+
+CMD ["dotnet", "run", "--no-restore", "--no-build", "--no-launch-profile"]

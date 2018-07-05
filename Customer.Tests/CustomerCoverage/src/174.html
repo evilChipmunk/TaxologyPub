@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.dto\responses\getshoppingcartcountresponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.DTO;
+
+namespace ShoppingCart.DTO
+{
+    public class GetShoppingCartCountResponse : BaseResponse
+    {
+        public GetShoppingCartCountResponse(bool success, ResponseAction responseAction, int count) : base(success, responseAction)
+        {
+            Count = count;
+        }
+
+        public int Count { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,103,7,132,0],[8,9,8,10,0],[9,13,9,27,0],[10,9,10,10,0],[12,28,12,32,0],[12,33,12,37,0]]);
+    </script>
+  </body>
+</html>

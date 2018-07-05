@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.domain\services\taxservice.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.Domain;
+
+namespace Order.Domain
+{
+    public class TaxService : ITaxService
+    {
+        public double GetTaxRate(string stateAbbreviation)
+        {
+            var state = States.GetByAbbreviation(stateAbbreviation);
+
+            if (state.Abbreviation.Equals(&quot;AL&quot;))
+            {
+                return .04;
+            }
+            else if (state.Abbreviation.Equals(&quot;AZ&quot;))
+            {
+                return .05;
+            }
+            else if (state.Abbreviation.Equals(&quot;CA&quot;))
+            {
+                return .06;
+            }
+            else if (state.Abbreviation.Equals(&quot;NY&quot;))
+            {
+                return .07;
+            }
+            else if (state.Abbreviation.Equals(&quot;TX&quot;))
+            {
+                return .08;
+            }
+
+            return .000001;
+
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,10,0],[9,13,9,69,0],[11,13,11,49,0],[12,13,12,14,0],[13,17,13,28,0],[15,18,15,54,0],[16,13,16,14,0],[17,17,17,28,0],[19,18,19,54,0],[20,13,20,14,0],[21,17,21,28,0],[23,18,23,54,0],[24,13,24,14,0],[25,17,25,28,0],[27,18,27,54,0],[28,13,28,14,0],[29,17,29,28,0],[32,13,32,28,0],[34,9,34,10,0]]);
+    </script>
+  </body>
+</html>

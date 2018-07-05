@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\consumers\createorderconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Order.DTO;
+using Order.Persistency;
+using Order.Service.Builders;
+
+namespace Order.Service.Consumers
+{
+    public class CreateOrderConsumer : IConsumer&lt;CreateOrderRequest&gt;
+    {
+        private readonly IOrderRepository repo;
+        private readonly ICustomerRepository custRepo;
+        private readonly IOrderBuilder orderBuilder;
+        private readonly ICustomerBuilder customerBuilder;
+        private readonly IMapper mapper;
+
+        public CreateOrderConsumer(IOrderRepository repo 
+            , IOrderBuilder orderBuilder, ICustomerBuilder customerBuilder,
+            IMapper mapper)
+        {
+            this.repo = repo;
+            this.custRepo = custRepo;
+            this.orderBuilder = orderBuilder;
+            this.customerBuilder = customerBuilder;
+            this.mapper = mapper;
+        }
+
+        public async Task Consume(ConsumeContext&lt;CreateOrderRequest&gt; context)
+        {
+            var request = context.Message;
+            var customer = await customerBuilder.Build(request);
+
+            var order = orderBuilder.Build(customer, request.BillingAddress, request.Products);
+            order = await repo.SaveAsync(order);
+
+            var orderDTO = mapper.Map&lt;OrderDTO&gt;(order);
+
+            var response = new CreateOrderResponse(orderDTO);
+
+            await context.RespondAsync(response);
+        }
+
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,20,28,0],[21,9,21,10,0],[22,13,22,30,0],[23,13,23,38,0],[24,13,24,46,0],[25,13,25,52,0],[26,13,26,34,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,43,0],[32,13,32,65,0],[34,13,34,96,0],[35,13,35,49,0],[37,13,37,56,0],[39,13,39,62,0],[41,13,41,50,0],[42,9,42,10,0]]);
+    </script>
+  </body>
+</html>

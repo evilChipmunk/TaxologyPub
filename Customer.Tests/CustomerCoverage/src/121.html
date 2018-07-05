@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.persistency\migrations\20180609194309_v5.designer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+// &lt;auto-generated /&gt;
+using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Order.Persistency;
+
+namespace Order.Persistency.Migrations
+{
+    [DbContext(typeof(OrderContext))]
+    [Migration(&quot;20180609194309_v5&quot;)]
+    partial class v5
+    {
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        {
+#pragma warning disable 612, 618
+            modelBuilder
+                .HasDefaultSchema(&quot;orders&quot;)
+                .HasAnnotation(&quot;ProductVersion&quot;, &quot;2.1.0-rtm-30799&quot;)
+                .HasAnnotation(&quot;Relational:MaxIdentifierLength&quot;, 128)
+                .HasAnnotation(&quot;SqlServer:ValueGenerationStrategy&quot;, SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity(&quot;Order.Domain.BillingAddress&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;)
+                        .ValueGeneratedOnAdd();
+
+                    b.Property&lt;string&gt;(&quot;Address1&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Address2&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Country&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;OrderId&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Phone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;StateAbbreviation&quot;);
+
+                    b.Property&lt;string&gt;(&quot;ZipCode&quot;);
+
+                    b.HasKey(&quot;Id&quot;);
+
+                    b.HasIndex(&quot;OrderId&quot;)
+                        .IsUnique();
+
+                    b.ToTable(&quot;BillingAddress&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Order.Domain.Customer&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;)
+                        .ValueGeneratedOnAdd();
+
+                    b.Property&lt;string&gt;(&quot;FirstName&quot;);
+
+                    b.Property&lt;string&gt;(&quot;FullName&quot;);
+
+                    b.Property&lt;string&gt;(&quot;LastName&quot;);
+
+                    b.HasKey(&quot;Id&quot;);
+
+                    b.ToTable(&quot;Customer&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Order.Domain.Order&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;)
+                        .ValueGeneratedOnAdd();
+
+                    b.Property&lt;Guid&gt;(&quot;CustomerId&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Exchange&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;OrderDate&quot;);
+
+                    b.Property&lt;int&gt;(&quot;OrderStatus&quot;);
+
+                    b.Property&lt;double&gt;(&quot;SubTotal&quot;);
+
+                    b.Property&lt;double&gt;(&quot;SubTotalAmount&quot;);
+
+                    b.Property&lt;double&gt;(&quot;Tax&quot;);
+
+                    b.Property&lt;double&gt;(&quot;TaxValue&quot;);
+
+                    b.Property&lt;double&gt;(&quot;Total&quot;);
+
+                    b.Property&lt;double&gt;(&quot;TotalAmount&quot;);
+
+                    b.HasKey(&quot;Id&quot;);
+
+                    b.ToTable(&quot;Order&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Order.Domain.Product&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;OrderId&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Exchange&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Name&quot;);
+
+                    b.Property&lt;double&gt;(&quot;Price&quot;);
+
+                    b.Property&lt;int&gt;(&quot;Quantity&quot;);
+
+                    b.HasKey(&quot;Id&quot;, &quot;OrderId&quot;);
+
+                    b.HasIndex(&quot;OrderId&quot;);
+
+                    b.ToTable(&quot;Product&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Order.Domain.BillingAddress&quot;, b =&gt;
+                {
+                    b.HasOne(&quot;Order.Domain.Order&quot;)
+                        .WithOne(&quot;BillingAddress&quot;)
+                        .HasForeignKey(&quot;Order.Domain.BillingAddress&quot;, &quot;OrderId&quot;)
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity(&quot;Order.Domain.Product&quot;, b =&gt;
+                {
+                    b.HasOne(&quot;Order.Domain.Order&quot;)
+                        .WithMany(&quot;Products&quot;)
+                        .HasForeignKey(&quot;OrderId&quot;)
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+#pragma warning restore 612, 618
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,0],[19,13,23,118,0],[25,13,26,17,0],[26,17,26,18,0],[26,18,27,21,0],[27,21,28,48,0],[28,48,30,21,0],[30,21,30,52,0],[30,52,32,21,0],[32,21,32,52,0],[32,52,34,21,0],[34,21,34,51,0],[34,51,36,21,0],[36,21,36,49,0],[36,49,38,21,0],[38,21,38,49,0],[38,49,40,21,0],[40,21,40,61,0],[40,61,42,21,0],[42,21,42,51,0],[42,51,44,21,0],[44,21,44,36,0],[44,36,46,21,0],[46,21,47,37,0],[47,37,49,21,0],[49,21,49,49,0],[49,49,50,17,0],[50,17,50,18,0],[50,18,50,20,0],[25,13,50,20,0],[52,13,53,17,0],[53,17,53,18,0],[53,18,54,21,0],[54,21,55,48,0],[55,48,57,21,0],[57,21,57,53,0],[57,53,59,21,0],[59,21,59,52,0],[59,52,61,21,0],[61,21,61,52,0],[61,52,63,21,0],[63,21,63,36,0],[63,36,65,21,0],[65,21,65,43,0],[65,43,66,17,0],[66,17,66,18,0],[66,18,66,20,0],[52,13,66,20,0],[68,13,69,17,0],[69,17,69,18,0],[69,18,70,21,0],[70,21,71,48,0],[71,48,73,21,0],[73,21,73,52,0],[73,52,75,21,0],[75,21,75,52,0],[75,52,77,21,0],[77,21,77,55,0],[77,55,79,21,0],[79,21,79,52,0],[79,52,81,21,0],[81,21,81,52,0],[81,52,83,21,0],[83,21,83,58,0],[83,58,85,21,0],[85,21,85,47,0],[85,47,87,21,0],[87,21,87,52,0],[87,52,89,21,0],[89,21,89,49,0],[89,49,91,21,0],[91,21,91,55,0],[91,55,93,21,0],[93,21,93,36,0],[93,36,95,21,0],[95,21,95,40,0],[95,40,96,17,0],[96,17,96,18,0],[96,18,96,20,0],[68,13,96,20,0],[98,13,99,17,0],[99,17,99,18,0],[99,18,100,21,0],[100,21,100,44,0],[100,44,102,21,0],[102,21,102,49,0],[102,49,104,21,0],[104,21,104,52,0],[104,52,106,21,0],[106,21,106,48,0],[106,48,108,21,0],[108,21,108,49,0],[108,49,110,21,0],[110,21,110,49,0],[110,49,112,21,0],[112,21,112,47,0],[112,47,114,21,0],[114,21,114,43,0],[114,43,116,21,0],[116,21,116,42,0],[116,42,117,17,0],[117,17,117,18,0],[117,18,117,20,0],[98,13,117,20,0],[119,13,120,17,0],[120,17,120,18,0],[120,18,121,21,0],[121,21,124,59,0],[124,59,125,17,0],[125,17,125,18,0],[125,18,125,20,0],[119,13,125,20,0],[127,13,128,17,0],[128,17,128,18,0],[128,18,129,21,0],[129,21,132,59,0],[132,59,133,17,0],[133,17,133,18,0],[133,18,133,20,0],[127,13,133,20,0],[135,9,135,10,0]]);
+    </script>
+  </body>
+</html>

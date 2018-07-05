@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.persistency\basecontext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+ 
+using System;
+using System.Collections.Generic;
+using System.Data; 
+using System.Threading.Tasks;
+using MediatR; 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
+using Shared.Domain;
+
+namespace Shared.Persistency
+{
+    using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+    public static class ModelBuilderExtensions
+    {
+        public static void RemovePluralizingTableNameConvention(this ModelBuilder modelBuilder)
+        {
+            foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())
+            {
+                entity.Relational().TableName = entity.DisplayName();
+            }
+        }
+    }
+
+    public abstract class BaseContext : DbContext
+    {
+
+        protected BaseContext(string schema, IMediator mediator)
+        {
+            this.schema = schema;
+            this.mediator = mediator;
+        }
+
+        private IDbContextTransaction currentTransaction;
+        private readonly string schema;
+        private readonly IMediator mediator;
+
+        public abstract Task EnsureSeedData();
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+           // optionsBuilder.UseSqlServer(@&quot;Server=tcp:taxology.database.windows.net,1433;Initial Catalog=taxology;Persist Security Info=False;User ID=mwest;Password=Azure777;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;&quot;);
+            optionsBuilder.UseSqlServer(@&quot;Server=SQLServer;Initial Catalog=taxology;Persist Security Info=False;User ID=sa;Password=D0ckers!;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;&quot;);
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.HasDefaultSchema(schema);
+            modelBuilder.Ignore&lt;State&gt;();
+ 
+
+            modelBuilder.RemovePluralizingTableNameConvention();
+
+            //  modelBuilder.Entity&lt;BaseEntity&gt;().Ignore(p =&gt; p.State);
+
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+
+                //LastModified is a shadow property, not props in the classes
+
+              //  modelBuilder.Entity(entityType.Name).Property&lt;DateTime&gt;(&quot;LastModified&quot;);
+
+                //IsDirty is for local tracking, not persisted in the database
+
+                modelBuilder.Entity(entityType.Name).Ignore(&quot;State&quot;);
+
+            }
+
+        }
+
+        public void SetSaveState(BaseEntity entity)
+        {
+            //            Entry(entity).State = entity.Id == Guid.Empty ?
+            //                EntityState.Added :
+            //                EntityState.Modified;
+
+            if (entity.State == SaveState.UnSaved)
+            {
+                Entry(entity).State = EntityState.Added;
+            }
+            else
+            {
+                Entry(entity).State = EntityState.Modified;
+            }
+
+//            foreach (var entry in ChangeTracker.Entries())
+//            {
+//                var baseEntity = entry.Entity as BaseEntity;
+//                if (baseEntity == null) continue;
+//                
+//                if (baseEntity.State == SaveState.UnSaved)
+//                {
+//                    Entry(baseEntity).State = EntityState.Added;
+//                }
+//                else
+//                {
+//                    Entry(baseEntity).State = EntityState.Modified;
+//                } 
+//            } 
+        }
+
+
+        //        public override int SaveChanges()
+        //        {
+
+        //            foreach (var entry in ChangeTracker.Entries()
+
+        //                .Where(e =&gt; e.State == EntityState.Added ||
+
+        //                            e.State == EntityState.Modified))
+        //            {
+
+        //                //ignore owned entities (todo: is there a generic way?)
+        ////
+        ////                if (!(entry.Entity is PersonFullName))
+        ////
+        ////                    entry.Property(&quot;LastModified&quot;).CurrentValue = DateTime.Now;
+
+        //            }
+
+        //            return base.SaveChanges();
+
+        //        }
+
+        public void BeginTransaction()
+        {
+            if (currentTransaction != null)
+            {
+                return;
+            }
+
+            currentTransaction = Database.BeginTransaction(IsolationLevel.ReadCommitted);
+        }
+
+        private void CommitAndSave()
+        {
+            try
+            {
+                SaveChanges();
+
+                currentTransaction?.Commit(); 
+            }
+            catch
+            {
+                RollbackTransaction();
+                throw;
+            }
+            finally
+            {
+                if (currentTransaction != null)
+                {
+                    currentTransaction.Dispose();
+                    currentTransaction = null;
+                }
+            }
+        }
+
+        public void RollbackTransaction()
+        {
+            try
+            {
+                currentTransaction?.Rollback();
+            }
+            finally
+            {
+                if (currentTransaction != null)
+                {
+                    currentTransaction.Dispose();
+                    currentTransaction = null;
+                }
+            }
+        }
+
+        public void CommitTransaction()
+        {
+            try
+            { 
+                currentTransaction?.Commit();
+            }
+            catch
+            {
+                RollbackTransaction();
+                throw;
+            }
+            finally
+            {
+                if (currentTransaction != null)
+                {
+                    currentTransaction.Dispose();
+                    currentTransaction = null;
+                }
+            }
+        }
+ 
+
+        public async Task Publish&lt;T&gt;(T entity) where T : BaseEntity
+        {
+            foreach (var domainEvent in entity.Events)
+            {
+                await mediator.Publish(domainEvent);
+            }
+        }
+
+        public async Task Publish&lt;T&gt;(IEnumerable&lt;T&gt; entities) where T : BaseEntity
+        {
+            foreach (var entity in entities)
+            {
+                foreach (var domainEvent in entity.Events)
+                {
+                    await mediator.Publish(domainEvent);
+                }
+            }
+        }
+
+        public async Task&lt;T&gt; SaveAndPublishAsync&lt;T&gt;(T entity, DbSet&lt;T&gt; set) where T : BaseEntity
+        {
+            BeginTransaction();
+             
+            try
+            {
+                SetSaveState(entity);
+
+                if (entity.State == SaveState.UnSaved)
+                {
+                    set.Add(entity);
+                }
+
+                CommitAndSave();
+
+                entity.SetSaved();
+
+                await Publish(entity);
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+            }
+
+
+            return entity;
+        }
+
+        public int Save&lt;T&gt;(T entity, DbSet&lt;T&gt; set) where T : BaseEntity
+        {
+            SetSaveState(entity);
+
+            if (entity.State == SaveState.UnSaved)
+            {
+                set.Add(entity);
+            }
+
+            int changes = SaveChanges();
+
+
+            entity.SetSaved();
+
+            return changes;
+        }
+
+        public void Delete(BaseEntity entity)
+        {
+            BeginTransaction();
+
+            Entry(entity).State = EntityState.Deleted;
+            CommitAndSave();
+        }
+    }
+
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,10,0],[20,13,20,20,0],[20,22,20,47,0],[20,48,20,50,0],[20,51,20,86,0],[21,13,21,14,0],[22,17,22,70,0],[23,13,23,14,0],[24,9,24,10,0],[30,9,30,65,0],[31,9,31,10,0],[32,13,32,34,0],[33,13,33,38,0],[34,9,34,10,0],[43,9,43,10,0],[45,13,45,238,0],[46,9,46,10,0],[48,9,48,10,0],[49,13,49,48,0],[50,13,50,51,0],[51,13,51,42,0],[54,13,54,65,0],[59,13,59,20,0],[59,22,59,36,0],[59,37,59,39,0],[59,40,59,75,0],[60,13,60,14,0],[68,17,68,70,0],[70,13,70,14,0],[72,9,72,10,0],[75,9,75,10,0],[80,13,80,51,0],[81,13,81,14,0],[82,17,82,57,0],[83,13,83,14,0],[85,13,85,14,0],[86,17,86,60,0],[87,13,87,14,0],[103,9,103,10,0],[129,9,129,10,0],[130,13,130,44,0],[131,13,131,14,0],[132,17,132,24,0],[135,13,135,90,0],[136,9,136,10,0],[139,9,139,10,0],[141,13,141,14,0],[142,17,142,31,0],[144,17,144,46,0],[145,13,145,14,0],[146,13,146,18,0],[147,13,147,14,0],[148,17,148,39,0],[149,17,149,23,0],[152,13,152,14,0],[153,17,153,48,0],[154,17,154,18,0],[155,21,155,50,0],[156,21,156,47,0],[157,17,157,18,0],[158,13,158,14,0],[159,9,159,10,0],[162,9,162,10,0],[164,13,164,14,0],[165,17,165,48,0],[166,13,166,14,0],[168,13,168,14,0],[169,17,169,48,0],[170,17,170,18,0],[171,21,171,50,0],[172,21,172,47,0],[173,17,173,18,0],[174,13,174,14,0],[175,9,175,10,0],[178,9,178,10,0],[180,13,180,14,0],[181,17,181,46,0],[182,13,182,14,0],[183,13,183,18,0],[184,13,184,14,0],[185,17,185,39,0],[186,17,186,23,0],[189,13,189,14,0],[190,17,190,48,0],[191,17,191,18,0],[192,21,192,50,0],[193,21,193,47,0],[194,17,194,18,0],[195,13,195,14,0],[196,9,196,10,0],[200,9,200,10,0],[201,13,201,20,0],[201,22,201,37,0],[201,38,201,40,0],[201,41,201,54,0],[202,13,202,14,0],[203,17,203,53,0],[204,13,204,14,0],[205,9,205,10,0],[208,9,208,10,0],[209,13,209,20,0],[209,22,209,32,0],[209,33,209,35,0],[209,36,209,44,0],[210,13,210,14,0],[211,17,211,24,0],[211,26,211,41,0],[211,42,211,44,0],[211,45,211,58,0],[212,17,212,18,0],[213,21,213,57,0],[214,17,214,18,0],[215,13,215,14,0],[216,9,216,10,0],[219,9,219,10,0],[220,13,220,32,0],[223,13,223,14,0],[224,17,224,38,0],[226,17,226,55,0],[227,17,227,18,0],[228,21,228,37,0],[229,17,229,18,0],[231,17,231,33,0],[233,17,233,35,0],[235,17,235,39,0],[236,13,236,14,0],[237,13,237,33,0],[238,13,238,14,0],[239,17,239,45,0],[240,13,240,14,0],[243,13,243,27,0],[244,9,244,10,0],[247,9,247,10,0],[248,13,248,34,0],[250,13,250,51,0],[251,13,251,14,0],[252,17,252,33,0],[253,13,253,14,0],[255,13,255,41,0],[258,13,258,31,0],[260,13,260,28,0],[261,9,261,10,0],[264,9,264,10,0],[265,13,265,32,0],[267,13,267,55,0],[268,13,268,29,0],[269,9,269,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\states.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Shared.Domain
+{
+    public static class States
+    {
+        public static List&lt;State&gt; los = new List&lt;State&gt; {
+            //us
+            new State(&quot;AL&quot;, &quot;Alabama&quot;),
+            new State(&quot;AK&quot;, &quot;Alaska&quot;),
+            new State(&quot;AZ&quot;, &quot;Arizona&quot;),
+            new State(&quot;AR&quot;, &quot;Arkansas&quot;),
+            new State(&quot;CA&quot;, &quot;California&quot;),
+            new State(&quot;CO&quot;, &quot;Colorado&quot;),
+            new State(&quot;CT&quot;, &quot;Connecticut&quot;),
+            new State(&quot;DE&quot;, &quot;Delaware&quot;),
+            new State(&quot;DC&quot;, &quot;District Of Columbia&quot;),
+            new State(&quot;FL&quot;, &quot;Florida&quot;),
+            new State(&quot;GA&quot;, &quot;Georgia&quot;),
+            new State(&quot;HI&quot;, &quot;Hawaii&quot;),
+            new State(&quot;ID&quot;, &quot;Idaho&quot;),
+            new State(&quot;IL&quot;, &quot;Illinois&quot;),
+            new State(&quot;IN&quot;, &quot;Indiana&quot;),
+            new State(&quot;IA&quot;, &quot;Iowa&quot;),
+            new State(&quot;KS&quot;, &quot;Kansas&quot;),
+            new State(&quot;KY&quot;, &quot;Kentucky&quot;),
+            new State(&quot;LA&quot;, &quot;Louisiana&quot;),
+            new State(&quot;ME&quot;, &quot;Maine&quot;),
+            new State(&quot;MD&quot;, &quot;Maryland&quot;),
+            new State(&quot;MA&quot;, &quot;Massachusetts&quot;),
+            new State(&quot;MI&quot;, &quot;Michigan&quot;),
+            new State(&quot;MN&quot;, &quot;Minnesota&quot;),
+            new State(&quot;MS&quot;, &quot;Mississippi&quot;),
+            new State(&quot;MO&quot;, &quot;Missouri&quot;),
+            new State(&quot;MT&quot;, &quot;Montana&quot;),
+            new State(&quot;NE&quot;, &quot;Nebraska&quot;),
+            new State(&quot;NV&quot;, &quot;Nevada&quot;),
+            new State(&quot;NH&quot;, &quot;New Hampshire&quot;),
+            new State(&quot;NJ&quot;, &quot;New Jersey&quot;),
+            new State(&quot;NM&quot;, &quot;New Mexico&quot;),
+            new State(&quot;NY&quot;, &quot;New York&quot;),
+            new State(&quot;NC&quot;, &quot;North Carolina&quot;),
+            new State(&quot;ND&quot;, &quot;North Dakota&quot;),
+            new State(&quot;OH&quot;, &quot;Ohio&quot;),
+            new State(&quot;OK&quot;, &quot;Oklahoma&quot;),
+            new State(&quot;OR&quot;, &quot;Oregon&quot;),
+            new State(&quot;PA&quot;, &quot;Pennsylvania&quot;),
+            new State(&quot;RI&quot;, &quot;Rhode Island&quot;),
+            new State(&quot;SC&quot;, &quot;South Carolina&quot;),
+            new State(&quot;SD&quot;, &quot;South Dakota&quot;),
+            new State(&quot;TN&quot;, &quot;Tennessee&quot;),
+            new State(&quot;TX&quot;, &quot;Texas&quot;),
+            new State(&quot;UT&quot;, &quot;Utah&quot;),
+            new State(&quot;VT&quot;, &quot;Vermont&quot;),
+            new State(&quot;VA&quot;, &quot;Virginia&quot;),
+            new State(&quot;WA&quot;, &quot;Washington&quot;),
+            new State(&quot;WV&quot;, &quot;West Virginia&quot;),
+            new State(&quot;WI&quot;, &quot;Wisconsin&quot;),
+            new State(&quot;WY&quot;, &quot;Wyoming&quot;),
+            //canada
+            new State(&quot;AB&quot;, &quot;Alberta&quot;),
+            new State(&quot;BC&quot;, &quot;British Columbia&quot;),
+            new State(&quot;MB&quot;, &quot;Manitoba&quot;),
+            new State(&quot;NB&quot;, &quot;New Brunswick&quot;),
+            new State(&quot;NL&quot;, &quot;Newfoundland and Labrador&quot;),
+            new State(&quot;NS&quot;, &quot;Nova Scotia&quot;),
+            new State(&quot;NT&quot;, &quot;Northwest Territories&quot;),
+            new State(&quot;NU&quot;, &quot;Nunavut&quot;),
+            new State(&quot;ON&quot;, &quot;Ontario&quot;),
+            new State(&quot;PE&quot;, &quot;Prince Edward Island&quot;),
+            new State(&quot;QC&quot;, &quot;Quebec&quot;),
+            new State(&quot;SK&quot;, &quot;Saskatchewan&quot;),
+            new State(&quot;YT&quot;, &quot;Yukon&quot;),
+        };
+
+        public static List&lt;string&gt; Abbreviations()
+        {
+            return los.Select(s =&gt; s.Abbreviation).ToList();
+        }
+
+        public static List&lt;string&gt; Names()
+        {
+            return los.Select(s =&gt; s.Name).ToList();
+        }
+
+        public static string GetName(string abbreviation)
+        {
+            return los.Where(s =&gt; s.Abbreviation.Equals(abbreviation, StringComparison.CurrentCultureIgnoreCase)).Select(s =&gt; s.Name).FirstOrDefault();
+        }
+
+        public static string GetAbbreviation(string name)
+        {
+            return los.Where(s =&gt; s.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).Select(s =&gt; s.Abbreviation).FirstOrDefault();
+        }
+
+        public static List&lt;State&gt; ToList()
+        {
+            return los;
+        }
+
+        public static State GetByAbbreviation(string ab)
+        {
+            return los.FirstOrDefault(x =&gt; x.Abbreviation.Equals(ab));
+        }
+        public static State GetByName(string name)
+        {
+            return los.FirstOrDefault(x =&gt; x.Name.Equals(name));
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,9,76,11,1],[79,9,79,10,0],[80,13,80,36,0],[80,36,80,50,0],[80,50,80,61,0],[80,13,80,61,0],[81,9,81,10,0],[84,9,84,10,0],[85,13,85,36,0],[85,36,85,42,0],[85,42,85,53,0],[85,13,85,53,0],[86,9,86,10,0],[89,9,89,10,0],[90,13,90,35,0],[90,35,90,113,0],[90,113,90,127,0],[90,127,90,133,0],[90,133,90,152,0],[90,13,90,152,0],[91,9,91,10,0],[94,9,94,10,0],[95,13,95,35,0],[95,35,95,97,0],[95,97,95,111,0],[95,111,95,125,0],[95,125,95,144,0],[95,13,95,144,0],[96,9,96,10,0],[99,9,99,10,1],[100,13,100,24,1],[101,9,101,10,1],[104,9,104,10,1],[105,13,105,44,1],[105,44,105,69,1],[105,69,105,71,1],[105,13,105,71,1],[106,9,106,10,1],[108,9,108,10,0],[109,13,109,44,0],[109,44,109,63,0],[109,63,109,65,0],[109,13,109,65,0],[110,9,110,10,0]]);
+    </script>
+  </body>
+</html>

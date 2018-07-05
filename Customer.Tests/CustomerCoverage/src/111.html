@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.persistency\ordercontext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+ 
+using System;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Order.Domain;
+using Shared.Domain;
+using Shared.Persistency;
+
+namespace Order.Persistency
+{ 
+    public class OrderContext : BaseContext
+    {
+        public OrderContext() : base(&quot;orders&quot;, null)
+        {
+
+        }
+        public OrderContext(IMediator mediator) : base(&quot;orders&quot;, mediator)
+        {
+        }
+
+        public override Task EnsureSeedData()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity&lt;Domain.Order&gt;().HasMany(x =&gt; x.Products);
+            modelBuilder.Entity&lt;Domain.Order&gt;().HasOne(x =&gt; x.BillingAddress);
+
+            //            modelBuilder.Entity&lt;Domain.Order&gt;().OwnsOne(x =&gt; x.Total);
+            //            modelBuilder.Entity&lt;Domain.Order&gt;().OwnsOne(x =&gt; x.SubTotal);
+            //            modelBuilder.Entity&lt;Domain.Order&gt;().OwnsOne(x =&gt; x.Tax);
+
+            //modelBuilder.Entity&lt;Domain.Order&gt;().Ignore(x =&gt; x.Total);
+            //modelBuilder.Entity&lt;Domain.Order&gt;().Ignore(x =&gt; x.SubTotal);
+            //modelBuilder.Entity&lt;Domain.Order&gt;().Ignore(x =&gt; x.Tax);
+
+            modelBuilder.Entity&lt;Product&gt;().HasKey(d =&gt; new { d.Id, d.OrderId }); 
+          //  modelBuilder.Entity&lt;Product&gt;().Ignore(x =&gt; x.Price);
+             
+            //  modelBuilder.Entity&lt;Product&gt;().OwnsOne(x =&gt; x.Price);
+        }
+
+        public DbSet&lt;Order.Domain.Order&gt; Orders { get; set; }
+        public DbSet&lt;Customer&gt; Customers { get; set; }
+
+        public DbSet&lt;Product&gt; Products { get; set; }
+
+        public DbSet&lt;BillingAddress&gt; BillingAddress { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,33,14,53,0],[15,9,15,10,0],[17,9,17,10,0],[18,51,18,75,0],[19,9,19,10,0],[20,9,20,10,0],[23,9,23,10,0],[24,13,24,39,0],[25,9,25,10,0],[28,9,28,10,0],[29,13,29,48,0],[31,13,31,74,0],[32,13,32,79,0],[42,13,42,81,0],[46,9,46,10,0],[48,51,48,55,0],[48,56,48,60,0],[49,44,49,48,0],[49,49,49,53,0],[51,42,51,46,0],[51,47,51,51,0],[53,55,53,59,0],[53,60,53,64,0]]);
+    </script>
+  </body>
+</html>

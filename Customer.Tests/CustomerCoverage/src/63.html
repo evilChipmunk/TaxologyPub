@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.dto\getcustomerrequest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace Customer.DTO
+{
+    public class GetCustomerRequest
+    {
+        public GetCustomerRequest(Guid id)
+        {
+            this.Id = id;
+        }
+        public Guid Id { get; set; }
+    }
+
+    public interface IGetCustomerRequest{
+
+        Guid Id { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,43,0],[8,9,8,10,0],[9,13,9,26,0],[10,9,10,10,0],[11,26,11,30,0],[11,31,11,35,0]]);
+    </script>
+  </body>
+</html>

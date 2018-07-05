@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\purchasecontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System; 
+using System.Threading.Tasks;
+using AutoMapper; 
+using Microsoft.AspNetCore.Authorization; 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Order.DTO;
+using Shared.Authentication;
+using ShoppingCart.DTO;
+using Taxology.Site.Models;
+using Taxology.Site.Services;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+
+namespace Taxology.Site.Controllers
+{
+    [Authorize]
+    public class PurchaseController : BaseWebController
+    { 
+        private readonly ICustomerRestService customerService;
+        private readonly ILogger logger;
+        private readonly IOrderRestService orderService; 
+        private readonly IMapper mapper;
+        private readonly IShoppingCartService shoppingCartService;
+
+        private readonly string purchaseModelKey = &quot;purchaseModel&quot;;
+
+        public PurchaseController(ICustomerRestService customerService, ILoggerFactory loggerFactory
+            , IOrderRestService orderService, IMapper mapper, IShoppingCartService shoppingCartService,
+            UserManager&lt;SiteUser&gt; userManager)
+        : base(userManager)
+        { 
+            this.customerService = customerService;
+            this.logger = loggerFactory.CreateLogger&lt;PurchaseController&gt;();
+            this.orderService = orderService; 
+            this.mapper = mapper;
+            this.shoppingCartService = shoppingCartService;
+        }
+
+        public async Task&lt;IActionResult&gt; Index(Guid cartId)
+        {
+            try
+            {
+                var user = await GetSiteUser();
+                var model = new PurchaseModel();
+                model.CustomerId = user.CustomerId;
+                model.CartId = cartId;
+                model.Step = 1;
+             
+                return View(model);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public ActionResult Continue(PurchaseModel model)
+        {
+            try
+            {
+                string modelString = TempData[purchaseModelKey] as string;
+
+                if (!string.IsNullOrEmpty(modelString))
+                {
+                    PurchaseModel tempModel = JsonConvert.DeserializeObject&lt;PurchaseModel&gt;(modelString);
+
+                    return View(&quot;Index&quot;, tempModel);
+                } 
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, &quot;Error ordering&quot;);
+            }
+
+            return RedirectToAction(&quot;Unable&quot;);
+
+        }
+
+        public async Task&lt;IActionResult&gt; Unable()
+        {
+            return View();
+        }
+         
+        [HttpPost]
+        public async Task&lt;IActionResult&gt; SaveBilling(PurchaseModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(&quot;Index&quot;, model);
+                }
+
+                var user = await GetSiteUser();
+
+                var cart = await shoppingCartService.GetShoppingCart();
+             
+                //TODO SAGA -- don&#39;t really need it here. worst case is that customer isn&#39;t updated
+                model = await CreateOrder(model, user, cart);
+                if (model.Order != null)
+                { 
+                    await SaveCustomer(model, user);
+                }
+             
+                model.Step = 2;
+
+                return RouteToContinue(model);
+                // return View(&quot;Index&quot;, model); 
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, &quot;Error ordering&quot;);
+            }
+
+            return RedirectToAction(&quot;Unable&quot;);
+        }
+
+        private IActionResult RouteToContinue(PurchaseModel model)
+        {
+            string modelString = JsonConvert.SerializeObject(model);
+            TempData[purchaseModelKey] = modelString;
+            return RedirectToAction(&quot;Continue&quot;);
+        }
+
+        private async Task&lt;PurchaseModel&gt; CreateOrder(PurchaseModel model, SiteUser user, ShoppingCartDTO cart)
+        {
+            var customer = await customerService.GetCustomer(user.CustomerId);
+            var billing = mapper.Map&lt;BillingAddressDTO&gt;(model.Billing);
+
+            var order = await orderService.CreateOrder(customer, cart, billing);
+
+            //on error return false;
+            model.Order = mapper.Map&lt;OrderModel&gt;(order);
+
+            return model;
+
+        }
+
+        private async Task SaveCustomer(PurchaseModel model, SiteUser user)
+        {  
+            //no return needed at this point
+            var customer = await customerService.SaveCustomer(model, user); 
+        }
+
+
+        [HttpPost]
+        public async Task&lt;IActionResult&gt; Confirm(PurchaseModel model)
+        {
+            try
+            {
+                model.Step = 3;
+                return RouteToContinue(model);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, &quot;Error ordering&quot;);
+            }
+
+            return RedirectToAction(&quot;Unable&quot;);
+        }
+
+        [HttpPost]
+        public async Task&lt;IActionResult&gt; Complete(PurchaseModel model)
+        {
+            try
+            {
+                //TODO add SAGA make sure cart doesn&#39;t clear if order isn&#39;t placed! 
+                bool success =  await orderService.CompleteOrder(model.Order.Id);
+     
+                if (success)
+                {
+                    await shoppingCartService.ClearCart(model.CartId, model.Order.Id);
+                    return RedirectToAction(&quot;Index&quot;, &quot;Home&quot;);
+                }
+
+                return RouteToContinue(model);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, &quot;Error ordering&quot;);
+            }
+
+            return RedirectToAction(&quot;Unable&quot;);
+        }
+    }
+}
+
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,9,27,68,0],[32,11,32,28,0],[33,9,33,10,0],[34,13,34,52,0],[35,13,35,76,0],[36,13,36,46,0],[37,13,37,34,0],[38,13,38,60,0],[39,9,39,10,0],[42,9,42,10,0],[44,13,44,14,0],[45,17,45,48,0],[46,17,46,49,0],[47,17,47,52,0],[48,17,48,39,0],[49,17,49,32,0],[51,17,51,36,0],[53,13,53,32,0],[54,13,54,14,0],[55,17,55,38,0],[56,17,56,23,0],[58,9,58,10,0],[61,9,61,10,0],[63,13,63,14,0],[64,17,64,75,0],[66,17,66,56,0],[67,17,67,18,0],[68,21,68,105,0],[70,21,70,53,0],[72,13,72,14,0],[73,13,73,33,0],[74,13,74,14,0],[75,17,75,55,0],[76,13,76,14,0],[78,13,78,47,0],[80,9,80,10,0],[83,9,83,10,0],[84,13,84,27,0],[85,9,85,10,0],[89,9,89,10,0],[91,13,91,14,0],[92,17,92,41,0],[93,17,93,18,0],[94,21,94,49,0],[97,17,97,48,0],[99,17,99,72,0],[102,17,102,62,0],[103,17,103,41,0],[104,17,104,18,0],[105,21,105,53,0],[106,17,106,18,0],[108,17,108,32,0],[110,17,110,47,0],[113,13,113,33,0],[114,13,114,14,0],[115,17,115,55,0],[116,13,116,14,0],[118,13,118,47,0],[119,9,119,10,0],[122,9,122,10,0],[123,13,123,69,0],[124,13,124,54,0],[125,13,125,49,0],[126,9,126,10,0],[129,9,129,10,0],[130,13,130,79,0],[131,13,131,72,0],[133,13,133,81,0],[136,13,136,57,0],[138,13,138,26,0],[140,9,140,10,0],[143,9,143,10,0],[145,13,145,76,0],[146,9,146,10,0],[151,9,151,10,0],[153,13,153,14,0],[154,17,154,32,0],[155,17,155,47,0],[157,13,157,33,0],[158,13,158,14,0],[159,17,159,55,0],[160,13,160,14,0],[162,13,162,47,0],[163,9,163,10,0],[167,9,167,10,0],[169,13,169,14,0],[171,17,171,82,0],[173,17,173,29,0],[174,17,174,18,0],[175,21,175,87,0],[176,21,176,62,0],[179,17,179,47,0],[181,13,181,33,0],[182,13,182,14,0],[183,17,183,55,0],[184,13,184,14,0],[186,13,186,47,0],[187,9,187,10,0]]);
+    </script>
+  </body>
+</html>

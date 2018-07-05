@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.domain\customer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.Domain;
+using System; 
+
+namespace Customer.Domain
+{
+    public class Customer: BaseEntity
+    {
+        private Customer()
+        {
+
+        }
+ 
+        public static Customer Create (string firstname, string lastName, string email,
+            string phone, string stateAbbreviation, Guid anonymousId) 
+        {
+            Guard.ForNullOrEmpty(firstname, &quot;firstname&quot;);
+            Guard.ForNullOrEmpty(lastName, &quot;lastName&quot;);
+            Guard.ForNullOrEmpty(email, &quot;email&quot;); 
+            Guard.ForNullOrEmpty(stateAbbreviation, &quot;stateAbbreviation&quot;);
+            Guard.ForNullOrEmpty(anonymousId, &quot;anonymousId&quot;);
+
+            var foundState = States.GetByAbbreviation(stateAbbreviation);
+            Guard.ForNull(foundState, &quot;stateAbbreviation&quot;, &quot;Invalid state abbreviation&quot;);
+             
+            Customer customer = new Customer();
+            customer.Id = Guid.NewGuid();
+            customer.State = SaveState.UnSaved;
+            customer.FirstName = firstname;
+            customer.LastName = lastName;
+            customer.Email = email;
+            customer.Phone = phone;
+            customer.StateAbbreviation = stateAbbreviation;
+            customer.AnonymousId = anonymousId;
+             
+            customer.AddEvent(new CustomerCreatedEvent(customer));
+              
+            return customer;
+        }
+
+        public static Customer CreateExisting (Guid id, string firstname, string lastName, string email, string phone, string stateAbbreviation)
+        {
+            Guard.ForNullOrEmpty(id, &quot;id&quot;);
+            Guard.ForNullOrEmpty(firstname, &quot;firstname&quot;);
+            Guard.ForNullOrEmpty(lastName, &quot;lastName&quot;);
+            Guard.ForNullOrEmpty(email, &quot;email&quot;);
+
+            var customer = new Customer();
+            customer.Id = id;
+            customer.FirstName = firstname;
+            customer.LastName = lastName;
+            customer.Email = email;
+            customer.Phone = phone;
+            customer.StateAbbreviation = stateAbbreviation;
+
+            customer.AddEvent(new CustomerHydratedEvent(customer));
+            return customer; 
+        }
+
+        public static Customer CreateForDelete(Guid id)
+        {
+            var deleted = new Customer();
+            deleted.Id = id;
+            return deleted;
+        }
+
+        public void UpdateAddress(string address1, string address2, string zipCode, string country,
+            string stateAbbreviation)
+        {
+            Address1 = address1;
+            Address2 = address2;
+            ZipCode = zipCode;
+            Country = country;
+            ResidencyState = States.GetByAbbreviation(stateAbbreviation);
+
+            AddEvent(new CustomerUpdatedEvent(this));
+        }
+
+        public Guid AnonymousId { get; set; }
+
+        public string FirstName { get; private set; }
+
+        public string LastName { get; private set; }
+
+        public string Email { get; private set; }
+
+        public string Phone { get; private set; }
+
+        public State ResidencyState { get; private set; }
+         
+        public string Address1 { get; private set; }
+
+        public string Address2 { get; private set; }
+
+        public string ZipCode { get; private set; }
+          
+        public string Country { get; set; }
+
+        public string StateAbbreviation {
+            get { return ResidencyState?.Abbreviation; }
+            private set { ResidencyState = States.GetByAbbreviation(value); } }
+
+    } 
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,27,1],[9,9,9,10,1],[11,9,11,10,1],[15,9,15,10,1],[16,13,16,58,1],[17,13,17,56,1],[18,13,18,50,1],[19,13,19,74,1],[20,13,20,62,1],[22,13,22,74,1],[23,13,23,90,1],[25,13,25,48,1],[26,13,26,42,1],[27,13,27,48,1],[28,13,28,44,1],[29,13,29,42,1],[30,13,30,36,1],[31,13,31,36,1],[32,13,32,60,1],[33,13,33,48,1],[35,13,35,67,1],[37,13,37,29,1],[38,9,38,10,1],[41,9,41,10,1],[42,13,42,44,1],[43,13,43,58,1],[44,13,44,56,1],[45,13,45,50,1],[47,13,47,43,1],[48,13,48,30,1],[49,13,49,44,1],[50,13,50,42,1],[51,13,51,36,1],[52,13,52,36,1],[53,13,53,60,1],[55,13,55,68,1],[56,13,56,29,1],[57,9,57,10,1],[60,9,60,10,0],[61,13,61,42,0],[62,13,62,29,0],[63,13,63,28,0],[64,9,64,10,0],[68,9,68,10,0],[69,13,69,33,0],[70,13,70,33,0],[71,13,71,31,0],[72,13,72,31,0],[73,13,73,74,0],[75,13,75,54,0],[76,9,76,10,0],[78,35,78,39,1],[78,40,78,44,1],[80,35,80,39,1],[80,40,80,52,1],[82,34,82,38,1],[82,39,82,51,1],[84,31,84,35,1],[84,36,84,48,1],[86,31,86,35,1],[86,36,86,48,1],[88,39,88,43,1],[88,44,88,56,1],[90,34,90,38,1],[90,39,90,51,1],[92,34,92,38,1],[92,39,92,51,1],[94,33,94,37,1],[94,38,94,50,1],[96,33,96,37,1],[96,38,96,42,1],[99,17,99,18,1],[99,19,99,55,1],[99,56,99,57,1],[100,25,100,26,1],[100,27,100,76,1],[100,77,100,78,1]]);
+    </script>
+  </body>
+</html>

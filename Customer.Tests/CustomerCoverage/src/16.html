@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\models\billinginfomodel.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using Shared.Domain;
+
+namespace Taxology.Site.Models
+{
+    [Serializable]
+    public class BillingInfoModel
+    {
+        public BillingInfoModel()
+        {
+            StateList = States.ToList();
+            CountryList = Countries.ToList();
+        }
+        public Guid CustomerId { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Phone { get; set; }
+
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+        
+        public string ZipCode { get; set; }
+
+        public string StateAbbreviation { get; set; }
+
+        public string Country { get; set; } 
+
+        public IEnumerable&lt;Country&gt; CountryList { get; set; }
+        public IEnumerable&lt;State&gt; StateList { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,34,0],[11,9,11,10,0],[12,13,12,41,0],[13,13,13,46,0],[14,9,14,10,0],[15,34,15,38,0],[15,39,15,43,0],[17,35,17,39,0],[17,40,17,44,0],[19,34,19,38,0],[19,39,19,43,0],[21,31,21,35,0],[21,36,21,40,0],[23,34,23,38,0],[23,39,23,43,0],[25,34,25,38,0],[25,39,25,43,0],[27,33,27,37,0],[27,38,27,42,0],[29,43,29,47,0],[29,48,29,52,0],[31,33,31,37,0],[31,38,31,42,0],[33,51,33,55,0],[33,56,33,60,0],[34,47,34,51,0],[34,52,34,56,0]]);
+    </script>
+  </body>
+</html>

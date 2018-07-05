@@ -1,0 +1,43 @@
+﻿@model PurchaseModel
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<hr />
+
+ 
+<div class="container">
+
+    <p>Please confirm your order</p>
+    <div class="row">
+        <span class="col-sm-2">Subtotal:</span>
+        <span class="col-sm-10">@Model.Order.SubTotal.ToString("C")</span>
+    </div>
+    <br />
+    <div class="row">
+        <span class="col-sm-2">Tax:</span>
+        <span class="col-sm-10">@Model.Order.Tax.ToString("C")</span>
+    </div>
+    <br />
+    <div class="row">
+        <span class="col-sm-2">Total:</span>
+        <span class="col-sm-10">@Model.Order.Total.ToString("C")</span>
+    </div>
+    <br />
+
+    <form asp-action="Confirm" asp-controller="Purchase">
+
+        <input type="hidden" asp-for="CartId" />
+        <input type="hidden" asp-for="Order.Id" />
+
+        <input type="submit" value="Continue" class="btn btn-default confirmationContinue pull-right" />
+    </form>
+</div>
+
+
+@*<a class="btn btn-default next confirmationContinue" id="confirmationSubmit" href="#" data-target="#completionContent">Continue</a>*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

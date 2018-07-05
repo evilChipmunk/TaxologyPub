@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.dto\responses\createorderresponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.DTO;
+
+namespace Order.DTO
+{
+    public class CreateOrderResponse : CreatedResponse
+    {
+        public CreateOrderResponse()
+        {
+
+        }
+
+        public CreateOrderResponse(OrderDTO order) 
+        {
+            this.Order = order;
+        }
+        public CreateOrderResponse(OrderDTO order, string link) : base(link)
+        {
+            this.Order = order;
+        }
+
+        public CreateOrderResponse(bool success, ResponseAction responseAction) 
+            : base(success, responseAction)
+        {
+
+        }
+
+        public OrderDTO Order { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,37,0],[8,9,8,10,0],[10,9,10,10,0],[12,9,12,51,0],[13,9,13,10,0],[14,13,14,32,0],[15,9,15,10,0],[16,67,16,77,0],[17,9,17,10,0],[18,13,18,32,0],[19,9,19,10,0],[22,15,22,44,0],[23,9,23,10,0],[25,9,25,10,0],[27,33,27,37,0],[27,38,27,42,0]]);
+    </script>
+  </body>
+</html>

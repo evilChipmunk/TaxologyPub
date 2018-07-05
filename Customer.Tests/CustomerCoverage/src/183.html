@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.persistency\migrations\20180609010031_v2.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+using System;
+using System.Collections.Generic;
+
+namespace ShoppingCart.Persistency.Migrations
+{
+    public partial class v2 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;Guid&gt;(
+                name: &quot;OrderId&quot;,
+                schema: &quot;shoppingcarts&quot;,
+                table: &quot;ShoppingCart&quot;,
+                nullable: false,
+                defaultValue: new Guid(&quot;00000000-0000-0000-0000-000000000000&quot;));
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;OrderId&quot;,
+                schema: &quot;shoppingcarts&quot;,
+                table: &quot;ShoppingCart&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,0],[11,13,16,81,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,24,40,0],[25,9,25,10,0]]);
+    </script>
+  </body>
+</html>

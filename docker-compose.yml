@@ -1,0 +1,47 @@
+version: '3.4'
+
+services:
+  
+  taxology.site:
+    image: taxologysite 
+    build:
+      context: .
+      dockerfile: Taxology.Site\Dockerfile
+       
+  taxology.webapi:
+    image: taxologywebapi
+    build:
+      context: .
+      dockerfile: Taxology.WebAPI\Dockerfile
+       
+  customer.console.service:
+    image: customerconsoleservice
+    build:
+      context: .
+      dockerfile: Customer.Console.Service\Dockerfile
+
+
+  product.console.service:
+    image: productconsoleservice
+    build:
+      context: .
+      dockerfile: Product.Console.Service\Dockerfile
+
+
+  order.console.service:
+    image: orderconsoleservice
+    build:
+      context: .
+      dockerfile: Order.Console.Service\Dockerfile
+
+
+  shoppingcart.console.service:
+    image: shoppingcartconsoleservice
+    build:
+      context: .
+      dockerfile: ShoppingCart.Console.Service\Dockerfile
+
+
+
+
+  

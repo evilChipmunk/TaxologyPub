@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\startup.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Customer.DTO;
+using MassTransit; 
+using MassTransit.Util;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Shared.Messaging.Commands;
+using Shared.Service;
+
+
+namespace Taxology.WebAPI
+{
+    public class Startup : SharedStartup
+    { 
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+        private IBus massBus;
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            // Add framework services.
+            services.AddMvc();
+
+            var builder = new ContainerBuilder();
+
+            ConfigureMassTransit(builder, (cfg, host) =&gt;
+            {
+//                cfg.ReceiveEndpoint(host, &quot;CheckOrderStatusConsumer&quot;, e =&gt; { e.Consumer&lt;CheckOrderStatusConsumer&gt;(); });
+//
+//                cfg.ReceiveEndpoint(host, &quot;orderstatus&quot;, CheckOrderStatusConsumer);
+
+            });
+
+            builder.Register(c =&gt; massBus);
+
+
+            builder.RegisterType&lt;Taxology.WebAPI.RequestClientFactory&gt;().As&lt;Taxology.WebAPI.IRequestClientFactory&gt;();
+
+
+
+            //builder.RegisterType&lt;Taxology.WebAPI.RequestClientFactory&lt;CheckOrderStatus, OrderStatusResult&gt;&gt;()
+            //    .As&lt;Taxology.WebAPI.IRequestClientFactory&lt;CheckOrderStatus, OrderStatusResult&gt;&gt;();
+
+
+            //builder.RegisterType&lt;Taxology.WebAPI.RequestClientFactory&lt;IGetCustomerRequest, GetCustomerResponse&gt;&gt;()
+            //    .As&lt;Taxology.WebAPI.IRequestClientFactory&lt;IGetCustomerRequest, GetCustomerResponse&gt;&gt;();
+
+            //
+            //            var address = new Uri(&quot;rabbitmq://taxrabbit/CheckOrderStatusConsumer&quot;);
+            //            var requestTimeout = TimeSpan.FromSeconds(30);
+            //
+            //            IRequestClient&lt;CheckOrderStatus, OrderStatusResult&gt; client =
+            //                new MessageRequestClient&lt;CheckOrderStatus, OrderStatusResult&gt;(massBus, address, requestTimeout);
+            //            //
+            //            builder.RegisterType&lt;MessageRequestClient&lt;CheckOrderStatus, OrderStatusResult&gt;&gt;()
+            //                .As&lt;IRequestClient&lt;CheckOrderStatus, OrderStatusResult&gt;&gt;().
+            //
+            //
+            //
+            //            builder.RegisterInstance&lt;IRequestClient&lt;CheckOrderStatus, OrderStatusResult&gt;&gt;(client).InstancePerLifetimeScope();
+            // 
+            //            massBus = container.Resolve&lt;IBusControl&gt;();
+
+            builder.Populate(services);
+            container = builder.Build();
+
+            
+
+
+             
+            // Create the IServiceProvider based on the container.
+            return new AutofacServiceProvider(container);
+        }
+//
+//        private void ConfigureMassTransit(ContainerBuilder builder)
+//        {
+//            //            cfg.Host(new Uri(&quot;rabbitmq://taxrabbit:15672&quot;), host =&gt;
+//            //            {
+//            //                host.Username(&quot;guest&quot;);
+//            //                host.Password(&quot;guest&quot;);
+//            //            });
+//            builder.Register(c =&gt;
+//                {
+//                    return Bus.Factory.CreateUsingRabbitMq(cfg =&gt;
+//                        {
+//                            var host = cfg.Host(new Uri(&quot;rabbitmq://taxrabbit&quot;), h =&gt;
+//                            {
+//                                h.Username(&quot;guest&quot;);
+//                                h.Password(&quot;guest&quot;);
+//                            });
+//
+//                            //cfg.ReceiveEndpoint(host, &quot;customer_update_queue&quot;, e =&gt;
+//                            //{
+//                            //    e.Consumer&lt;UpdateCustomerConsumer&gt;();
+//                            //});
+//                        }
+//                    );
+//                })
+//                .As&lt;IBusControl&gt;()
+//                .As&lt;IPublishEndpoint&gt;()
+//                .SingleInstance();
+//        }
+//
+//
+//        private IBusControl SetBusLifetime(IApplicationLifetime lifetime)
+//        {
+//            var bus = container.Resolve&lt;IBusControl&gt;();
+//            //start the bus
+//            var busHandle = TaskUtil.Await(() =&gt; bus.StartAsync());
+//
+//            //register an action to call when the application is shutting down
+//            lifetime.ApplicationStopping.Register(() =&gt; busHandle.Stop());
+//            return bus;
+//        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
+        public void Configure(IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IApplicationLifetime lifetime)
+        {
+    
+            //resolve the bus from the container
+            massBus = SetBusLifetime(lifetime); 
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseMvc();
+
+
+
+
+
+            massBus.Publish&lt;UpdateCustomerAddress&gt;(
+                new
+                {
+                    OrderId = &quot;27&quot;,
+                    OrderDate = DateTime.UtcNow,
+                    OrderAmount = 123.45m
+
+                } 
+            );
+
+
+
+
+
+        }
+
+
+        public async Task SendOrder(ISendEndpoint endpoint)
+        {
+            await endpoint.Send&lt;UpdateCustomerAddress&gt;(new
+            {
+                OrderId = &quot;27&quot;,
+                OrderDate = DateTime.UtcNow,
+                OrderAmount = 123.45m
+            });
+        }
+
+        private void ConfigureBus()
+        {
+            Bus.Factory.CreateUsingRabbitMq(cfg =&gt;
+            {
+               // cfg.Host(new Uri(&quot;rabbitmq://a-machine-name/a-virtual-host&quot;), host =&gt;
+                cfg.Host(new Uri(&quot;rabbitmq://taxrabbit:15672&quot;), host =&gt;
+                {
+                    host.Username(&quot;guest&quot;);
+                    host.Password(&quot;guest&quot;);
+                });
+            });
+        }
+
+
+
+        //private void ConfigureBus()
+        //{
+         
+        //    Bus.Factory.CreateUsingAzureServiceBus(cfg =&gt;
+        //    {
+        //        cfg.Host(new Uri(&quot;sb://localhost&quot;), host =&gt;
+        //        {
+        //            host.OperationTimeout = TimeSpan.FromSeconds(5);
+        //            host.TokenProvider = new OAuthTokenProvider(); ??
+        //        });
+        //    });
+
+             
+        //}
+
+        //protected override void Load(ContainerBuilder builder)
+        //{
+
+        //    string azureSBNamespace = &quot;AzureSbNamespace&quot;;
+        //    string AzureSbPath = &quot;AzureSbPath&quot;;
+        //    string ServiceQueueName = &quot;ServiceQueueName&quot;;
+        //    string AzureSbKeyName = &quot;AzureSbKeyName&quot;;
+        //    string AzureSbSharedAccessKey = &quot;AzureSbSharedAccessKey&quot;;
+
+        //    // Creates our bus from the factory and registers it as a singleton against two interfaces
+        //    builder.Register(c =&gt; Bus.Factory.CreateUsingAzureServiceBus(sbc =&gt;
+        //        {
+        //            var serviceUri = ServiceBusEnvironment.CreateServiceUri(&quot;sb&quot;, azureSBNamespace,
+        //                AzureSbPath);
+
+        //            var host = sbc.Host(serviceUri, h =&gt;
+        //            {
+        //                h.TokenProvider = TokenProvider.CreateSharedAccessSignatureTokenProvider(
+        //                    AzureSbKeyName,
+        //                    AzureSbSharedAccessKey, TimeSpan.FromDays(1), TokenScope.Namespace);
+        //            });
+
+        //            sbc.ReceiveEndpoint(host, ServiceQueueName, e =&gt;
+        //            {
+        //                // Configure your consumer(s)
+        //                e.Consumer&lt;CheckOrderStatusConsumer&gt;();
+        //                e.DefaultMessageTimeToLive = TimeSpan.FromMinutes(1);
+        //                e.EnableDeadLetteringOnMessageExpiration = false;
+        //            });
+        //        }))
+        //        .SingleInstance()
+        //        .As&lt;IBusControl&gt;()
+        //        .As&lt;IBus&gt;();
+        //}
+    }
+
+
+    public interface IRequestClientFactory
+    {
+        IRequestClient&lt;TRequest, TResult&gt; Create&lt;TRequest, TResult&gt;() where TRequest : class where TResult : class;
+    }
+
+    public class RequestClientFactory : IRequestClientFactory 
+    {
+        private readonly IBus bus;
+
+        public RequestClientFactory(IBus bus)
+        {
+            this.bus = bus;
+        }
+
+        public IRequestClient&lt;TRequest, TResult&gt; Create&lt;TRequest, TResult&gt;() where TRequest : class where TResult : class
+        {
+           string name =  typeof(TRequest).Name;
+            var address = new Uri($&quot;rabbitmq://taxrabbit/{name}&quot;);
+            var requestTimeout = TimeSpan.FromSeconds(30);
+
+            IRequestClient&lt;TRequest, TResult&gt; client =
+                new MessageRequestClient&lt;TRequest, TResult&gt;(bus, address, requestTimeout);
+
+            return client;
+        }
+
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,9,23,53,0],[24,9,24,10,0],[25,13,25,43,0],[26,9,26,10,0],[28,47,28,51,0],[33,9,33,10,0],[35,13,35,31,0],[37,13,37,50,0],[39,13,40,13,0],[40,13,40,14,0],[40,14,45,13,0],[45,13,45,14,0],[45,14,45,16,0],[39,13,45,16,0],[47,13,47,35,0],[47,35,47,42,0],[47,42,47,44,0],[47,13,47,44,0],[50,13,50,118,0],[77,13,77,40,0],[78,13,78,41,0],[85,13,85,58,0],[86,9,86,10,0],[134,9,134,10,0],[137,13,137,48,0],[139,13,139,37,0],[140,13,140,14,0],[141,17,141,49,0],[142,13,142,14,0],[144,13,144,26,0],[150,13,158,15,0],[164,9,164,10,0],[168,9,168,10,0],[169,13,174,16,0],[175,9,175,10,0],[178,9,178,10,0],[179,13,180,13,0],[180,13,180,14,0],[180,14,182,17,0],[182,17,183,17,0],[183,17,183,18,0],[183,18,184,21,0],[184,21,184,44,0],[184,44,185,21,0],[185,21,185,44,0],[185,44,186,17,0],[186,17,186,18,0],[186,18,186,20,0],[182,17,186,20,0],[186,20,187,13,0],[187,13,187,14,0],[187,14,187,16,0],[179,13,187,16,0],[188,9,188,10,0],[253,9,253,46,0],[254,9,254,10,0],[255,13,255,28,0],[256,9,256,10,0],[259,9,259,10,0],[260,12,260,49,0],[261,13,261,67,0],[262,13,262,59,0],[264,13,265,91,0],[267,13,267,27,0],[268,9,268,10,0]]);
+    </script>
+  </body>
+</html>

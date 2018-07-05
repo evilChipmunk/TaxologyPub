@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.messaging\baseclients\basesubscriptionclient.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.Azure.ServiceBus;
+
+namespace Subscribers
+{
+    public abstract class BaseSubscriptionClient&lt;T&gt; : BaseServiceBusClient&lt;T&gt;
+    {
+        protected readonly string subscriptionName;
+        protected readonly string topic;
+        protected BaseSubscriptionClient(ISubscriptionClient receiver) : base(receiver, null)
+        {
+        }
+
+
+        protected BaseSubscriptionClient(QueueConfig config, string topic, string subscription):
+            base(new SubscriptionClient(config.ClientConnection, topic, subscription), null)
+        {
+            this.subscriptionName = subscription;
+            this.topic = topic;
+        }
+    } 
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,74,9,94,0],[10,9,10,10,0],[11,9,11,10,0],[15,13,15,93,0],[16,9,16,10,0],[17,13,17,50,0],[18,13,18,32,0],[19,9,19,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.dto\createcustomerresponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.DTO;
+
+namespace Customer.DTO
+{
+    public class CreateCustomerResponse : CreatedResponse
+    {
+        public CreateCustomerResponse()
+        {
+
+        }
+
+        public CreateCustomerResponse(CustomerDTO customer) 
+        {
+            Customer = customer;
+        }
+
+        public CreateCustomerResponse(CustomerDTO customer, string link) : base(link)
+        {
+            Customer = customer;
+        }
+
+        public CustomerDTO Customer { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,40,0],[8,9,8,10,0],[10,9,10,10,0],[12,9,12,60,0],[13,9,13,10,0],[14,13,14,33,0],[15,9,15,10,0],[17,76,17,86,0],[18,9,18,10,0],[19,13,19,33,0],[20,9,20,10,0],[22,39,22,43,0],[22,44,22,48,0]]);
+    </script>
+  </body>
+</html>

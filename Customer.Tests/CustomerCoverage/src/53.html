@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\product.persistency\migrations\20180610000139_v2.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+using System;
+using System.Collections.Generic;
+
+namespace Product.Persistency.Migrations
+{
+    public partial class v2 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Description&quot;,
+                schema: &quot;products&quot;,
+                table: &quot;Product&quot;,
+                nullable: true);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;Description&quot;,
+                schema: &quot;products&quot;,
+                table: &quot;Product&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,0],[11,13,15,33,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,23,35,0],[24,9,24,10,0]]);
+    </script>
+  </body>
+</html>

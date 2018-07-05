@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.mapping\mappingextensions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Reflection;
+using AutoMapper;
+
+namespace Shared.Mapping
+{
+    public static class MappingExtensions
+    {
+        public static TDestination Map&lt;TSource, TDestination&gt;(
+            this TDestination destination, TSource source)
+        {
+            return Mapper.Map(source, destination);
+        }
+        public static IMappingExpression&lt;TSource, TDestination&gt; IgnoreAllNonExisting&lt;TSource, TDestination&gt;
+            (this IMappingExpression&lt;TSource, TDestination&gt; expression)
+        {
+            var flags = BindingFlags.Public | BindingFlags.Instance;
+            var sourceType = typeof(TSource);
+            var destinationProperties = typeof(TDestination).GetProperties(flags);
+
+            foreach (var property in destinationProperties)
+            {
+                if (sourceType.GetProperty(property.Name, flags) == null)
+                {
+                    expression.ForMember(property.Name, opt =&gt; opt.Ignore());
+                }
+            }
+            return expression;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,10,0],[12,13,12,52,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,69,0],[18,13,18,46,0],[19,13,19,83,0],[21,13,21,20,0],[21,22,21,34,0],[21,35,21,37,0],[21,38,21,59,0],[22,13,22,14,0],[23,17,23,74,0],[24,17,24,18,0],[25,21,25,64,0],[25,64,25,76,0],[25,76,25,78,0],[25,21,25,78,0],[26,17,26,18,0],[27,13,27,14,0],[28,13,28,31,0],[29,9,29,10,0]]);
+    </script>
+  </body>
+</html>

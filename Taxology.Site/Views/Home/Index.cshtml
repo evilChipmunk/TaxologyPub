@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<link href="~/css/home.css" rel="stylesheet" />
+<style>
+
+ 
+</style>
+ 
+
+<div id="demo" class="carousel slide" data-ride="carousel">
+
+    <!-- Indicators -->
+    <ul class="carousel-indicators">
+        <li data-target="#demo" data-slide-to="0" class="active"></li>
+        <li data-target="#demo" data-slide-to="1"></li>
+        <li data-target="#demo" data-slide-to="2"></li>
+    </ul>
+
+    <!-- The slideshow -->
+    <div class="carousel-inner" id="myCarousel">
+        <div class="carousel-item active">
+
+            <div class="item">
+                <img src="images/acchand.jpg" alt="Taxology" class="img-fluid">
+                <section class="welcome">
+                    <h1>
+                        Your world. Your life. Your money. Our concern.
+                    </h1>
+                </section>
+            </div>
+
+            @*<picture>
+                <source srcset="https://dummyimage.com/2000x400/007aeb/4196e5" media="(min-width: 1400px)">
+                <source srcset="https://dummyimage.com/1400x400/007aeb/4196e5" media="(min-width: 768px)">
+                <source srcset="https://dummyimage.com/800x400/007aeb/4196e5" media="(min-width: 576px)">
+                <img srcset="https://dummyimage.com/600x400/007aeb/4196e5" alt="responsive image" class="d-block img-fluid">
+            </picture>*@
+
+        </div>
+
+        <div class="carousel-item">
+            <div class="item">
+                <img src="images/laptop-coffee-mac.jpg" alt="Taxology" class="img-fluid">
+                <section class="welcome">
+                    <h1>
+                        Sit back and enjoy your day. Let us do the worrying.
+                    </h1>
+                </section>
+            </div>
+        </div>
+
+        <div class="carousel-item">
+            <div class="item">
+                <img src="images/hour-clock.jpg" alt="Taxology" class="img-responsive">
+                <section class="welcome">
+                    <h1>
+                        It's time to start being smart with your money.
+                    </h1>
+                </section>
+            </div>
+
+        </div>
+        @* <div class="carousel-item"> *@
+        @*     <div class="item"> *@
+        @*         <img src="http://lorempixel.com/1024/750" alt="Slide2" /> *@
+        @*     </div> *@
+        @* </div> *@
+    </div>
+
+    <!-- Left and right controls -->
+    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#demo" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </a>
+
+</div>
+
+
+@section Scripts{ 
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var height = $(window).height();  
+            var navHeight = $("#mainNav").height();
+            height = height - navHeight; 
+            jQuery('#myCarousel').css('height', height + 'px');   
+        });
+
+    </script>
+}

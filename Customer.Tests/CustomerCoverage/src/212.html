@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\money.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+namespace Shared.Domain
+{
+    public class Money : ValueObject&lt;Money&gt;
+    {
+        //concession to entity framework
+        private Money()
+        {
+
+        }
+        public Money(double amount)
+        {
+            Amount = amount;
+            Exchange = &quot;USD&quot;;
+        }
+
+        public Money(double amount, string exchange)
+        {
+            Amount = amount;
+            Exchange = exchange;
+        }
+
+        public double Amount { get; private set; }
+        public string Exchange { get; private set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[6,9,6,24,0],[7,9,7,10,0],[9,9,9,10,0],[10,9,10,36,0],[11,9,11,10,0],[12,13,12,29,0],[13,13,13,30,0],[14,9,14,10,0],[16,9,16,53,0],[17,9,17,10,0],[18,13,18,29,0],[19,13,19,33,0],[20,9,20,10,0],[22,32,22,36,0],[22,37,22,49,0],[23,34,23,38,0],[23,39,23,51,0]]);
+    </script>
+  </body>
+</html>

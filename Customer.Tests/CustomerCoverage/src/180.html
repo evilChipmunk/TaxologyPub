@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.persistency\shoppingcartrepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Shared.Domain;
+
+namespace ShoppingCart.Persistency
+{
+    public class ShoppingCartRepository : IShoppingCartRepository
+    {
+        private readonly ShoppingCartContext context;
+
+        public ShoppingCartRepository(ShoppingCartContext context)
+        {
+            this.context = context;
+        }
+        public async Task&lt;Domain.ShoppingCart&gt; GetCartByCustomerAsync(Guid customerId)
+        { 
+            return await context.ShoppingCarts
+                .Include(x =&gt; x.Products)
+                .ThenInclude(x =&gt; x.Price)
+                .FirstOrDefaultAsync(x =&gt; x.CustomerId == customerId &amp;&amp; x.OrderId == Guid.Empty);
+        }
+
+        public async Task&lt;Domain.ShoppingCart&gt; GetCartByIdAsync(Guid cartId)
+        {
+            return await context.ShoppingCarts
+                .Include(x =&gt; x.Products)
+                .ThenInclude(x =&gt; x.Price)
+                .FirstOrDefaultAsync(x =&gt; x.Id == cartId);
+        }
+
+        public async Task&lt;IEnumerable&lt;Domain.ShoppingCart&gt;&gt; GetCartsByProductAsync(Guid productId)
+        {
+            return await context.ShoppingCarts
+                .Include(x =&gt; x.Products)
+                .ThenInclude(x =&gt; x.Price)
+                .Where(x =&gt; x.Products.Any(y =&gt; y.Id == productId))
+                .ToListAsync();
+        }
+
+        public async Task&lt;int&gt; GetCartProductCountAsync(Guid customerId)
+        {
+            var count = await context.ShoppingCarts
+                .Where(o =&gt; o.CustomerId == customerId)
+                .SelectMany(o =&gt; o.Products)
+                .CountAsync();
+
+            return count;
+        }
+
+        public async Task SaveAsync(Domain.ShoppingCart cart)
+        {
+            await context.SaveAndPublishAsync(cart, context.ShoppingCarts);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,67,0],[15,9,15,10,0],[16,13,16,36,0],[17,9,17,10,0],[19,9,19,10,0],[20,13,23,98,0],[24,9,24,10,0],[27,9,27,10,0],[28,13,31,59,0],[32,9,32,10,0],[35,9,35,10,0],[36,13,40,32,0],[41,9,41,10,0],[44,9,44,10,0],[45,13,48,31,0],[50,13,50,26,0],[51,9,51,10,0],[54,9,54,10,0],[55,13,55,76,0],[56,9,56,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.persistency\customercontext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Shared.Persistency;
+
+namespace Customer.Persistency
+{
+    public class CustomerContext : BaseContext
+    {
+        public CustomerContext() : base(&quot;customers&quot;, null)
+        {
+
+        }
+        public CustomerContext(IMediator mediator) : base(&quot;customers&quot;, mediator)
+        { 
+        }
+
+        public override Task EnsureSeedData()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder); 
+//            modelBuilder.Entity&lt;Domain.Customer&gt;()
+//            .Ignore(b =&gt; b.State);
+            modelBuilder.Entity&lt;Domain.Customer&gt;().Ignore(x =&gt; x.AnonymousId); // no reason to save this explicitly
+        } 
+        public DbSet&lt;Customer.Domain.Customer&gt; Customers { get; set; }
+         
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,36,10,59,0],[11,9,11,10,0],[13,9,13,10,0],[14,54,14,81,0],[15,9,15,10,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,39,0],[21,9,21,10,0],[24,9,24,10,0],[25,13,25,48,0],[28,13,28,79,0],[29,9,29,10,0],[30,60,30,64,0],[30,65,30,69,0]]);
+    </script>
+  </body>
+</html>

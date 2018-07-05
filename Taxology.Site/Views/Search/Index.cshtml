@@ -1,0 +1,30 @@
+﻿@model Taxology.Site.Controllers.SearchModel
+
+@{
+    ViewData["Title"] = "Searh Resuts";
+}
+ 
+
+<div class="container">
+    <h4>Search Results</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            We found @Html.DisplayFor(model => model.ResultCount) matching items
+        </dt>
+        <dd>
+            
+        </dd>
+    </dl>
+    
+    <div>
+        @foreach (var result in Model.Results)
+        {
+            <div class="row">
+                <div class="col-sm-3" ><a href="@result.Link">@result.Item</a> </div>
+                <div class="col-sm-1"></div>
+                <div  class="col-sm-8" >@result.Description</div> 
+            </div>
+        }
+    </div>
+</div> 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\getshoppingcartbycustomerconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Shared.DTO;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+
+namespace ShoppingCart.Service.Consumers
+{
+
+    public class GetShoppingCartByCustomerConsumer : IConsumer&lt;GetShoppingCartByCustomerRequest&gt;
+    {
+        private readonly IShoppingCartRepository repo;
+        private readonly IMapper mapper;
+        private readonly IShoppingCartBuilder builder;
+
+        public GetShoppingCartByCustomerConsumer(IShoppingCartRepository repo, IMapper mapper
+            , IShoppingCartBuilder builder)
+        {
+            this.repo = repo;
+            this.mapper = mapper;
+            this.builder = builder;
+        }
+        public async Task Consume(ConsumeContext&lt;GetShoppingCartByCustomerRequest&gt; context)
+        {
+            var request = context.Message;
+               
+            var cart = await builder.GetCartAsync(request);
+
+            var response = new GetShoppingCartResponse(cart, true, ResponseAction.Found);
+              
+            await context.RespondAsync(response);
+        }
+
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,18,44,0],[19,9,19,10,0],[20,13,20,30,0],[21,13,21,34,0],[22,13,22,36,0],[23,9,23,10,0],[25,9,25,10,0],[26,13,26,43,0],[28,13,28,60,0],[30,13,30,90,0],[32,13,32,50,0],[33,9,33,10,0]]);
+    </script>
+  </body>
+</html>

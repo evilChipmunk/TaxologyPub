@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\viewcomponents\productcountviewcomponent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Http; 
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using ReturnTrue.AspNetCore.Identity.Anonymous;
+using Shared.Authentication;
+using Shared.Service;
+using ShoppingCart.DTO; 
+
+namespace Taxology.Site.ViewComponents
+{
+    public class ProductCountViewComponent : ViewComponent
+    {
+
+        private readonly IRestClient restClient;
+        private readonly IMapper mapper;
+        private readonly UserManager&lt;SiteUser&gt; userManager;
+        private readonly RoutingConfig routingConfig;
+        private readonly IHttpContextAccessor contextAccessor;
+
+        public ProductCountViewComponent(IRestClient restClient, IMapper mapper, UserManager&lt;SiteUser&gt; userManager
+            , RoutingConfig routingConfig, IHttpContextAccessor contextAccessor)
+        {
+            this.restClient = restClient;
+            this.mapper = mapper;
+            this.userManager = userManager;
+            this.routingConfig = routingConfig;
+            this.contextAccessor = contextAccessor;
+        }
+
+
+        public async Task&lt;IViewComponentResult&gt; InvokeAsync()
+        {
+
+            string routeName = &quot;&quot;;
+            string routeIdentifier = &quot;&quot;;
+
+            var user = await userManager.GetUserAsync(UserClaimsPrincipal);
+
+            if (user == null || string.IsNullOrEmpty(user.Name))
+            {
+                IAnonymousIdFeature feature = HttpContext.Features.Get&lt;IAnonymousIdFeature&gt;();
+                if (feature != null)
+                {
+                    routeIdentifier = feature.AnonymousId; 
+                }
+            }
+            else
+            {
+                routeIdentifier = user.CustomerId.ToString(); 
+
+            }
+
+            int count = 0;
+
+
+
+
+            try
+            {
+                // var IpAddress = contextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+
+                var response = await this.restClient.Get&lt;GetShoppingCartCountResponse&gt;(
+                    routingConfig.ShoppingCartService.URL,
+                    routingConfig.ShoppingCartService.ProductCount, routeIdentifier, HeaderAccept.Json);
+
+                count = response.Count;
+            }
+            catch (Exception e)
+            {
+            }
+
+
+            return View(count);
+        }
+         
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[24,9,25,81,0],[26,9,26,10,0],[27,13,27,42,0],[28,13,28,34,0],[29,13,29,44,0],[30,13,30,48,0],[31,13,31,52,0],[32,9,32,10,0],[36,9,36,10,0],[38,13,38,35,0],[39,13,39,41,0],[41,13,41,76,0],[43,13,43,65,0],[44,13,44,14,0],[45,17,45,95,0],[46,17,46,37,0],[47,17,47,18,0],[48,21,48,59,0],[49,17,49,18,0],[50,13,50,14,0],[52,13,52,14,0],[53,17,53,62,0],[55,13,55,14,0],[57,13,57,27,0],[63,13,63,14,0],[66,17,68,105,0],[70,17,70,40,0],[71,13,71,14,0],[72,13,72,32,0],[73,13,73,14,0],[74,13,74,14,0],[77,13,77,32,0],[78,9,78,10,0]]);
+    </script>
+  </body>
+</html>

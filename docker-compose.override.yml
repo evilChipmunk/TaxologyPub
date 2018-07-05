@@ -1,0 +1,48 @@
+version: '3.4'
+
+services:
+ 
+  shoppingcart.console.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+    container_name: shoppingcart-service
+
+  customer.console.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+    container_name: customer-service 
+    
+  product.console.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+    container_name: product-service 
+
+  order.console.service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development 
+    container_name: order-service
+
+  taxology.site:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "51197:80"
+    container_name: taxology-site
+
+  taxology.webapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "53564:80"
+    container_name: taxology-webapi
+
+networks:
+  default:
+    external:
+      name: nat
+
+
+
+
+
+

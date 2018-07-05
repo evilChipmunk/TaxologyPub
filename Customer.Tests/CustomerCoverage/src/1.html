@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\errorhandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing;
+using Taxology.Site.Models;
+
+
+public static class MiddlewareExtensions
+{
+    public static IApplicationBuilder UseErrorHandler(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware&lt;ErrorHandler&gt;();
+    }
+
+}
+
+public class ErrorHandler
+{
+    private readonly ITempDataDictionaryFactory temDataFactory;
+
+    public ErrorHandler(ITempDataDictionaryFactory temDataFactory)
+    {
+        this.temDataFactory = temDataFactory;
+    }
+    private readonly RequestDelegate next;
+
+    public ErrorHandler(RequestDelegate next)
+    {
+        this.next = next;
+    }
+
+    public async Task Invoke(HttpContext context)
+    {
+        try
+        {
+            await next(context);
+        }
+        catch (Exception ex)
+        {
+
+
+            var request = context.Request;
+            UriBuilder uriBuilder = new UriBuilder();
+            uriBuilder.Scheme = request.Scheme;
+            uriBuilder.Host = request.Host.Host;
+            if (request.Host.Port.HasValue)
+            {
+                uriBuilder.Port = request.Host.Port.Value;
+            }
+            uriBuilder.Path = &quot;Home/Error&quot;;
+
+            var url = uriBuilder.Uri;
+
+
+          //  var result = new RedirectResult(url.AbsolutePath);
+
+            //
+            //            string message = ex.Message;
+            //
+            ErrorViewModel errModel = new ErrorViewModel();
+            errModel.Message = ex.Message;
+
+
+
+
+         //   var tempData = temDataFactory.GetTempData(context);
+            //TODO need to remove magic string --- but also probably just need
+            //to remove this whole temp data thing. prod users won&#39;t nee to see the details
+            
+          //  tempData[&quot;error&quot;] = ex.Message;
+           // tempData.Save();
+
+           
+            var result = new RedirectToActionResult(&quot;Error&quot;, &quot;Home&quot;, errModel );
+            //var result = new RedirectToActionResult(&quot;Error&quot;, &quot;Home&quot;, null);
+
+            RouteData routeData = context.GetRouteData();
+            if (routeData == null) routeData = new RouteData();
+            ActionDescriptor actionDescriptor = new ActionDescriptor();
+            ActionContext actionContext = new ActionContext(context, routeData, actionDescriptor);
+            await result.ExecuteResultAsync(actionContext);
+             
+        }
+    } 
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,5,15,6,0],[16,9,16,50,0],[17,5,17,6,0],[25,5,25,67,0],[26,5,26,6,0],[27,9,27,46,0],[28,5,28,6,0],[31,5,31,46,0],[32,5,32,6,0],[33,9,33,26,0],[34,5,34,6,0],[37,5,37,6,0],[39,9,39,10,0],[40,13,40,33,0],[41,9,41,10,0],[42,9,42,29,0],[43,9,43,10,0],[46,13,46,43,0],[47,13,47,54,0],[48,13,48,48,0],[49,13,49,49,0],[50,13,50,44,0],[51,13,51,14,0],[52,17,52,59,0],[53,13,53,14,0],[54,13,54,44,0],[56,13,56,38,0],[64,13,64,60,0],[65,13,65,43,0],[78,13,78,81,0],[81,13,81,58,0],[82,13,82,35,0],[82,36,82,64,0],[83,13,83,72,0],[84,13,84,99,0],[85,13,85,60,0],[87,9,87,10,0],[88,5,88,6,0]]);
+    </script>
+  </body>
+</html>

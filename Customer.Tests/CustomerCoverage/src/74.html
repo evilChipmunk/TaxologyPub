@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.console.service\consumers\createcustomerconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using Customer.DTO;
+using Customer.Persistency;
+using MassTransit;
+
+namespace Customer.Service
+{
+    public class CreateCustomerConsumer : IConsumer&lt;ICreateCustomerRequest&gt;
+    {
+        private readonly ICustomerBuilder builder;
+        private readonly ICustomerRepository repo;
+        private readonly IMapper mapper;
+
+        public CreateCustomerConsumer(ICustomerBuilder builder, ICustomerRepository repo, IMapper mapper)
+        {
+            this.builder = builder;
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+
+
+        public async Task Consume(ConsumeContext&lt;ICreateCustomerRequest&gt; context)
+        {
+            var customer = builder.Build(context.Message.RegisteredUser);
+            customer = await this.repo.SaveAsync(customer);
+            var dto = mapper.Map&lt;CustomerDTO&gt;(customer);
+             
+            var response = new CreateCustomerResponse(dto);
+
+
+            await context.RespondAsync(response); 
+             
+        } 
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,106,0],[16,9,16,10,0],[17,13,17,36,0],[18,13,18,30,0],[19,13,19,34,0],[20,9,20,10,0],[24,9,24,10,0],[25,13,25,74,0],[26,13,26,60,0],[27,13,27,57,0],[29,13,29,60,0],[32,13,32,50,0],[34,9,34,10,0]]);
+    </script>
+  </body>
+</html>

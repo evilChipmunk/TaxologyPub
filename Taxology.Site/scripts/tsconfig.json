@@ -1,0 +1,39 @@
+//{
+//  "compilerOptions": {
+//    "noImplicitAny": false,
+//    "noEmitOnError": true,
+//    "removeComments": false,
+//    "sourceMap": true,
+//    "target": "es5"
+//  },
+//  "exclude": [
+//    "node_modules",
+//    "wwwroot"
+//  ]
+//}
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "noEmitOnError": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "target": "es5",
+    "types": [
+      "jquery", "bootstrap"
+    ],
+    "typeRoots": [ "../../node_modules/@types/" ]
+  },
+  "files": [
+    "./app.ts",
+    "products.ts", "PurchaseWizard.ts"
+  ],
+  //"include": [
+  //  "wwwroot/scripts/*",
+  //  "wwwroot/js/*"
+  //],
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ],
+  "compileOnSave": true
+}

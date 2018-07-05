@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\customercreatedconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using Customer.DTO;
+using MassTransit;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+using ShoppingCart.Service.Consumers;
+
+namespace ShoppingCart.Service.Controllers
+{
+    public class CustomerCreatedConsumer : IConsumer&lt;ICustomerCreatedNotification&gt;{
+        private readonly IShoppingCartRepository repo;
+        private readonly IShoppingCartBuilder builder;
+
+        public CustomerCreatedConsumer(IShoppingCartRepository repo, IShoppingCartBuilder builder)
+        {
+            this.repo = repo;
+            this.builder = builder;
+        }
+
+        public async Task Consume(ConsumeContext&lt;ICustomerCreatedNotification&gt; context)
+        {
+            var customer = context.Message.Customer;
+
+            var request = new GetShoppingCartByCustomerRequest(customer.AnonymousId);
+
+            //either get an existing cart or create a new one
+            var cartDTO = await builder.GetCartAsync(request);
+
+            var cart = await repo.GetCartByIdAsync(cartDTO.Id);
+
+            cart.UpdateCustomer(customer.AnonymousId, customer.Id);
+
+            await repo.SaveAsync(cart);
+             
+        } 
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,99,0],[15,9,15,10,0],[16,13,16,30,0],[17,13,17,36,0],[18,9,18,10,0],[21,9,21,10,0],[22,13,22,53,0],[24,13,24,86,0],[27,13,27,63,0],[29,13,29,64,0],[31,13,31,68,0],[33,13,33,40,0],[35,9,35,10,0]]);
+    </script>
+  </body>
+</html>

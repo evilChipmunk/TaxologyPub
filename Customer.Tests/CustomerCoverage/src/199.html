@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\controllers\customerscontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System; 
+using System.Threading;
+using System.Threading.Tasks; 
+using Customer.DTO;
+using MassTransit;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging; 
+using Shared.Service; 
+
+namespace Taxology.WebAPI.Controllers
+{
+    public static class Routing
+    {
+        public const string GetCustomer = &quot;getcustomers&quot;;
+        public const string GetCustomers = &quot;getallcustomers&quot;;
+        public const string CreateCustomer = &quot;createcustomer&quot;;
+        public const string UpdateCustomer = &quot;updatecustomer&quot;;
+        public const string DeleteCustomer = &quot;deletecustomer&quot;;
+    }
+
+
+    [Produces(&quot;application/json&quot;)]
+    [Route(&quot;api/Customers&quot;)]
+    public class CustomersController : BaseApiController
+    {
+        private readonly IRequestClientFactory getClientFactory;
+
+
+        public CustomersController(ILoggerFactory loggerFactory
+            , IRequestClientFactory getClientFactory
+
+        ) : base(loggerFactory)
+        {
+            this.getClientFactory = getClientFactory;
+        }
+
+        protected override ILogger CreateLogger()
+        {
+            return this.loggerFactory.CreateLogger&lt;CustomersController&gt;();
+        }
+
+        [ResponseCache(Duration = 30)]
+        [HttpGet(&quot;{id}&quot;, Name = Routing.GetCustomer)]
+        public async Task&lt;IActionResult&gt; Get(Guid id)
+        {
+            var client = getClientFactory.Create&lt;IGetCustomerRequest, GetCustomerResponse&gt;();
+
+            return await HandleAsync(async () =&gt; await client.Request(new {Id = id}, CancellationToken.None));
+        }
+
+        //        [HttpGet(Name = Routing.GetCustomers)]
+        //        public async Task&lt;IActionResult&gt; GetAll()
+        //        {
+        //            return await HandleAsync(async () =&gt;
+        //              await workflow.Get(new GetAllCustomersRequest()));
+        //        }
+        //
+        [HttpPost(Name = Routing.CreateCustomer)]
+        [Route(&quot;create&quot;)]
+        public async Task&lt;IActionResult&gt; Create([FromBody] CreateCustomerRequest request)
+        {
+            var client = getClientFactory.Create&lt;ICreateCustomerRequest, CreateCustomerResponse&gt;();
+
+            return await HandleAsync(async () =&gt;
+            {
+                var response = await client.Request(request, CancellationToken.None);
+                string link = Url.Link(Routing.GetCustomer, new {id = response.Customer.Id});
+
+                response.RequestUri = link;
+
+                return response;
+
+            });
+        }
+
+        [HttpPut(Name = Routing.UpdateCustomer)]
+        [Route(&quot;update&quot;)]
+        public async Task&lt;IActionResult&gt; Update([FromBody] SaveCustomerRequest request)
+        {
+            var client = getClientFactory.Create&lt;ISaveCustomerRequest, SaveCustomerResponse&gt;();
+            return await HandleAsync(async () =&gt; await client.Request(request, CancellationToken.None));
+        }
+
+    }
+} 
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[32,13,32,32,0],[33,9,33,10,0],[34,13,34,54,0],[35,9,35,10,0],[38,9,38,10,0],[39,13,39,75,0],[40,9,40,10,0],[45,9,45,10,0],[46,13,46,94,0],[48,13,48,50,0],[48,50,48,109,0],[48,109,48,111,0],[48,13,48,111,0],[49,9,49,10,0],[61,9,61,10,0],[62,13,62,100,0],[64,13,65,13,0],[65,13,65,14,0],[65,14,66,17,0],[66,17,66,86,0],[66,86,67,17,0],[67,17,67,94,0],[67,94,69,17,0],[69,17,69,44,0],[69,44,71,17,0],[71,17,71,33,0],[71,33,73,13,0],[73,13,73,14,0],[73,14,73,16,0],[64,13,73,16,0],[74,9,74,10,0],[79,9,79,10,0],[80,13,80,96,0],[81,13,81,50,0],[81,50,81,103,0],[81,103,81,105,0],[81,13,81,105,0],[82,9,82,10,0]]);
+    </script>
+  </body>
+</html>

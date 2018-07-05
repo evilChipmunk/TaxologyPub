@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.messaging\baseclients\baseservicebusclient.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.Azure.ServiceBus;
+using Microsoft.Azure.ServiceBus.Core;
+using System;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Subscribers
+{ 
+    public abstract class BaseServiceBusClient&lt;T&gt;
+    {
+        protected BaseServiceBusClient(IReceiverClient receiver, ISenderClient sender)
+        { 
+            this.receiver = receiver;
+            this.sender = sender;
+        }
+
+        protected readonly IReceiverClient receiver;
+        protected readonly ISenderClient sender;
+
+        protected Message GetBasicMessage(T entity)
+        {
+            var message = new Message();
+            string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(entity);
+            message.Body = Encoding.UTF8.GetBytes(jsonData);
+            return message;
+        }
+
+        public virtual async Task SendMessage(T entity)
+        {
+            var message = GetBasicMessage(entity);
+            await sender.SendAsync(message);
+        }
+
+        protected async Task SendMessage(Message message)
+        {
+            await sender.SendAsync(message);
+        }
+
+        protected EventHandler&lt;Message&gt; MessageReceived { get; set; }
+
+        public virtual async Task AddToDeadLetterQueue(Message message)
+        {
+            await receiver.DeadLetterAsync(message.SystemProperties.LockToken);
+        }
+
+        public virtual async Task Complete(Message message)
+        {
+            await receiver.CompleteAsync(message.SystemProperties.LockToken);
+        }
+
+        public virtual async Task Abandon(Message message)
+        {
+            await receiver.AbandonAsync(message.SystemProperties.LockToken);
+        }
+
+        private async Task MessageException(ExceptionReceivedEventArgs arg)
+        {
+            System.Diagnostics.Trace.TraceError(arg.Exception.Message);
+        }
+
+        private async Task MessageHandler(Message message, CancellationToken arg2)
+        {
+            if (MessageReceived != null)
+            {
+                MessageReceived(this, message);
+            }
+            else
+            {
+                throw new Exception(&quot;Handler was not hooked up!&quot;);
+            }
+        }
+
+        private void RegisterForMessages()
+        {
+            var options = new MessageHandlerOptions(MessageException);
+            options.AutoComplete = false;
+            options.MaxConcurrentCalls = int.MaxValue;
+            receiver.RegisterMessageHandler(MessageHandler, options);
+        }
+
+        public void RegisterForMessages(Action&lt;MessagePackage&lt;T&gt;&gt; messageHandler)
+        {
+            this.MessageReceived += new EventHandler&lt;Message&gt;((obj, message) =&gt; {
+
+                var mp = new MessagePackage&lt;T&gt;();
+                mp.Message = message;
+                mp.Entity = Newtonsoft.Json.JsonConvert.DeserializeObject&lt;T&gt;(Encoding.UTF8.GetString(message.Body));
+                messageHandler(mp);
+            });
+            RegisterForMessages();
+        }
+
+         
+    } 
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,87,0],[13,9,13,10,0],[14,13,14,38,0],[15,13,15,34,0],[16,9,16,10,0],[22,9,22,10,0],[23,13,23,41,0],[24,13,24,83,0],[25,13,25,61,0],[26,13,26,28,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,51,0],[32,13,32,45,0],[33,9,33,10,0],[36,9,36,10,0],[37,13,37,45,0],[38,9,38,10,0],[40,59,40,63,0],[40,64,40,68,0],[43,9,43,10,0],[44,13,44,80,0],[45,9,45,10,0],[48,9,48,10,0],[49,13,49,78,0],[50,9,50,10,0],[53,9,53,10,0],[54,13,54,77,0],[55,9,55,10,0],[58,9,58,10,0],[59,13,59,72,0],[60,9,60,10,0],[63,9,63,10,0],[64,13,64,41,0],[65,13,65,14,0],[66,17,66,48,0],[67,13,67,14,0],[69,13,69,14,0],[70,17,70,67,0],[72,9,72,10,0],[75,9,75,10,0],[76,13,76,71,0],[77,13,77,42,0],[78,13,78,55,0],[79,13,79,70,0],[80,9,80,10,0],[83,9,83,10,0],[84,13,84,81,0],[84,81,84,82,0],[84,82,86,17,0],[86,17,86,50,0],[86,50,87,17,0],[87,17,87,38,0],[87,38,88,17,0],[88,17,88,117,0],[88,117,89,17,0],[89,17,89,36,0],[89,36,90,13,0],[90,13,90,14,0],[90,14,90,16,0],[84,13,90,16,0],[91,13,91,35,0],[92,9,92,10,0]]);
+    </script>
+  </body>
+</html>

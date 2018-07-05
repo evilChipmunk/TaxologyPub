@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.service\servicecollectionextensions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Autofac;
+using Autofac.Core;
+using MassTransit;
+using MassTransit.ConsumeConfigurators;
+using MassTransit.RabbitMqTransport;
+using MassTransit.Util;
+using MediatR;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Domain;
+
+namespace Shared.Service
+{
+
+//
+//    public interface IRequestClient&lt;TRequest, TResponse&gt;
+//    {
+//        Task&lt;TResponse&gt; Request(TRequest request, CancellationToken cancellationToken);
+//    }
+
+
+    public static class ServiceCollectionExtensions
+    {
+        public static void ResolveAllTypes(this IServiceCollection services, string solutionPrefix,
+            params string[] projectSuffixes)
+        {
+            //solutionPrefix is my Solution name, to separate with another assemblies of Microsoft,...
+            //projectSuffixes is my project what i want to scan and register
+            //Note: To use this code u must reference your project to &quot;projectSuffixes&quot; projects.
+
+            var allAssemblies = new List&lt;Assembly&gt;();
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            foreach (var dll in Directory.GetFiles(path, &quot;*.dll&quot;))
+                allAssemblies.Add(Assembly.LoadFile(dll));
+
+
+            var types = new List&lt;Type&gt;();
+            foreach (var assembly in allAssemblies)
+            {
+                if (assembly.FullName.StartsWith(solutionPrefix))
+                {
+                    foreach (var assemblyDefinedType in assembly.DefinedTypes)
+                    {
+                        if (projectSuffixes.Any(x =&gt; assemblyDefinedType.Name.EndsWith(x)))
+                        {
+                            types.Add(assemblyDefinedType.AsType());
+
+                        }
+                    }
+                }
+            }
+
+            var implementTypes = types.Where(x =&gt; x.IsClass).ToList();
+            foreach (var implementType in implementTypes)
+            {
+                //I default &quot;AService&quot; always implement &quot;IAService&quot;, You can custom it
+                var interfaceType = implementType.GetInterface(&quot;I&quot; + implementType.Name);
+
+                if (interfaceType != null)
+                {
+                    services.Add(new ServiceDescriptor(interfaceType, implementType,
+                        ServiceLifetime.Scoped));
+                }
+
+            }
+
+        }
+
+        public static void ConfigureHandlers(this IServiceCollection services, params Type[] handlerAssemblyMarkerTypes)
+        {
+            services.AddMvc();
+
+            services.AddMediatR(handlerAssemblyMarkerTypes);
+        }
+
+    }
+
+    public  class SharedStartup
+    {
+        protected IContainer container;
+
+
+        protected void ConfigureEndpoint&lt;TConsumer, TRequest&gt;(IRabbitMqHost host, IRabbitMqBusFactoryConfigurator cfg) where TConsumer : IConsumer
+        {
+            string queueName = typeof(TRequest).Name;
+            cfg.ReceiveEndpoint(host, queueName, e =&gt;
+            {
+                e.Consumer(typeof(TConsumer), type =&gt; container.Resolve&lt;TConsumer&gt;());
+            });
+        }
+        protected void ConfigureMassTransit(ContainerBuilder builder, Action&lt;IRabbitMqBusFactoryConfigurator, IRabbitMqHost&gt; configureEndPoints)
+        { 
+            builder.Register(c =&gt;
+                {
+                    return Bus.Factory.CreateUsingRabbitMq(cfg =&gt;
+                        {
+                            var host = cfg.Host(new Uri(&quot;rabbitmq://taxrabbit&quot;), h =&gt;
+                            {
+                                h.Username(&quot;guest&quot;);
+                                h.Password(&quot;guest&quot;);
+                            });
+
+                            configureEndPoints(cfg, host);
+ 
+                            //cfg.ReceiveEndpoint(host, &quot;customer_update_queue&quot;, e =&gt;
+                            //{
+                            //    e.Consumer&lt;UpdateCustomerConsumer&gt;();
+                            //});
+                        }
+                    );
+                })
+                .As&lt;IBusControl&gt;()
+                .As&lt;IPublishEndpoint&gt;()
+                .SingleInstance();
+        }
+         
+
+        protected IBusControl SetBusLifetime(IApplicationLifetime lifetime)
+        {
+            var bus = container.Resolve&lt;IBusControl&gt;();
+            //start the bus
+            var busHandle = TaskUtil.Await(() =&gt; bus.StartAsync());
+
+            //register an action to call when the application is shutting down
+            lifetime.ApplicationStopping.Register(() =&gt; busHandle.Stop());
+            return bus;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[35,9,35,10,0],[40,13,40,54,0],[41,13,41,88,0],[43,13,43,20,0],[43,22,43,29,0],[43,30,43,32,0],[43,33,43,66,0],[44,17,44,59,0],[47,13,47,42,0],[48,13,48,20,0],[48,22,48,34,0],[48,35,48,37,0],[48,38,48,51,0],[49,13,49,14,0],[50,17,50,66,0],[51,17,51,18,0],[52,21,52,28,0],[52,30,52,53,0],[52,54,52,56,0],[52,57,52,78,0],[53,21,53,22,0],[54,25,54,54,0],[54,54,54,90,0],[54,90,54,92,0],[54,25,54,92,0],[55,25,55,26,0],[56,29,56,69,0],[58,25,58,26,0],[59,21,59,22,0],[60,17,60,18,0],[61,13,61,14,0],[63,13,63,51,0],[63,51,63,60,0],[63,60,63,71,0],[63,13,63,71,0],[64,13,64,20,0],[64,22,64,39,0],[64,40,64,42,0],[64,43,64,57,0],[65,13,65,14,0],[67,17,67,90,0],[69,17,69,43,0],[70,17,70,18,0],[71,21,72,50,0],[73,17,73,18,0],[75,13,75,14,0],[77,9,77,10,0],[80,9,80,10,0],[81,13,81,31,0],[83,13,83,61,0],[84,9,84,10,0],[94,9,94,10,0],[95,13,95,54,0],[96,13,97,13,0],[97,13,97,14,0],[97,14,98,17,0],[98,17,98,55,0],[98,55,98,85,0],[98,85,98,87,0],[98,17,98,87,0],[98,87,99,13,0],[99,13,99,14,0],[99,14,99,16,0],[96,13,99,16,0],[100,9,100,10,0],[102,9,102,10,0],[103,13,104,17,0],[104,17,104,18,0],[104,18,105,21,0],[105,21,106,25,0],[106,25,106,26,0],[106,26,107,29,0],[107,29,108,29,0],[108,29,108,30,0],[108,30,109,33,0],[109,33,109,53,0],[109,53,110,33,0],[110,33,110,53,0],[110,53,111,29,0],[111,29,111,30,0],[111,30,111,32,0],[107,29,111,32,0],[111,32,113,29,0],[113,29,113,59,0],[113,59,119,25,0],[119,25,119,26,0],[119,26,120,23,0],[105,21,120,23,0],[120,23,121,17,0],[121,17,121,18,0],[121,18,124,35,0],[103,13,124,35,0],[125,9,125,10,0],[129,9,129,10,0],[130,13,130,56,0],[132,13,132,50,0],[132,50,132,66,0],[132,66,132,68,0],[132,13,132,68,0],[135,13,135,57,0],[135,57,135,73,0],[135,73,135,75,0],[135,13,135,75,0],[136,13,136,24,0],[137,9,137,10,0]]);
+    </script>
+  </body>
+</html>

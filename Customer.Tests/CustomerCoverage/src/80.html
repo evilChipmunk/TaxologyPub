@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.console.service\customermappings.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Customer.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Customer.Service.Mappings
+{
+    public class CustomerMappings : Profile
+    {
+        public CustomerMappings()
+        {
+            CreateMap&lt;CustomerDTO, Domain.Customer&gt;();
+
+
+            CreateMap&lt;CustomerDTO, GetCustomerResponse&gt;()
+                .ForMember(dest =&gt; dest.Customer, opt =&gt; opt.MapFrom(src =&gt; src));
+
+            CreateMap&lt;CustomerDTO, SaveCustomerResponse&gt;()
+                .ForMember(dest =&gt; dest.Customer, opt =&gt; opt.MapFrom(src =&gt; src));
+
+
+            CreateMap&lt;IEnumerable&lt;CustomerDTO&gt;, GetAllCustomersResponse&gt;()
+                .ForMember(dest =&gt; dest.Customers, opt =&gt; opt.MapFrom(src =&gt; src));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,34,0],[13,9,13,10,0],[14,13,14,55,0],[17,13,18,58,0],[18,58,18,81,0],[18,81,18,83,0],[17,13,18,83,0],[20,13,21,58,0],[21,58,21,81,0],[21,81,21,83,0],[20,13,21,83,0],[24,13,25,59,0],[25,59,25,82,0],[25,82,25,84,0],[24,13,25,84,0],[26,9,26,10,0]]);
+    </script>
+  </body>
+</html>

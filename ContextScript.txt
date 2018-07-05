@@ -1,0 +1,19 @@
+EntityFrameworkCore\Add-Migration v2 -project Product\Product.Persistency    -startupproject Product\Product.Service
+
+EntityFrameworkCore\Add-Migration v1 -project Customer\Customer.Persistency  -startupproject Customer\Customer.Service
+
+EntityFrameworkCore\Add-Migration v2 -project ShoppingCart\ShoppingCart.Persistency  -startupproject ShoppingCart\ShoppingCart.Service
+
+
+EntityFrameworkCore\Add-Migration v1 -project SharedKernel\Shared.Authentication -startupproject Taxology.Site
+
+EntityFrameworkCore\Add-Migration v4 -project Order\Order.Persistency -startupproject Order\Order.Service
+
+
+
+ 
+EntityFrameworkCore\update-database -project Product\Product.Persistency   -startupproject Product\Product.Service
+EntityFrameworkCore\update-database -project Customer\Customer.Persistency  -startupproject Customer\Customer.Service
+EntityFrameworkCore\update-database -project ShoppingCart\ShoppingCart.Persistency -startupproject ShoppingCart\ShoppingCart.Service
+EntityFrameworkCore\update-database -project SharedKernel\Shared.Authentication -startupproject Taxology.Site
+EntityFrameworkCore\update-database -project Order\Order.Persistency -startupproject Order\Order.Service

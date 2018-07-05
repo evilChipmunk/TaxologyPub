@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.domain\events\ordercanceledevent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Shared.Domain;
+
+namespace Order.Domain
+{
+    public class OrderCanceledEvent : IDomainEvent
+    {
+        public OrderCanceledEvent(Order order)
+        {
+            Order = order;
+            DateTimeEventOccurred = DateTime.Now;
+        }
+
+        public Order Order { get; }
+        public DateTime DateTimeEventOccurred { get; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,47,0],[9,9,9,10,0],[10,13,10,27,0],[11,13,11,50,0],[12,9,12,10,0],[14,30,14,34,0],[15,49,15,53,0]]);
+    </script>
+  </body>
+</html>

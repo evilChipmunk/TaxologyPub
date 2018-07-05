@@ -1,0 +1,54 @@
+﻿@model PurchaseModel
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Order summary</h4>
+        <hr />
+        <br />
+        <div class="row">
+            <span class="col-sm-2">Order #</span>
+            <span class="col-sm">@Model.Order.Id</span>
+        </div>
+        <br />
+
+        <div class="row">
+            <span><strong>Products</strong></span>
+            <hr />
+        </div>
+        @foreach (var product in Model.Order.Products)
+        {
+            <div class="row">
+                <span class="col-sm-2">@product.Name</span>
+                <span class="col-sm">@product.Price.ToString("C")</span>
+            </div>
+        }
+        <br />
+        <br />
+        <div class="row">
+            <span class="col-sm-2">Total</span>
+            <span class="col-sm-6"><strong>@Model.Order.Total.ToString("C")</strong> </span>
+        </div>
+        <br />
+        <br />
+
+        <form asp-action="Complete" asp-controller="Purchase">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Order.Id" />
+            <input type="hidden" asp-for="CartId" />
+
+            <input type="submit" value="Complete Purchase" class="btn btn-success pull-right purchaseContinue" />
+        </form>
+
+    </div>
+</div>
+@* <a class="btn btn-success complete purchaseContinue" id="completionSubmit" href="#">Complete</a> *@
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

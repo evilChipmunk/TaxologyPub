@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.console.service\consumers\getcustomerconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using Customer.DTO;
+using Customer.Persistency;
+using MassTransit;
+using Shared.DTO;
+
+namespace Customer.Service
+{
+    public class GetCustomerConsumer : IConsumer&lt;IGetCustomerRequest&gt;
+    {
+        private readonly ICustomerRepository repo;
+        private readonly IMapper mapper; 
+ 
+        public GetCustomerConsumer(ICustomerRepository repo, IMapper mapper)
+        {
+            this.repo = repo;
+            this.mapper = mapper; 
+        }
+        public async Task Consume(ConsumeContext&lt;IGetCustomerRequest&gt; context)
+        {
+            GetCustomerResponse response;
+
+            var customer = await repo.GetCustomerByIdAsync(context.Message.Id);
+            if (customer == null)
+            {
+                response = new GetCustomerResponse(false, ResponseAction.NotFound);
+            }
+            else
+            {
+                var dto = mapper.Map&lt;CustomerDTO&gt;(customer);
+                response = new GetCustomerResponse(dto);
+
+            }
+             
+            await context.RespondAsync&lt;GetCustomerResponse&gt;(response);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,77,0],[16,9,16,10,0],[17,13,17,30,0],[18,13,18,34,0],[19,9,19,10,0],[21,9,21,10,0],[24,13,24,80,0],[25,13,25,34,0],[26,13,26,14,0],[27,17,27,84,0],[28,13,28,14,0],[30,13,30,14,0],[31,17,31,61,0],[32,17,32,57,0],[34,13,34,14,0],[36,13,36,71,0],[37,9,37,10,0]]);
+    </script>
+  </body>
+</html>

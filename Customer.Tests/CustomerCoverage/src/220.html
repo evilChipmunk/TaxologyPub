@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\categories\categoryattribute.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Xunit.Sdk;
+
+namespace Domain.Tests.Framework.Categories
+{
+    // Pay attention on [TraitDiscoverer(&quot;&quot;, &quot;&quot;)]
+    // the first argument is “The fully qualified type name of the discoverer
+    // (f.e., ‘Xunit.Sdk.TraitDiscoverer’)” and the second argument is
+    // “The name of the assembly that the discoverer type is located in, without file extension (f.e., ‘xunit.execution’)“
+    // https://dennymichael.net/2015/01/23/how-to-extendmigrate-traitattribute-to-xunit-v2-and-why-has-become-sealed/
+
+    /// &lt;summary&gt;
+    ///     Apply this attribute to your test method to specify a category.
+    /// &lt;/summary&gt;
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
+    [TraitDiscoverer(&quot;Domain.Tests.Framework.Categories.CategoryDiscoverer&quot;, &quot;Domain.Tests&quot;)]
+    internal class CategoryAttribute : Attribute, ITraitAttribute
+    {
+        internal CategoryAttribute(string category)
+        {
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,52,0],[20,9,20,10,0],[21,9,21,10,0]]);
+    </script>
+  </body>
+</html>

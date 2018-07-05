@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.persistency\migrations\20180609203026_v6.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Order.Persistency.Migrations
+{
+    public partial class v6 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;SubTotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;TaxValue&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;TotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;double&gt;(
+                name: &quot;SubTotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;,
+                nullable: false,
+                defaultValue: 0.0);
+
+            migrationBuilder.AddColumn&lt;double&gt;(
+                name: &quot;TaxValue&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;,
+                nullable: false,
+                defaultValue: 0.0);
+
+            migrationBuilder.AddColumn&lt;double&gt;(
+                name: &quot;TotalAmount&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Order&quot;,
+                nullable: false,
+                defaultValue: 0.0);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,10,0],[9,13,12,33,0],[14,13,17,33,0],[19,13,22,33,0],[23,9,23,10,0],[26,9,26,10,0],[27,13,32,36,0],[34,13,39,36,0],[41,13,46,36,0],[47,9,47,10,0]]);
+    </script>
+  </body>
+</html>

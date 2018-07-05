@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\shoppingcartbuilder.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+
+namespace ShoppingCart.Service.Consumers
+{
+
+    public interface IShoppingCartBuilder
+    {
+        Task&lt;ShoppingCartDTO&gt; GetCartAsync(GetShoppingCartByCustomerRequest request);
+    }
+
+
+    public class ShoppingCartBuilder : IShoppingCartBuilder
+    {
+        private readonly IShoppingCartRepository repo;
+        private readonly IMapper mapper;
+
+        public ShoppingCartBuilder(IShoppingCartRepository repo, IMapper mapper)
+        {
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+        public async Task&lt;ShoppingCartDTO&gt; GetCartAsync(GetShoppingCartByCustomerRequest request)
+        { 
+            var cart = await repo.GetCartByCustomerAsync(request.CustomerId);
+
+            if (cart == null)
+            {
+                cart = Domain.ShoppingCart.Create(request.CustomerId);
+
+                await repo.SaveAsync(cart);
+            }
+
+            return mapper.Map&lt;ShoppingCartDTO&gt;(cart); 
+        } 
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,81,0],[21,9,21,10,0],[22,13,22,30,0],[23,13,23,34,0],[24,9,24,10,0],[26,9,26,10,0],[27,13,27,78,0],[29,13,29,30,0],[30,13,30,14,0],[31,17,31,71,0],[33,17,33,44,0],[34,13,34,14,0],[36,13,36,54,0],[37,9,37,10,0]]);
+    </script>
+  </body>
+</html>

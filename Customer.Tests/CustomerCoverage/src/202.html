@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\updatecustomeraddress.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Threading.Tasks;
+using MassTransit;
+using Shared.Messaging.Commands;
+
+namespace Taxology.WebAPI
+{
+ 
+
+
+    public class UpdateCustomerConsumer :
+        IConsumer&lt;UpdateCustomerAddress&gt;
+    {
+        public async Task Consume(ConsumeContext&lt;UpdateCustomerAddress&gt; context)
+        {
+            await Console.Out.WriteLineAsync($&quot;Updating customer: {context.Message.CustomerId}&quot;);
+
+            // update the customer address
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,0],[16,13,16,98,0],[19,9,19,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\guard.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace Shared.Domain
+{
+    public class Guard
+    {
+        public static void ForNull(object value, string parameterName)
+        {
+            if (value == null)
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+        public static void ForNull(object value, string parameterName, string message)
+        {
+            if (value == null)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, message);
+            }
+        }
+
+        public static void ForLessEqualZero(int value, string parameterName)
+        {
+            if (value &lt;= 0)
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+
+        public static void ForPrecedesDate(DateTime value, DateTime dateToPrecede, string parameterName)
+        {
+            if (value &gt;= dateToPrecede)
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+
+        public static void ForNullOrEmpty(string value, string parameterName)
+        {
+            if (String.IsNullOrEmpty(value))
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+
+
+        public static void ForNullOrEmpty(Guid value, string parameterName)
+        {
+            if (value == null || value == Guid.Empty)
+            {
+                throw new ArgumentOutOfRangeException(parameterName);
+            }
+        }
+    }
+
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,10,0],[9,13,9,31,0],[10,13,10,14,0],[11,17,11,70,0],[13,9,13,10,0],[15,9,15,10,1],[16,13,16,31,1],[17,13,17,14,1],[18,17,18,79,1],[20,9,20,10,1],[23,9,23,10,0],[24,13,24,28,0],[25,13,25,14,0],[26,17,26,70,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,40,0],[33,13,33,14,0],[34,17,34,70,0],[36,9,36,10,0],[39,9,39,10,1],[40,13,40,45,1],[41,13,41,14,1],[42,17,42,70,1],[44,9,44,10,1],[48,9,48,10,1],[49,13,49,54,1],[50,13,50,14,1],[51,17,51,70,1],[53,9,53,10,1]]);
+    </script>
+  </body>
+</html>

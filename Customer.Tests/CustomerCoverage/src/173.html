@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.dto\responses\createshoppingcartresponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.DTO;
+
+namespace ShoppingCart.DTO
+{
+    public class CreateShoppingCartResponse : BaseResponse
+    {
+        public CreateShoppingCartResponse( ShoppingCartDTO shoppingCart, bool success, 
+            ResponseAction responseAction) : base(success, responseAction)
+        {
+            ShoppingCart = shoppingCart;
+        }
+
+        public ShoppingCartDTO ShoppingCart { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,46,8,75,0],[9,9,9,10,0],[10,13,10,41,0],[11,9,11,10,0],[13,47,13,51,0],[13,52,13,56,0]]);
+    </script>
+  </body>
+</html>

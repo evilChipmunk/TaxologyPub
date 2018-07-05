@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\controllers\valuescontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MassTransit;
+using MassTransit.Util;
+using Microsoft.AspNetCore.Mvc;
+using Shared.DTO;
+using Shared.Messaging.Commands;
+
+
+namespace Taxology.WebAPI.Controllers
+{
+ 
+
+
+    [Route(&quot;api/[controller]&quot;)]
+    public class ValuesController : Controller
+    {
+        private readonly IRequestClient&lt;CheckOrderStatus, OrderStatusResult&gt; client;
+
+        public ValuesController(IRequestClientFactory clientFactory)
+        {
+            this.client = clientFactory.Create&lt;CheckOrderStatus, OrderStatusResult&gt;();
+        }
+        // GET api/values
+        [HttpGet]
+        public async Task&lt;string&gt; Get()
+        { 
+
+
+
+            try
+            {    //MassTransit.RequestClientExtensions.Request&lt;CheckOrderStatus&gt;(client, new {OrderId = &quot;&quot;}, CancellationToken.None);
+           var result =  await client.Request(new {OrderId = &quot;Send Id&quot;}, CancellationToken.None);
+            //var result = await client.Request&lt;CheckOrderStatus&gt;(new { OrderId = &quot;&quot; });
+          //  var result = await client.Request(new {OrderId = &quot;some id&quot;}, new CancellationToken());
+
+            return result.OrderId;
+
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+                return message;
+            }
+        
+
+        }
+
+        // GET api/values/5
+        [HttpGet(&quot;{id}&quot;)]
+        public string Get(int id)
+        {
+            return &quot;value&quot;;
+        }
+
+        // POST api/values
+        [HttpPost]
+        public void Post([FromBody]string value)
+        {
+        }
+
+        // PUT api/values/5
+        [HttpPut(&quot;{id}&quot;)]
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // DELETE api/values/5
+        [HttpDelete(&quot;{id}&quot;)]
+        public void Delete(int id)
+        {
+        }
+    }
+
+
+
+
+
+    //[Produces(&quot;application/json&quot;)]
+    //[Route(&quot;api/Customers&quot;)]
+    //public class CustomersController : BaseApiController
+    //{
+    //    private readonly ICustomerService workflow;
+
+    //    public CustomersController(ICustomerService workflow, ILoggerFactory loggerFactory) : base(loggerFactory)
+    //    {
+    //        this.workflow = workflow;
+
+    //    }
+    //    protected override ILogger CreateLogger()
+    //    {
+    //        return this.loggerFactory.CreateLogger&lt;CustomersController&gt;();
+    //    }
+
+    //    [HttpGet(&quot;{id}&quot;, Name = Routing.GetCustomer)]
+    //    public async Task&lt;IActionResult&gt; Get(Guid id)
+    //    {
+    //        return await HandleAsync(async () =&gt;
+    //        {
+    //            return await workflow.Get(new GetCustomerRequest(id));
+    //        });
+    //    }
+
+    //    [HttpGet(Name = Routing.GetCustomers)]
+    //    public async Task&lt;IActionResult&gt; GetAll()
+    //    {
+    //        return await HandleAsync(async () =&gt;
+    //          await workflow.Get(new GetAllCustomersRequest()));
+    //    }
+
+    //    [HttpPost(Name = Routing.CreateCustomer)]
+    //    [Route(Routing.CreateCustomer)]
+    //    public async Task&lt;IActionResult&gt; Create([FromBody] CreateCustomerRequest request)
+    //    {
+    //        return await HandleAsync(async () =&gt;
+    //        {
+    //            var response = await workflow.Create(request);
+
+    //            return response;
+
+    //        });
+    //    }
+
+    //    [HttpPut(Name = Routing.UpdateCustomer)]
+    //    [Route(Routing.UpdateCustomer)]
+    //    public async Task&lt;IActionResult&gt; Update([FromBody] SaveCustomerRequest request)
+    //    {
+    //        return await HandleAsync(async () =&gt; await this.workflow.Update(request));
+    //    }
+
+    //    [HttpDelete(Name = Routing.DeleteCustomer)]
+    //    public async Task&lt;IActionResult&gt; Delete(Guid id)
+    //    {
+    //        return await HandleAsync(async () =&gt; await this.workflow.Delete(new DeleteRequest(id)));
+    //    }
+    //}
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[23,9,23,69,0],[24,9,24,10,0],[25,13,25,87,0],[26,9,26,10,0],[30,9,30,10,0],[35,13,35,14,0],[36,12,36,98,0],[40,13,40,35,0],[43,13,43,33,0],[44,13,44,14,0],[45,17,45,45,0],[46,17,46,32,0],[50,9,50,10,0],[55,9,55,10,0],[56,13,56,28,0],[57,9,57,10,0],[62,9,62,10,0],[63,9,63,10,0],[68,9,68,10,0],[69,9,69,10,0],[74,9,74,10,0],[75,9,75,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\mapping.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Reflection;
+using AutoMapper;
+using Customer.DTO;
+using Order.DTO;
+using Shared.Authentication;
+using Shared.DTO;
+using Shared.Mapping;
+using ShoppingCart.DTO;
+using Taxology.Site.Controllers;
+using Taxology.Site.Models;
+using CustomerDTO = Customer.DTO.CustomerDTO;
+using ProductDTO = Product.DTO.ProductDTO;
+
+namespace Taxology.Site
+{
+    public class Mapping : Profile
+    {
+        public Mapping()
+        { 
+            mapCustomerServiceDTOs();
+            mapShoppingCartDTOs();
+            mapProductDTOs();
+            mapOrderDTOs();
+            mapGeneral();
+
+            //Mapper.AssertConfigurationIsValid();
+        }
+
+        private void mapGeneral()
+        {
+            CreateMap&lt;Customer.DTO.CustomerDTO, CustomerOrdersModel&gt;().IgnoreAllNonExisting();
+            CreateMap&lt; IEnumerable&lt;Order.DTO.OrderDTO&gt;, CustomerOrdersModel&gt;().IgnoreAllNonExisting();
+
+            CreateMap&lt;CustomerModel, CustomerOrdersModel&gt;().IgnoreAllNonExisting();
+            CreateMap&lt;IEnumerable&lt;OrderModel&gt;, CustomerOrdersModel&gt;().IgnoreAllNonExisting();
+           
+
+        }
+
+        private void mapCustomerServiceDTOs()
+        {
+            CreateMap&lt;RegisterModel, RegisteredUserDTO&gt;();
+            CreateMap&lt;CustomerDTO, BillingInfoModel&gt;()
+                .ForMember(dest =&gt; dest.FirstName, opt =&gt; opt.MapFrom(src =&gt; src.FirstName))
+                .ForMember(dest =&gt; dest.LastName, opt =&gt; opt.MapFrom(src =&gt; src.LastName))
+                .ForMember(dest =&gt; dest.StateAbbreviation, opt =&gt; opt.MapFrom(src =&gt; src.StateAbbreviation));
+
+           // CreateMap&lt;CustomerModel, CustomerDTO&gt;().IgnoreAllNonExisting();
+            CreateMap&lt;CustomerDTO, CustomerModel&gt;().IgnoreAllNonExisting();
+
+            CreateMap&lt;SiteUser, CustomerDTO&gt;().IgnoreAllNonExisting()
+                .ForMember(dest =&gt; dest.Id, opt =&gt; opt.MapFrom(src =&gt; src.CustomerId));
+            CreateMap&lt;BillingInfoModel, CustomerDTO&gt;().IgnoreAllNonExisting();
+        }
+
+        private void mapShoppingCartDTOs()
+        {
+            CreateMap&lt;ShoppingCartProductDTO, ProductModel&gt;()
+                .ForMember(src =&gt; src.Price, opt =&gt; opt.MapFrom(dest =&gt; dest.Price.Amount))
+                .ForMember(src =&gt; src.Id, opt =&gt; opt.MapFrom(dest =&gt; dest.ProductId));
+            CreateMap&lt;ShoppingCartDTO, ShoppingCartModel&gt;()
+                .ForMember(src =&gt; src.Total, opt =&gt; opt.MapFrom(dest =&gt; dest.Total.Amount));
+
+            CreateMap&lt;ProductModel, ShoppingCartProductDTO&gt;()
+                .ForMember(src =&gt; src.ProductId, opt =&gt; opt.MapFrom(dest =&gt; dest.Id))
+                .ForMember(dest =&gt; dest.Price, opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO {Amount = src.Price, Exchange = DefaultExchange.USD}));
+
+
+        }
+
+        private void mapProductDTOs()
+        {
+            CreateMap&lt;ProductModel, Product.DTO.ProductDTO&gt;()
+                .ForMember(dest =&gt; dest.Price,
+                    opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO {Amount = src.Price, Exchange = DefaultExchange.USD}));
+
+            CreateMap&lt;ProductDTO, ProductModel&gt;()
+                .ForMember(dest =&gt; dest.Price, opt =&gt; opt.MapFrom(src =&gt; src.Price.Amount));
+
+        }
+
+        private void mapOrderDTOs()
+        {
+            CreateMap&lt;BillingAddressDTO, BillingInfoModel&gt;().IgnoreAllNonExisting();
+            CreateMap&lt;OrderDTO, OrderModel&gt;().IgnoreAllNonExisting()
+                .ForMember(dest =&gt; dest.Total, opt =&gt; opt.MapFrom(src =&gt; src.Total.Amount))
+                .ForMember(dest =&gt; dest.SubTotal, opt =&gt; opt.MapFrom(src =&gt; src.SubTotal.Amount))
+                .ForMember(dest =&gt; dest.Tax, opt =&gt; opt.MapFrom(src =&gt; src.Tax.Amount)).IgnoreAllNonExisting();
+
+
+            CreateMap&lt;Order.DTO.ProductDTO, ProductModel&gt;()
+                .ForMember(dest =&gt; dest.Price, opt =&gt; opt.MapFrom(src =&gt; src.Price.Amount)).IgnoreAllNonExisting();
+
+            CreateMap&lt;ProductModel, Order.DTO.ProductDTO&gt;()
+                .ForMember(dest =&gt; dest.Price, opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO {Amount = src.Price, Exchange = DefaultExchange.USD}));
+
+        }
+    }
+
+
+    public class People
+    {
+        public string Name { get; set; }
+    }
+
+    public class Phone
+    {
+        public int Number { get; set; }
+    }
+
+    public class PeoplePhoneDto
+    {
+        public string Name { get; set; }
+        public int PhoneNumber { get; set; }
+    }
+
+    public class Mappings : Profile
+    {
+        public Mappings()
+        {
+            CreateMap&lt;People, PeoplePhoneDto&gt;();
+            CreateMap&lt;Phone, PeoplePhoneDto&gt;()
+                .ForMember(d =&gt; d.PhoneNumber, a =&gt; a.MapFrom(s =&gt; s.Number));
+
+        }
+
+        public PeoplePhoneDto MapIt(People p, Phone phone)
+        {
+            return Mapper.Map&lt;PeoplePhoneDto&gt;(p).Map(phone);
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,25,0],[20,9,20,10,0],[21,13,21,38,0],[22,13,22,35,0],[23,13,23,30,0],[24,13,24,28,0],[25,13,25,26,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,95,0],[33,13,33,103,0],[35,13,35,84,0],[36,13,36,94,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,43,59,0],[44,13,45,59,0],[45,59,45,92,0],[45,92,46,58,0],[46,58,46,90,0],[46,90,47,67,0],[47,67,47,108,0],[47,108,47,110,0],[44,13,47,110,0],[50,13,50,76,0],[52,13,53,52,0],[53,52,53,86,0],[53,86,53,88,0],[52,13,53,88,0],[54,13,54,79,0],[55,9,55,10,0],[58,9,58,10,0],[59,13,60,53,0],[60,53,60,91,0],[60,91,61,50,0],[61,50,61,85,0],[61,85,61,87,0],[59,13,61,87,0],[62,13,63,53,0],[63,53,63,91,0],[63,91,63,93,0],[62,13,63,93,0],[65,13,66,57,0],[66,57,66,85,0],[66,85,67,55,0],[67,55,67,140,0],[67,140,67,142,0],[65,13,67,142,0],[70,9,70,10,0],[73,9,73,10,0],[74,13,76,28,0],[76,28,76,113,0],[76,113,76,115,0],[74,13,76,115,0],[78,13,79,55,0],[79,55,79,91,0],[79,91,79,93,0],[78,13,79,93,0],[81,9,81,10,0],[84,9,84,10,0],[85,13,85,85,0],[86,13,87,55,0],[87,55,87,91,0],[87,91,88,58,0],[88,58,88,97,0],[88,97,89,53,0],[89,53,89,87,0],[89,87,89,112,0],[86,13,89,112,0],[92,13,93,55,0],[93,55,93,91,0],[93,91,93,116,0],[92,13,93,116,0],[95,13,96,55,0],[96,55,96,140,0],[96,140,96,142,0],[95,13,96,142,0],[98,9,98,10,0],[104,30,104,34,0],[104,35,104,39,0],[109,29,109,33,0],[109,34,109,38,0],[114,30,114,34,0],[114,35,114,39,0],[115,34,115,38,0],[115,39,115,43,0],[120,9,120,26,0],[121,9,121,10,0],[122,13,122,49,0],[123,13,124,53,0],[124,53,124,77,0],[124,77,124,79,0],[123,13,124,79,0],[126,9,126,10,0],[129,9,129,10,0],[130,13,130,61,0],[131,9,131,10,0]]);
+    </script>
+  </body>
+</html>

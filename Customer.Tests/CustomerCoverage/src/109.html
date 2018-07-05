@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.persistency\icustomerrepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Order.Domain;
+
+namespace Order.Persistency
+{
+    public interface ICustomerRepository
+    {
+        Task&lt;Customer&gt; GetCustomer(Guid id);
+        Task&lt;Customer&gt; SaveAsync(Customer customer);
+    }
+
+    public class CustomerRepository : ICustomerRepository
+    {
+        private readonly OrderContext context;
+
+        public CustomerRepository(OrderContext context)
+        {
+            this.context = context;
+        }
+
+
+        public async Task&lt;Customer&gt; GetCustomer(Guid id)
+        {
+            return await context.Customers.FirstOrDefaultAsync(x =&gt; x.Id == id);
+        }
+
+        public async Task&lt;Customer&gt; SaveAsync(Customer customer)
+        {
+            return await context.SaveAndPublishAsync(customer, context.Customers);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,56,0],[19,9,19,10,0],[20,13,20,36,0],[21,9,21,10,0],[25,9,25,10,0],[26,13,26,81,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,83,0],[32,9,32,10,0]]);
+    </script>
+  </body>
+</html>

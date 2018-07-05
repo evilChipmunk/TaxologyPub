@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\product.persistency\productrepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore; 
+
+namespace Product.Persistency
+{
+    public interface IProductRepository
+    {
+        Task&lt;IEnumerable&lt;Domain.Product&gt;&gt; GetProductsAsync();
+        Task&lt;Domain.Product&gt; GetProductByIdAsync(Guid id);
+        Task&lt;Domain.Product&gt; SaveAsync(Domain.Product entity);
+        void Delete(Guid id);
+    }
+
+    public class ProductRepository : IProductRepository
+    {
+        private readonly ProductContext context;
+
+        public ProductRepository(ProductContext context)
+        {
+            this.context = context;
+        }
+
+        public async Task&lt;IEnumerable&lt;Domain.Product&gt;&gt; GetProductsAsync()
+        {
+            return await context.Products.ToListAsync();
+        }
+
+        public async Task&lt;Domain.Product&gt; GetProductByIdAsync(Guid id)
+        {
+            return await context.Products.FindAsync(id);
+        }
+
+        public async Task&lt;Domain.Product&gt; SaveAsync(Domain.Product entity)
+        {
+            return await context.SaveAndPublishAsync(entity, context.Products);
+
+        }
+
+        public void Delete(Guid id)
+        {
+            var entity = Domain.Product.CreateForDelete(id);
+            context.Delete(entity); 
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,57,0],[21,9,21,10,0],[22,13,22,36,0],[23,9,23,10,0],[26,9,26,10,0],[27,13,27,57,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,57,0],[33,9,33,10,0],[36,9,36,10,0],[37,13,37,80,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,43,61,0],[44,13,44,36,0],[45,9,45,10,0]]);
+    </script>
+  </body>
+</html>

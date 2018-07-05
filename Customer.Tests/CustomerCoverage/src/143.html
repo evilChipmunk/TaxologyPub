@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.service\restclient.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Rest;
+using Newtonsoft.Json;
+
+namespace Shared.Service
+{
+    public interface IRestClient
+    {
+        Task&lt;TResultContent&gt; Get&lt;TResultContent&gt;(string baseUrl, string contextUrl, HeaderAccept headerAccept = null);
+
+        Task Get&lt;TResultContent&gt;(
+            string baseUrl
+            , string contextUrl
+            , Action&lt;TResultContent&gt; success
+            , Action&lt;RestException&lt;TResultContent&gt;&gt; error
+            , HeaderAccept headerAccept = null);
+
+        Task Get&lt;TResultContent&gt;(
+            string baseUrl
+            , string contextUrl
+            , object identifier
+            , Action&lt;TResultContent&gt; success
+            , Action&lt;RestException&lt;TResultContent&gt;&gt; error
+            , HeaderAccept headerAccept = null);
+        Task&lt;TResultContent&gt; Get&lt;TResultContent&gt;(string baseUrl, string contextUrl, object identifier = null, HeaderAccept headerAccept = null);
+        Task&lt;TResultContent&gt; Post&lt;TPostContent, TResultContent&gt;(string baseUrl, string contextUrl, TPostContent content, HeaderAccept headerAccept = null);
+        Task&lt;TResultContent&gt; Put&lt;TPostContent, TResultContent&gt;(string baseUrl, string contextUrl, TPostContent content, HeaderAccept headerAccept = null);
+        Task&lt;TResultContent&gt; Delete&lt;TPostContent, TResultContent&gt;(string baseUrl, string contextUrl, TPostContent content, HeaderAccept json = null);
+    }
+
+
+    public class RestException&lt;T&gt; : Exception
+    {
+        public RestException(RestResponse&lt;T&gt; response)
+        {
+            this.Response = response;
+        }
+
+       public RestResponse&lt;T&gt; Response { get; set; }
+    }
+
+    public class RestClient : IRestClient
+    {
+ 
+        public async Task&lt;TResultContent&gt; Get&lt;TResultContent&gt;(string baseUrl, string contextUrl, HeaderAccept headerAccept = null)
+        { 
+            Uri requestUri = new Uri(new Uri(baseUrl), contextUrl);
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+
+                var message = await CreateRequestMessage(HttpMethod.Get, headerAccept, requestUri);
+                 
+
+                var restResponse = await GetResponse&lt;TResultContent&gt;(client, message);
+
+                if (restResponse.IsSuccess)
+                {
+                    return restResponse.Result;
+                }
+                else
+                {
+                    throw new RestException&lt;TResultContent&gt;(restResponse);
+                }
+            } 
+        }
+
+        public Task&lt;TResultContent&gt; Get&lt;TResultContent&gt;(string baseUrl, string contextUrl, object identifier, HeaderAccept headerAccept = null)
+        {
+            string request = contextUrl;
+            if (identifier != null)
+            {
+                string idPart = identifier.ToString();
+                request = Path.Combine(request, idPart);
+            }
+
+            return Get&lt;TResultContent&gt;(baseUrl, request, headerAccept);
+        }
+ 
+        public async Task Get&lt;TResultContent&gt;(string baseUrl
+            , string contextUrl
+            , Action&lt;TResultContent&gt; success
+            , Action&lt;RestException&lt;TResultContent&gt;&gt; error
+            , HeaderAccept headerAccept = null
+            )
+        {
+            Uri requestUri = new Uri(new Uri(baseUrl), contextUrl);
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+
+                var message = await CreateRequestMessage(HttpMethod.Get, headerAccept, requestUri);
+                 
+                var restResponse = await GetResponse&lt;TResultContent&gt;(client, message);
+
+                if (restResponse.IsSuccess)
+                {
+                    success(restResponse.Result); 
+                }
+                else
+                {
+                    error(new RestException&lt;TResultContent&gt;(restResponse));
+                }
+            }
+        }
+
+        public Task Get&lt;TResultContent&gt;(
+            string baseUrl, 
+            string contextUrl, 
+            object identifier,
+            Action&lt;TResultContent&gt; success,
+            Action&lt;RestException&lt;TResultContent&gt;&gt; error,
+            HeaderAccept headerAccept = null)
+        {
+            string request = contextUrl;
+            if (identifier != null)
+            {
+                string idPart = identifier.ToString();
+                request = Path.Combine(request, idPart);
+            }
+
+            return Get&lt;TResultContent&gt;(baseUrl, request, success, error, headerAccept);
+        }
+
+        public async Task&lt;TResultContent&gt; Post&lt;TPostContent, TResultContent&gt;(string baseUrl, string contextUrl, TPostContent content, HeaderAccept headerAccept = null)
+        {
+            HttpMethod method = HttpMethod.Post;
+
+            return await Execute&lt;TPostContent, TResultContent&gt;(baseUrl, contextUrl, content,method, headerAccept);
+        }
+
+        public async Task&lt;TResultContent&gt; Put&lt;TPostContent, TResultContent&gt;(string baseUrl, string contextUrl, TPostContent content, HeaderAccept headerAccept = null)
+        {
+            HttpMethod method = HttpMethod.Put;
+
+            return await Execute&lt;TPostContent, TResultContent&gt;(baseUrl, contextUrl, content, method, headerAccept);
+        }
+
+        public async Task&lt;TResultContent&gt; Delete&lt;TPostContent, TResultContent&gt;(string baseUrl, string contextUrl, TPostContent content,
+            HeaderAccept headerAccept = null)
+        {
+            HttpMethod method = HttpMethod.Delete;
+
+            return await Execute&lt;TPostContent, TResultContent&gt;(baseUrl, contextUrl, content, method, headerAccept);
+        }
+
+        private async Task&lt;TResult&gt; Execute&lt;TPost, TResult&gt;(string baseUrl, string contextUrl, TPost content, HttpMethod method,
+            HeaderAccept headerAccept = null)
+        {
+            Uri requestUri = new Uri(new Uri(baseUrl), contextUrl);
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                
+
+                var message = await CreateRequestMessage(method, headerAccept, requestUri);
+
+                CreatePostContent(content, message);
+
+                var restResponse = await GetResponse&lt;TResult&gt;(client, message);
+
+                if (restResponse.IsSuccess)
+                {
+                    return restResponse.Result;
+                }
+                else
+                {
+                    throw new RestException&lt;TResult&gt;(restResponse);
+                }
+            }
+        }
+
+
+        private static async Task&lt;RestResponse&lt;TResultContent&gt;&gt; GetResponse&lt;TResultContent&gt;(
+            HttpClient client, HttpRequestMessage message)
+        {
+            RestResponse&lt;TResultContent&gt; restResponse = new RestResponse&lt;TResultContent&gt;();
+            try
+            {
+                var response = await client.SendAsync(message);
+                restResponse.StatusCode = response.StatusCode;
+                restResponse.ReasonPhrase = response.ReasonPhrase;
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseString = await response.Content.ReadAsStringAsync();
+                    restResponse.Result = JsonConvert.DeserializeObject&lt;TResultContent&gt;(responseString);
+                    restResponse.IsSuccess = true;
+                }
+                else
+                {
+                    restResponse.Error = &quot;Response was not successful&quot;;
+                } 
+            }
+            catch (HttpRequestException ex)
+            {
+                restResponse.Error = $&quot;Message: {ex.Message} Exception: { ex.InnerException }&quot;; 
+            }
+
+            return restResponse;
+        }
+
+
+        private async Task&lt;HttpRequestMessage&gt; CreateRequestMessage(HttpMethod method, HeaderAccept headerAccept,
+            Uri requestUri)
+        {
+            var message = new HttpRequestMessage(method, requestUri);
+            string authtoken = await GetAuthToken();
+            if (!string.IsNullOrEmpty(authtoken))
+            {
+                message.Headers.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, authtoken);
+            }
+
+            if (headerAccept != null &amp;&amp; headerAccept != HeaderAccept.None)
+            {
+                message.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(headerAccept.Type));
+            } 
+
+            return message;
+        }
+ 
+        private void CreatePostContent&lt;TPostContent&gt;(TPostContent content, HttpRequestMessage message)
+        {
+            var jsonContent = JsonConvert.SerializeObject(content);
+            StringContent stringContent = new StringContent(jsonContent, Encoding.UTF8, HeaderAccept.Json.Type);
+            message.Content = stringContent;
+        }
+
+
+        private async Task&lt;string&gt; GetAuthToken()
+        {
+            return null;
+        }
+    }
+        public class RestResponse&lt;T&gt;
+        {
+            public T Result { get; set; }
+            public HttpStatusCode StatusCode { get; set; }
+            public string ReasonPhrase { get; set; }
+            public string Error { get; set; }
+            public bool IsSuccess { get; set; }
+        }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[40,9,40,55,0],[41,9,41,10,0],[42,13,42,38,0],[43,9,43,10,0],[45,42,45,46,0],[45,47,45,51,0],[52,9,52,10,0],[53,13,53,68,0],[55,20,55,49,0],[56,13,56,14,0],[57,17,57,61,0],[59,17,59,100,0],[62,17,62,87,0],[64,17,64,44,0],[65,17,65,18,0],[66,21,66,48,0],[69,17,69,18,0],[70,21,70,75,0],[73,9,73,10,0],[76,9,76,10,0],[77,13,77,41,0],[78,13,78,36,0],[79,13,79,14,0],[80,17,80,55,0],[81,17,81,57,0],[82,13,82,14,0],[84,13,84,72,0],[85,9,85,10,0],[93,9,93,10,0],[94,13,94,68,0],[96,20,96,49,0],[97,13,97,14,0],[98,17,98,61,0],[100,17,100,100,0],[102,17,102,87,0],[104,17,104,44,0],[105,17,105,18,0],[106,21,106,50,0],[107,17,107,18,0],[109,17,109,18,0],[110,21,110,76,0],[111,17,111,18,0],[112,13,112,14,0],[113,9,113,10,0],[122,9,122,10,0],[123,13,123,41,0],[124,13,124,36,0],[125,13,125,14,0],[126,17,126,55,0],[127,17,127,57,0],[128,13,128,14,0],[130,13,130,88,0],[131,9,131,10,0],[134,9,134,10,0],[135,13,135,49,0],[137,13,137,115,0],[138,9,138,10,0],[141,9,141,10,0],[142,13,142,48,0],[144,13,144,116,0],[145,9,145,10,0],[149,9,149,10,0],[150,13,150,51,0],[152,13,152,116,0],[153,9,153,10,0],[157,9,157,10,0],[158,13,158,68,0],[160,20,160,49,0],[161,13,161,14,0],[162,17,162,61,0],[165,17,165,92,0],[167,17,167,53,0],[169,17,169,80,0],[171,17,171,44,0],[172,17,172,18,0],[173,21,173,48,0],[176,17,176,18,0],[177,21,177,68,0],[180,9,180,10,0],[185,9,185,10,0],[186,13,186,92,0],[188,13,188,14,0],[189,17,189,64,0],[190,17,190,63,0],[191,17,191,67,0],[192,17,192,50,0],[193,17,193,18,0],[194,21,194,88,0],[195,21,195,105,0],[196,21,196,51,0],[197,17,197,18,0],[199,17,199,18,0],[200,21,200,72,0],[201,17,201,18,0],[202,13,202,14,0],[203,13,203,44,0],[204,13,204,14,0],[205,17,205,96,0],[206,13,206,14,0],[208,13,208,33,0],[209,9,209,10,0],[214,9,214,10,0],[215,13,215,70,0],[216,13,216,53,0],[217,13,217,50,0],[218,13,218,14,0],[219,17,219,100,0],[220,13,220,14,0],[222,13,222,75,0],[223,13,223,14,0],[224,17,224,100,0],[225,13,225,14,0],[227,13,227,28,0],[228,9,228,10,0],[231,9,231,10,0],[232,13,232,68,0],[233,13,233,113,0],[234,13,234,45,0],[235,9,235,10,0],[239,9,239,10,0],[240,13,240,25,0],[241,9,241,10,0],[245,31,245,35,0],[245,36,245,40,0],[246,48,246,52,0],[246,53,246,57,0],[247,42,247,46,0],[247,47,247,51,0],[248,35,248,39,0],[248,40,248,44,0],[249,37,249,41,0],[249,42,249,46,0]]);
+    </script>
+  </body>
+</html>

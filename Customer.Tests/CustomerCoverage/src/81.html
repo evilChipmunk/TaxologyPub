@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.domain\billingaddress.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Shared.Domain;
+
+namespace Order.Domain
+{
+    public class BillingAddress : BaseEntity
+    { 
+
+        public string Phone { get; private set; }
+
+        public string Address1 { get; private set; }
+
+        public string Address2 { get; private set; }
+
+        public string ZipCode { get; private set; }
+
+        public string StateAbbreviation { get; private set; }
+
+        public string Country { get; private set; }
+
+
+        public Guid OrderId { get; private set; }
+
+        public static BillingAddress Create(Order order,  string dtoAddress1, string dtoAddress2, string dtoCountry
+            , string dtoPhone, string dtoStateAbbreviation, string dtoZipCode)
+        {
+
+            //add guards
+
+            BillingAddress ba = new BillingAddress();
+            ba.Id = Guid.NewGuid();
+            ba.State = SaveState.UnSaved;
+
+            ba.Address1 = dtoAddress1;
+            ba.Address2 = dtoAddress2;
+            ba.Country = dtoCountry;
+            ba.Phone = dtoPhone;
+            ba.StateAbbreviation = dtoStateAbbreviation;
+            ba.ZipCode = dtoZipCode;
+
+            ba.OrderId = order.Id;
+
+            ba.AddEvent(new BillingAddressCreatedEvent(ba));
+
+            return ba;
+
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,31,9,35,0],[9,36,9,48,0],[11,34,11,38,0],[11,39,11,51,0],[13,34,13,38,0],[13,39,13,51,0],[15,33,15,37,0],[15,38,15,50,0],[17,43,17,47,0],[17,48,17,60,0],[19,33,19,37,0],[19,38,19,50,0],[22,31,22,35,0],[22,36,22,48,0],[26,9,26,10,0],[30,13,30,54,0],[31,13,31,36,0],[32,13,32,42,0],[34,13,34,39,0],[35,13,35,39,0],[36,13,36,37,0],[37,13,37,33,0],[38,13,38,57,0],[39,13,39,37,0],[41,13,41,35,0],[43,13,43,61,0],[45,13,45,23,0],[47,9,47,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\categories\integrationtestdiscoverer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using Xunit.Abstractions;
+using Xunit.Sdk;
+
+namespace Domain.Tests.Framework.Categories
+{
+    internal class IntegrationTestDiscoverer : ITraitDiscoverer
+    {
+        /// &lt;summary&gt;
+        ///     Gets the trait values from the EndToEnd Category attribute.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;traitAttribute&quot;&gt;The trait attribute containing the trait values.&lt;/param&gt;
+        /// &lt;returns&gt;The trait values.&lt;/returns&gt;
+        public IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt; GetTraits(IAttributeInfo traitAttribute)
+        {
+            yield return new KeyValuePair&lt;string, string&gt;(&quot;Category&quot;, &quot;Integration&quot;);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,0],[16,13,16,86,0],[17,9,17,10,0]]);
+    </script>
+  </body>
+</html>

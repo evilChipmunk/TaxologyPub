@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\product.domain\product.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Shared.Domain;
+
+namespace Product.Domain
+{
+    public class Product : BaseEntity
+    {
+        private Product()  
+        {
+
+        }
+     
+
+        public static Product CreateForDelete(Guid id)
+        {
+            var product = new Product();
+            product.Id = id;
+            return product;
+        }
+
+        public static Product Create(string name, Money price, string imageLink, ProductCategory category, string description) 
+        {
+            Guard.ForNullOrEmpty(name, &quot;name&quot;);
+            Guard.ForNull(price, &quot;price&quot;); 
+           
+            var product = new Product();
+            product.Name = name;
+            product.Description = description;
+            product.Price = price;
+            product.Category = category;
+            product.ImageLink = imageLink;
+            product.State = SaveState.UnSaved;
+
+
+            DomainEvents.Raise(new ProductCreatedEvent(product));
+
+            return product;
+        }
+
+
+        public static Product CreateExisting(Guid id, string name, Money price, ProductCategory category)
+        {
+            Guard.ForNullOrEmpty(name, &quot;name&quot;);
+            Guard.ForNull(price, &quot;price&quot;);
+
+            var product = new Product();
+            product.Id = id;
+            product.Name = name;
+            product.Price = price;
+            product.Category = category;
+
+            return product;
+        }
+        public string Name { get; private set; }
+
+        public Money Price { get; private set; }
+
+        public string ImageLink { get; private set; }
+
+        public ProductCategory Category { get; private set; }
+
+
+        public string Description { get; private set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,26,0],[9,9,9,10,0],[11,9,11,10,0],[15,9,15,10,0],[16,13,16,41,0],[17,13,17,29,0],[18,13,18,28,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,48,0],[24,13,24,43,0],[26,13,26,41,0],[27,13,27,33,0],[28,13,28,47,0],[29,13,29,35,0],[30,13,30,41,0],[31,13,31,43,0],[32,13,32,47,0],[35,13,35,66,0],[37,13,37,28,0],[38,9,38,10,0],[42,9,42,10,0],[43,13,43,48,0],[44,13,44,43,0],[46,13,46,41,0],[47,13,47,29,0],[48,13,48,33,0],[49,13,49,35,0],[50,13,50,41,0],[52,13,52,28,0],[53,9,53,10,0],[54,30,54,34,0],[54,35,54,47,0],[56,30,56,34,0],[56,35,56,47,0],[58,35,58,39,0],[58,40,58,52,0],[60,43,60,47,0],[60,48,60,60,0],[63,37,63,41,0],[63,42,63,54,0]]);
+    </script>
+  </body>
+</html>

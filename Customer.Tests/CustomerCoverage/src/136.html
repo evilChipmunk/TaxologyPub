@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\builders\orderbuilder.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using Order.Domain;
+using Order.DTO;
+
+namespace Order.Service.Builders
+{
+    public class OrderBuilder : IOrderBuilder
+    {
+        private readonly ITaxService taxService;
+
+        public OrderBuilder(ITaxService taxService)
+        {
+            this.taxService = taxService;
+        }
+
+        public Domain.Order Build(Customer customer, BillingAddressDTO baDTO, IEnumerable&lt;ProductDTO&gt; productDTOs)
+        {
+            var taxRate = taxService.GetTaxRate(baDTO.StateAbbreviation);
+
+            Domain.Order order = Domain.Order.Create(customer,
+                baDTO.Address1, baDTO.Address2, baDTO.Country, baDTO.Phone, baDTO.StateAbbreviation, baDTO.ZipCode,
+                taxRate);
+
+            foreach (var product in productDTOs)
+            {
+                order.AddProduct(product.Id, product.Name, product.Price.Amount);
+            }
+
+            return order;
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,52,0],[12,9,12,10,0],[13,13,13,42,0],[14,9,14,10,0],[17,9,17,10,0],[18,13,18,74,0],[20,13,22,26,0],[24,13,24,20,0],[24,22,24,33,0],[24,34,24,36,0],[24,37,24,48,0],[25,13,25,14,0],[26,17,26,82,0],[27,13,27,14,0],[29,13,29,26,0],[30,9,30,10,0]]);
+    </script>
+  </body>
+</html>

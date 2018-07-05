@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.console.service\customerbuilder.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Customer.DTO;
+
+namespace Customer.Service
+{
+    public interface ICustomerBuilder
+    {
+        Domain.Customer Build(RegisteredUserDTO dto);
+        Domain.Customer Build(CustomerDTO dto);
+    }
+
+    public class CustomerBuilder : ICustomerBuilder
+    {
+
+        public Domain.Customer Build(RegisteredUserDTO dto)
+        {
+            return Domain.Customer.Create(dto.FirstName, dto.LastName, dto.Email, dto.AnonymousId);
+
+        }
+
+        public Domain.Customer Build(CustomerDTO dto)
+        {
+            if (dto.Id == Guid.Empty)
+            {
+                return Domain.Customer.Create(dto.FirstName, dto.LastName, dto.Email, dto.Phone, dto.StateAbbreviation, dto.AnonymousId);
+            }
+            else
+            {
+                return Domain.Customer.CreateExisting(dto.Id, dto.FirstName, dto.LastName, dto.Email, dto.Phone, dto.StateAbbreviation);
+            } 
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,10,0],[17,13,17,100,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,38,0],[24,13,24,14,0],[25,17,25,138,0],[28,13,28,14,0],[29,17,29,137,0],[31,9,31,10,0]]);
+    </script>
+  </body>
+</html>

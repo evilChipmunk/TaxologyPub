@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\state.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+namespace Shared.Domain
+{
+    public class State : ValueObject&lt;State&gt;
+    {
+        public State(string ab, string name)
+        {
+            Name = name;
+            Abbreviation = ab;
+        }
+
+        public string Name { get; private set; }
+
+        public string Abbreviation { get; private set; }
+
+        public override string ToString()
+        {
+            return string.Format(&quot;{0} - {1}&quot;, Abbreviation, Name);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[5,9,5,45,1],[6,9,6,10,1],[7,13,7,25,1],[8,13,8,31,1],[9,9,9,10,1],[11,30,11,34,1],[11,35,11,47,1],[13,38,13,42,1],[13,43,13,55,1],[16,9,16,10,1],[17,13,17,67,1],[18,9,18,10,1]]);
+    </script>
+  </body>
+</html>

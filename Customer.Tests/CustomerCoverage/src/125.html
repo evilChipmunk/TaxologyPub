@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\ordermappings.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoMapper;
+using Order.Domain;
+using Order.DTO; 
+using Shared.DTO;
+ 
+
+namespace Order.Service
+{
+    public class OrderMappings : Profile
+    {
+        public OrderMappings()
+        {
+            //CreateMap&lt;MoneyDTO, Money&gt;().IgnoreAllNonExisting();
+            //CreateMap&lt;BillingAddressDTO, BillingAddress&gt;().IgnoreAllNonExisting();
+            //CreateMap&lt;ProductDTO, Product&gt;().IgnoreAllNonExisting();
+
+            CreateMap&lt;Domain.Order, OrderDTO&gt;()
+                .ForMember(dest =&gt; dest.SubTotal, opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO(src.SubTotal, src.Exchange)))
+                .ForMember(dest =&gt; dest.Tax, opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO(src.Tax, src.Exchange)))
+                .ForMember(dest =&gt; dest.Total, opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO(src.Total, src.Exchange)));
+
+
+            CreateMap&lt;Product, ProductDTO&gt;()
+                .ForMember(dest =&gt; dest.Price, opt =&gt; opt.MapFrom(src =&gt; new MoneyDTO(src.Price, src.Exchange)));
+
+
+
+            
+
+            //  Mapper.AssertConfigurationIsValid();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,31,0],[12,9,12,10,0],[17,13,18,58,0],[18,58,18,118,0],[18,118,19,53,0],[19,53,19,108,0],[19,108,20,55,0],[20,55,20,112,0],[20,112,20,114,0],[17,13,20,114,0],[23,13,24,55,0],[24,55,24,112,0],[24,112,24,114,0],[23,13,24,114,0],[31,9,31,10,0]]);
+    </script>
+  </body>
+</html>

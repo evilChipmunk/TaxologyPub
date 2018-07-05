@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\product.persistency\productcontext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Product.Domain;
+using Shared.Domain;
+using Shared.Persistency;
+
+namespace Product.Persistency
+{
+    public class ProductContext : BaseContext 
+    {
+        public ProductContext() : base(&quot;products&quot;, null)
+        {
+
+        }
+
+        public ProductContext(IMediator mediator) : base( &quot;products&quot;, mediator)
+        {
+        }
+
+        public override async Task EnsureSeedData()
+        {
+          
+            int count = await Products.CountAsync();
+            if (  count &gt; 0)
+            {
+                return;
+            }
+            var filing = Domain.Product.Create(&quot;Tax Filing&quot;, 
+                new Money(25), 
+                &quot;images/help.jpg&quot;, 
+                ProductCategory.Filing,
+                &quot;You should file your taxes with us and save!&quot;);
+
+            Products.Add(filing);
+
+
+            var advice = Domain.Product.Create(&quot;Accounting Advice&quot;,
+                new Money(50),
+                &quot;images/consultation.jpg&quot;,
+                ProductCategory.TaxConsulting,
+                &quot;Don&#39;t want to figure it all out? We can do it for you.&quot;);
+
+            Products.Add(advice);
+
+
+            var defense = Domain.Product.Create(&quot;Audit Defense&quot;,
+                new Money(2500),
+                &quot;images/justice.jpg&quot;,
+                ProductCategory.AuditDefense,
+                &quot;Tried to do it on your own and messed it all up huh? No problem. We&#39;ve got your back.&quot;);
+
+            Products.Add(defense);
+
+            var appraisal = Domain.Product.Create(&quot;Appraisal&quot;,
+                new Money(2500),
+                &quot;images/coins.jpg&quot;,
+                ProductCategory.Appraisal,
+                &quot;So now you&#39;re going to have to sell something to pay for the arrears (and the lawyers)? Easy enough, let us tell you how much its worth.&quot;);
+
+            Products.Add(defense);
+
+
+            SaveChanges(); 
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity&lt;Product.Domain.Product&gt;().OwnsOne(c =&gt; c.Price);
+            modelBuilder.Entity&lt;Domain.Product&gt;().Ignore(b =&gt; b.State);
+        }
+
+        public DbSet&lt;Domain.Product&gt; Products { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,35,12,57,0],[13,9,13,10,0],[15,9,15,10,0],[17,53,17,80,0],[18,9,18,10,0],[19,9,19,10,0],[22,9,22,10,0],[24,13,24,53,0],[25,13,25,29,0],[26,13,26,14,0],[27,17,27,24,0],[29,13,33,65,0],[35,13,35,34,0],[38,13,42,75,0],[44,13,44,34,0],[47,13,51,106,0],[53,13,53,35,0],[55,13,59,157,0],[61,13,61,35,0],[64,13,64,27,0],[65,9,65,10,0],[68,9,68,10,0],[69,13,69,48,0],[71,13,71,81,0],[72,13,72,72,0],[73,9,73,10,0],[75,49,75,53,0],[75,54,75,58,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+﻿
+@model ProductModel
+
+
+<style>
+ 
+</style>
+<link href="~/css/productSlider.css" rel="stylesheet" />
+    <div class="col-sm-3">
+        <div class="col-item">
+            <div class="photo">
+                <img src="@Model.ImageLink" class="prodImg img-responsive" alt="a" />
+            </div>
+            <div class="info">
+                <div class="row">
+                    <div class="price col-md-6">
+                        <h5>
+                            @Model.Name
+                        </h5>
+                        <h5 class="price-text-color">
+                            @Model.Price.ToString("C")
+                        </h5>
+                    </div>
+                    <div class="rating hidden-sm col-md-6">
+                        <i class="price-text-color fa fa-star"></i><i class="price-text-color fa fa-star">
+                        </i><i class="price-text-color fa fa-star"></i><i class="price-text-color fa fa-star">
+                        </i><i class="fa fa-star"></i>
+                    </div>
+                </div>
+                <div class="separator clear-left">
+                    <p class="btn-add">
+                        <i class="fa fa-shopping-cart"></i>
+                        @Html.ActionLink("Add to Cart", "AddToCart", Model, new { @class = "hidden-sm" })
+
+                    </p>
+                    <p class="btn-details">
+                        <i class="fa fa-list"></i>
+                        @Html.ActionLink("More Details", "Details", Model, new { @class = "hidden-sm" })
+                    </p>
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+    </div>

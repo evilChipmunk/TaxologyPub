@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\product.console.service\productconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Product.DTO;
+using Product.Persistency;
+
+namespace Product.Service.Controllers
+{
+    public class ProductConsumer  : IConsumer&lt;GetAllProductsRequest&gt;
+    {
+        private readonly IProductRepository repo;
+        private readonly IMapper mapper;
+
+        public ProductConsumer(IProductRepository repo, IMapper mapper)
+        {
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+  
+        public async Task Consume(ConsumeContext&lt;GetAllProductsRequest&gt; context)
+        { 
+            var products = await repo.GetProductsAsync();  
+            var productDTOS = mapper.Map&lt;IEnumerable&lt;ProductDTO&gt;&gt;(products);
+
+            GetAllProductsResponse response = new GetAllProductsResponse(productDTOS);
+
+            await context.RespondAsync(response); 
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,72,0],[16,9,16,10,0],[17,13,17,30,0],[18,13,18,34,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,58,0],[24,13,24,77,0],[26,13,26,87,0],[28,13,28,50,0],[29,9,29,10,0]]);
+    </script>
+  </body>
+</html>

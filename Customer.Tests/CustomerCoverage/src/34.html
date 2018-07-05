@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\anoymousidhandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.AspNetCore.Http;
+
+namespace Taxology.Site.Controllers
+{
+    public class AnoymousIdHandler
+    {
+        string anonCart = &quot;anoncart&quot;;
+        private readonly IHttpContextAccessor contextAccessor;
+
+        public AnoymousIdHandler(IHttpContextAccessor contextAccessor)
+        {
+            this.contextAccessor = contextAccessor;
+        }
+
+        public void RemoveAnonymousId()
+        {
+            contextAccessor.HttpContext.Response.Cookies.Delete(anonCart);
+        }
+
+        public Guid GetAnonId()
+        {
+            if (contextAccessor.HttpContext.Request.Cookies.ContainsKey(anonCart))
+            {
+                var cookie = contextAccessor.HttpContext.Request.Cookies[anonCart];
+
+                return Guid.Parse(cookie);
+            }
+
+            else
+            {
+                Guid anonId = Guid.NewGuid();
+                contextAccessor.HttpContext.Response.Cookies.Append(anonCart, anonId.ToString(), new CookieOptions
+                {
+                    //   Domain = &quot;taxology.com&quot;,
+                    Expires = DateTimeOffset.Now.AddDays(30),
+                    Path = &quot;/&quot;,
+                    HttpOnly = false,
+                    Secure = false
+                });
+
+                return anonId;
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,38,0],[11,9,11,71,0],[12,9,12,10,0],[13,13,13,52,0],[14,9,14,10,0],[17,9,17,10,0],[18,13,18,75,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,83,0],[24,13,24,14,0],[25,17,25,84,0],[27,17,27,43,0],[31,13,31,14,0],[32,17,32,46,0],[33,17,40,20,0],[42,17,42,31,0],[44,9,44,10,0]]);
+    </script>
+  </body>
+</html>

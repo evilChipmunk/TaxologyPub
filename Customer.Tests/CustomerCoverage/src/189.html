@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\addproductconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+ 
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Shared.Domain;
+using Shared.DTO;
+using ShoppingCart.Domain;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+
+namespace ShoppingCart.Service.Consumers
+{
+    public class AddProductConsumer : IConsumer&lt;AddProductRequest&gt;
+    {
+        private readonly IShoppingCartRepository repo; 
+
+        public AddProductConsumer(IShoppingCartRepository repo)
+        {
+            this.repo = repo; 
+        }
+        public async Task Consume(ConsumeContext&lt;AddProductRequest&gt; context)
+        {
+            var request = context.Message;
+
+            var cart = await repo.GetCartByIdAsync(request.CartId);
+            var product = request.Product;
+
+            //double dispatch pattern
+            cart.AddProduct(ShoppingCartProduct.Create(product.Id, product.Name, cart, new Money(product.Price.Amount)));
+
+            await repo.SaveAsync(cart);
+
+            var response =  new AddProductResponse(true, ResponseAction.Updated);
+
+            await context.RespondAsync(response);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,64,0],[18,9,18,10,0],[19,13,19,30,0],[20,9,20,10,0],[22,9,22,10,0],[23,13,23,43,0],[25,13,25,68,0],[26,13,26,43,0],[29,13,29,122,0],[31,13,31,40,0],[33,13,33,82,0],[35,13,35,50,0],[36,9,36,10,0]]);
+    </script>
+  </body>
+</html>

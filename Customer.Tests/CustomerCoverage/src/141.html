@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.service\baseapicontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.AspNetCore.Mvc;
+using System; 
+using System.Threading.Tasks; 
+using Microsoft.Extensions.Logging;
+using Shared.DTO;
+
+namespace Shared.Service
+{ 
+    public abstract class BaseApiController : Controller
+    {
+        private ILogger logger;
+
+        protected ILogger Logger
+        {
+            get
+            {
+                if (logger == null)
+                {
+                    logger = CreateLogger();
+                }
+
+                return logger;
+            }
+        }
+
+        protected BaseApiController(ILoggerFactory loggerFactory)
+        {
+            this.loggerFactory = loggerFactory; 
+        }
+
+        protected readonly ILoggerFactory loggerFactory;
+        protected abstract ILogger CreateLogger();
+
+        protected async Task&lt;IActionResult&gt; HandleAsync (Func&lt;Task&lt;BaseResponse&gt;&gt; process) 
+        {
+            try
+            {
+                var response = await process();
+                switch (response.ResponseAction)
+                {
+                    case ResponseAction.Created:
+                        return Created(response.RequestUri, response);
+
+                    case ResponseAction.Updated:
+                        return Ok(response);
+
+                    case ResponseAction.Deleted:
+                        return Ok(response); //really should just be an OK but caller is expecting a result
+
+                    case ResponseAction.Found:
+                        return Ok(response);
+
+                    case ResponseAction.NotFound:
+                        return NotFound(response);
+
+                    case ResponseAction.Error:
+                        return BadRequest(response);
+
+                    case ResponseAction.Exception:
+                        return BadRequest(response);
+
+                }
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, &quot;Error processing request&quot;);
+                return BadRequest(&quot;Unable to process request&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,13,16,14,0],[17,17,17,36,0],[18,17,18,18,0],[19,21,19,45,0],[20,17,20,18,0],[22,17,22,31,0],[23,13,23,14,0],[26,9,26,66,0],[27,9,27,10,0],[28,13,28,48,0],[29,9,29,10,0],[35,9,35,10,0],[37,13,37,14,0],[38,17,38,48,0],[39,17,39,49,0],[42,25,42,71,0],[45,25,45,45,0],[48,25,48,45,0],[51,25,51,45,0],[54,25,54,51,0],[57,25,57,53,0],[60,25,60,53,0],[63,17,63,37,0],[65,13,65,33,0],[66,13,66,14,0],[67,17,67,65,0],[68,17,68,64,0],[70,9,70,10,0]]);
+    </script>
+  </body>
+</html>

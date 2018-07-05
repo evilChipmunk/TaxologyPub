@@ -1,0 +1,65 @@
+﻿@model Taxology.Site.Controllers.CustomerOrdersModel
+ 
+
+<style>
+    .orderHeader {
+        background: #abbbcb;
+        margin: 10px;
+    }
+
+    .borderspace {
+        margin: 10px;
+    }
+
+    .productSection {
+        background: #e7f0f9;
+        margin: 5px;
+    }
+</style>
+
+<div class="container">
+        
+    <h4>Your Orders</h4>
+    <hr />
+    <dl class="dl-horizontal"></dl>
+  
+    <div class="container"> 
+        @foreach (var order in Model.Orders)
+        {
+        <div class="orderHeader"> 
+            <div class="row">
+                <h4 class="col-sm">Ordered On</h4>
+                <h4 class="col-sm">Total</h4>
+                <h4 class="col-sm">Order #</h4>
+            </div>
+            <div class="row">
+                <div class="col-sm">@order.OrderDate</div>
+                <div class="col-sm">
+                    @Html.DisplayFor(model => order.Total) 
+                </div>
+                <div class="col-sm">@order.Id</div>
+            </div>
+        </div>
+
+        <div class="productSection">
+            <div class="row">
+                <h5 class="col-sm"></h5>
+                <h5 class="col-sm">Product</h5>
+                <h5 class="col-sm">Price</h5>
+            </div>
+
+            @foreach (var product in order.Products)
+            {
+            <div class="row">
+                <div class="col-sm"></div>
+                <div class="col-sm">@product.Name</div>
+                <div class="col-sm"> 
+                     @Html.DisplayFor(model => product.Price) 
+                </div>
+            </div> 
+            }
+        </div>
+            <div class="borderspace"></div>
+        } 
+    </div> 
+</div>

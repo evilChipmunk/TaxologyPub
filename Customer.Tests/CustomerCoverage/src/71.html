@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.persistency\migrations\20180608042818_v1.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+using System;
+using System.Collections.Generic;
+
+namespace Customer.Persistency.Migrations
+{
+    public partial class v1 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: &quot;customers&quot;);
+
+            migrationBuilder.CreateTable(
+                name: &quot;Customer&quot;,
+                schema: &quot;customers&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;Guid&gt;(nullable: false),
+                    Address1 = table.Column&lt;string&gt;(nullable: true),
+                    Address2 = table.Column&lt;string&gt;(nullable: true),
+                    Country = table.Column&lt;string&gt;(nullable: true),
+                    Email = table.Column&lt;string&gt;(nullable: true),
+                    FirstName = table.Column&lt;string&gt;(nullable: true),
+                    LastName = table.Column&lt;string&gt;(nullable: true),
+                    Phone = table.Column&lt;string&gt;(nullable: true),
+                    StateAbbreviation = table.Column&lt;string&gt;(nullable: true),
+                    ZipCode = table.Column&lt;string&gt;(nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Customer&quot;, x =&gt; x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: &quot;Customer&quot;,
+                schema: &quot;customers&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,0],[11,13,12,36,0],[14,13,17,35,0],[17,35,29,18,0],[29,18,31,17,0],[31,17,31,18,0],[31,18,32,21,0],[32,21,32,64,0],[32,64,33,17,0],[33,17,33,18,0],[33,18,33,20,0],[14,13,33,20,0],[34,9,34,10,0],[37,9,37,10,0],[38,13,40,38,0],[41,9,41,10,0]]);
+    </script>
+  </body>
+</html>

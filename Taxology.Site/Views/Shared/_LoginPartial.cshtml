@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Shared.Authentication
+
+@inject SignInManager<SiteUser> SignInManager
+@inject UserManager<SiteUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var userName = (await UserManager.FindByNameAsync(UserManager.GetUserName(User)))?.Name;
+
+
+    <li><a class="nav-link" asp-controller="Orders" asp-action="Index" asp-route-moniker="">Welcome @userName</a></li>
+ 
+    <li><a class="nav-link" asp-controller="Orders" asp-action="Index" asp-route-moniker="">Orders</a></li>
+    <li><a class="nav-link" asp-controller="Account" asp-action="Logoff" asp-route-moniker="">Log out</a></li>
+
+}
+else
+{
+    <li>
+        <a class="nav-link" asp-controller="Account" asp-action="Login" asp-route-moniker="">Log in</a>
+    </li>
+    <li>
+        <a class="nav-link" asp-controller="Register" asp-action="Index">Register</a>
+    </li>
+}

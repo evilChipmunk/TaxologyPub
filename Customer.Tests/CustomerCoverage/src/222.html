@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\autodata\testingconventions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using Domain.Tests.Framework.Customizations;
+
+namespace Domain.Tests.Framework.AutoData
+{
+    internal class TestingConventions : CompositeCustomization
+    {
+        public TestingConventions()
+            : base( 
+                new StateCustomization(), 
+                new AutoMoqCustomization())
+        {
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,15,12,44,1],[13,9,13,10,1],[14,9,14,10,1]]);
+    </script>
+  </body>
+</html>

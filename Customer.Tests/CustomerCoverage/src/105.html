@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.dto\responses\getbillingaddressresponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Shared.DTO;
+
+namespace Order.DTO
+{
+    public class GetBillingAddressResponse : BaseResponse
+    {
+
+        public GetBillingAddressResponse(bool success, ResponseAction responseAction) : base(success, responseAction)
+        {
+        }
+
+        public GetBillingAddressResponse(bool success, ResponseAction responseAction, BillingAddressDTO billingAddress) : base(success, responseAction)
+        {
+            BillingAddress = billingAddress;
+        }
+
+        public BillingAddressDTO BillingAddress { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,89,8,118,0],[9,9,9,10,0],[10,9,10,10,0],[12,123,12,152,0],[13,9,13,10,0],[14,13,14,45,0],[15,9,15,10,0],[17,51,17,55,0],[17,56,17,60,0]]);
+    </script>
+  </body>
+</html>

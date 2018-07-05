@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.persistency\migrations\20180609010031_v2.designer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+// &lt;auto-generated /&gt;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Storage.Internal;
+using ShoppingCart.Persistency;
+using System;
+
+namespace ShoppingCart.Persistency.Migrations
+{
+    [DbContext(typeof(ShoppingCartContext))]
+    [Migration(&quot;20180609010031_v2&quot;)]
+    partial class v2
+    {
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        {
+#pragma warning disable 612, 618
+            modelBuilder
+                .HasDefaultSchema(&quot;shoppingcarts&quot;)
+                .HasAnnotation(&quot;ProductVersion&quot;, &quot;2.0.3-rtm-10026&quot;)
+                .HasAnnotation(&quot;SqlServer:ValueGenerationStrategy&quot;, SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity(&quot;ShoppingCart.Domain.ShoppingCart&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;)
+                        .ValueGeneratedOnAdd();
+
+                    b.Property&lt;Guid&gt;(&quot;CustomerId&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;OrderId&quot;);
+
+                    b.HasKey(&quot;Id&quot;);
+
+                    b.ToTable(&quot;ShoppingCart&quot;);
+                });
+
+            modelBuilder.Entity(&quot;ShoppingCart.Domain.ShoppingCartProduct&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;Id&quot;)
+                        .ValueGeneratedOnAdd();
+
+                    b.Property&lt;string&gt;(&quot;Name&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;ProductId&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;ShoppingCartId&quot;);
+
+                    b.HasKey(&quot;Id&quot;);
+
+                    b.HasIndex(&quot;ShoppingCartId&quot;);
+
+                    b.ToTable(&quot;ShoppingCartProduct&quot;);
+                });
+
+            modelBuilder.Entity(&quot;ShoppingCart.Domain.ShoppingCartProduct&quot;, b =&gt;
+                {
+                    b.HasOne(&quot;ShoppingCart.Domain.ShoppingCart&quot;)
+                        .WithMany(&quot;Products&quot;)
+                        .HasForeignKey(&quot;ShoppingCartId&quot;)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.OwnsOne(&quot;Shared.Domain.Money&quot;, &quot;Price&quot;, b1 =&gt;
+                        {
+                            b1.Property&lt;Guid&gt;(&quot;ShoppingCartProductId&quot;);
+
+                            b1.Property&lt;double&gt;(&quot;Amount&quot;);
+
+                            b1.Property&lt;string&gt;(&quot;Exchange&quot;);
+
+                            b1.ToTable(&quot;ShoppingCartProduct&quot;,&quot;shoppingcarts&quot;);
+
+                            b1.HasOne(&quot;ShoppingCart.Domain.ShoppingCartProduct&quot;)
+                                .WithOne(&quot;Price&quot;)
+                                .HasForeignKey(&quot;Shared.Domain.Money&quot;, &quot;ShoppingCartProductId&quot;)
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
+                });
+#pragma warning restore 612, 618
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,10,0],[20,13,23,118,0],[25,13,26,17,0],[26,17,26,18,0],[26,18,27,21,0],[27,21,28,48,0],[28,48,30,21,0],[30,21,30,52,0],[30,52,32,21,0],[32,21,32,49,0],[32,49,34,21,0],[34,21,34,36,0],[34,36,36,21,0],[36,21,36,47,0],[36,47,37,17,0],[37,17,37,18,0],[37,18,37,20,0],[25,13,37,20,0],[39,13,40,17,0],[40,17,40,18,0],[40,18,41,21,0],[41,21,42,48,0],[42,48,44,21,0],[44,21,44,48,0],[44,48,46,21,0],[46,21,46,51,0],[46,51,48,21,0],[48,21,48,56,0],[48,56,50,21,0],[50,21,50,36,0],[50,36,52,21,0],[52,21,52,50,0],[52,50,54,21,0],[54,21,54,54,0],[54,54,55,17,0],[55,17,55,18,0],[55,18,55,20,0],[39,13,55,20,0],[57,13,58,17,0],[58,17,58,18,0],[58,18,59,21,0],[59,21,62,59,0],[62,59,64,21,0],[64,21,65,25,0],[65,25,65,26,0],[65,26,66,29,0],[66,29,66,72,0],[66,72,68,29,0],[68,29,68,59,0],[68,59,70,29,0],[70,29,70,61,0],[70,61,72,29,0],[72,29,72,79,0],[72,79,74,29,0],[74,29,77,67,0],[77,67,78,25,0],[78,25,78,26,0],[78,26,78,28,0],[64,21,78,28,0],[78,28,79,17,0],[79,17,79,18,0],[79,18,79,20,0],[57,13,79,20,0],[81,9,81,10,0]]);
+    </script>
+  </body>
+</html>

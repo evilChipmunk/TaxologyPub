@@ -1,0 +1,195 @@
+﻿@model Taxology.Site.Models.PurchaseModel
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+@*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+@* <script src="~/js/PurchaseWizard.js"></script> *@
+@*<script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>*@
+
+<link href="~/css/purchaseWizard.css" rel="stylesheet" />
+
+
+<div class="container">
+    <div class="row">
+        <article class="col-sm-12 col-md-12 col-lg-12">
+            <div id="wid-id-0">
+                <header role="heading">
+                    <h2>Order Process </h2>
+                </header>
+                <div class="row">
+                    <div id="bootstrap-wizard-1" class="col-sm-12">
+                        <ul class="bootstrapWizard nav" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#billingContent" role="tab" aria-controls="billingContent" aria-selected="true">
+                                    <span class="step">1</span> 
+                                    <span class="title">Add Billing Info</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#confirmationContent" role="tab" aria-controls="confirmationContent" aria-selected="false">
+                                    <span class="step">2</span> 
+                                    <span class="title">Confirm Order</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="messages-tab" data-toggle="tab" href="#completionContent" role="tab" aria-controls="completionContent" aria-selected="false">
+                                    <span class="step">3</span> 
+                                    <span class="title">Complete Order</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane active" role="tabpanel" aria-labelledby="home-tab" id="billingContent">
+            <br>
+            <div class="col-md-12  ">
+                @if (Model.Step == 1)
+                {
+                    @await Component.InvokeAsync("Billing", Model)
+                }
+
+            </div>
+        </div>
+        <div class="tab-pane" role="tabpanel" aria-labelledby="home-tab" id="confirmationContent">
+            <br>
+                @if (Model.Step == 2)
+                {
+                    @await Component.InvokeAsync("OrderConfirmation", Model)
+                }
+        </div>
+        <div class="tab-pane" role="tabpanel" aria-labelledby="home-tab" id="completionContent">
+            <br>
+                @if (Model.Step == 3)
+                {
+                    @await Component.InvokeAsync("OrderPurchase", Model)
+                }
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+//        $(function() { 
+//            $('#myTab a[href="#billingContent"]').tab('show');  
+//        });
+////         
+////        $('.billingContinue').click(function () {
+////            $('#myTab a[href="#confirmationContent"]').tab('show');  
+////
+////        });
+//
+//        $('.confirmationContinue').click(function () {
+//            $('#myTab a[href="#completionContent"]').tab('show');  
+//
+//        });
+//
+//        $('.purchaseContinue').click(function () {
+//            alert('finsihed');
+//        });
+//
+
+        $(function() {
+
+            var step = @Html.Raw(Model.Step);
+            console.log(step);
+
+            switch (step) {
+                case 1:
+                    $('#myTab a[href="#billingContent"]').tab('show');
+                    break;
+                case 2:
+                    $('#myTab a[href="#confirmationContent"]').tab('show');
+                    break;
+                case 3:
+                    $('#myTab a[href="#completionContent"]').tab('show');  
+                    break; 
+            } 
+
+        });
+
+
+
+        $("#billingsubmit").click(function () {
+            console.log('clicked');
+            $.ajax({
+                url: "Purchase/SaveBilling",
+                type: "post",
+                data: $("form").serialize(), //if you need to post Model data, use this
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log('success');
+                    console.log(result);
+                    $('#myTab a[href="#confirmationContent"]').tab('show');
+                    //$("#partial").html(result);
+                },
+                error: function (err) {
+                    console.log('error');
+                    console.log(err);
+                }
+            });
+        });
+
+
+        $("#confirmationSubmit").click(function () {
+            console.log('clicked');
+            $.ajax({
+                url: "Purchase/Confirm",
+                type: "post",
+                data: $("form").serialize(), //if you need to post Model data, use this
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log('success');
+                    console.log(result);
+                    $('#myTab a[href="#completionContent"]').tab('show');  
+                    //$("#partial").html(result);
+                },
+                error: function (err) {
+                    console.log('error');
+                    console.log(err);
+                }
+            });
+        });
+
+
+        $("#completionsubmit").click(function () {
+            console.log('clicked');
+            $.ajax({
+                url: "Purchase/Complete",
+                type: "post",
+                data: $("form").serialize(), //if you need to post Model data, use this
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log('success');
+                    console.log(result);
+                    $('#myTab a[href="#confirmationContent"]').tab('show');
+                    //$("#partial").html(result);
+                },
+                error: function (err) {
+                    console.log('error');
+                    console.log(err);
+                }
+            });
+        });
+         
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+@* *@
+@* <script src="https://use.fontawesome.com/c560c025cf.js"></script>  *@
+@* <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>  *@
+@* <script src="~/lib/jquery/dist/jquery.js"></script> *@
+

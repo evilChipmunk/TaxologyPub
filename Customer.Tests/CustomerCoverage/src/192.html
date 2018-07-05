@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\productchangedconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using MassTransit;
+using Product.DTO;
+using Shared.Domain;
+using ShoppingCart.Persistency;
+
+namespace ShoppingCart.Service.Consumers
+{
+    //TODO register and start using this class - have to build out the Product.DomainEvents publishing too
+    /// &lt;summary&gt;
+    /// NOT CURRENTLY REGISTERED - JUST AN EXAMPLE OF HOW TO HANDLE A PRODUCT CHANGE
+    /// &lt;/summary&gt;
+    public class ProductChangedConsumer : IConsumer&lt;IProductChanged&gt;
+    {
+//        private readonly IShoppingCartProductRepository productRepo;
+        private readonly IShoppingCartRepository cartRepo;
+
+        public ProductChangedConsumer(IShoppingCartRepository cartRepo)
+        { 
+            this.cartRepo = cartRepo;
+        } 
+
+        private void RaiseEventToEmail(Guid customerId, string message)
+        {
+            //put message in a queue that is picked up by Customer Service (the service handling emails to customers)
+        }
+
+        public async Task Consume(ConsumeContext&lt;IProductChanged&gt; context)
+        {
+            var product = context.Message.Product;
+
+            var carts = await cartRepo.GetCartsByProductAsync(product.Id);
+            foreach (var cart in carts)
+            {
+                // var shoppingCartProduct = await productRepo.GetProductAsync(product.Id);
+                var shoppingCartProduct = cart.Products.FirstOrDefault(x =&gt; x.Id == product.Id);
+
+                if (shoppingCartProduct == null) break;
+
+                if (shoppingCartProduct.Name != product.Name)
+                {
+                    shoppingCartProduct.UpdateName(product.Name);
+                }
+
+                string message = &quot;&quot;;
+                if (!shoppingCartProduct.Price.Amount.Equals(product.Price.Amount))
+                {
+
+                    string priceChange = &quot;&quot;;
+                    if (shoppingCartProduct.Price.Amount &lt; product.Price.Amount)
+                    {
+                        priceChange = &quot;Act fast prices are going up! A product you want has changed price.&quot;;
+                        //send customer an email that price has RAISED
+                    }
+                    else
+                    {
+                        priceChange = &quot;And a recent product you were interested in has dropped in price!&quot;;
+                        //send customer an email that price has DROPPED
+                    }
+
+                    message =
+                        $&quot;Dear Customer {cart.CustomerId}, you&#39;re not just a number, you&#39;re a guid. {priceChange}&quot;;
+
+
+                    shoppingCartProduct.UpdatePrice(new Money(product.Price.Amount));
+
+                }
+
+                await cartRepo.SaveAsync(cart);
+                //this could potentially spam customers if more than one product in their cart changed
+                RaiseEventToEmail(cart.CustomerId, message);
+            }
+
+            //  await productRepo.SaveAsync(shoppingCartProduct);
+             
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,72,0],[21,9,21,10,0],[22,13,22,38,0],[23,9,23,10,0],[26,9,26,10,0],[28,9,28,10,0],[31,9,31,10,0],[32,13,32,51,0],[34,13,34,75,0],[35,13,35,20,0],[35,22,35,30,0],[35,31,35,33,0],[35,34,35,39,0],[36,13,36,14,0],[38,17,38,77,0],[38,77,38,95,0],[38,95,38,97,0],[38,17,38,97,0],[40,17,40,49,0],[40,50,40,56,0],[42,17,42,62,0],[43,17,43,18,0],[44,21,44,66,0],[45,17,45,18,0],[47,17,47,37,0],[48,17,48,84,0],[49,17,49,18,0],[51,21,51,45,0],[52,21,52,81,0],[53,21,53,22,0],[54,25,54,109,0],[56,21,56,22,0],[58,21,58,22,0],[59,25,59,107,0],[61,21,61,22,0],[63,21,64,116,0],[67,21,67,86,0],[69,17,69,18,0],[71,17,71,48,0],[73,17,73,61,0],[74,13,74,14,0],[78,9,78,10,0]]);
+    </script>
+  </body>
+</html>

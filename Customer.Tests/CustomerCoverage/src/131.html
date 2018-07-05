@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\consumers\getbillingconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Order.DTO;
+using Order.Persistency;
+using Shared.DTO;
+
+namespace Order.Service.Consumers
+{
+    public class GetBillingConsumer : IConsumer&lt;GetBillingAddressRequest&gt;
+    {
+        private readonly IOrderRepository repo;
+        private readonly IMapper mapper;
+
+        public GetBillingConsumer(IOrderRepository repo, IMapper mapper)
+        {
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+
+        public async Task Consume(ConsumeContext&lt;GetBillingAddressRequest&gt; context)
+        {
+            var request = context.Message;
+
+            var order = await repo.GetMostRecentOrderByCustomer(request.CustomerId);
+
+            BillingAddressDTO billingAddressDTO = null;
+            if (order != null)
+            {
+                billingAddressDTO = mapper.Map&lt;BillingAddressDTO&gt;(order.BillingAddress);
+            }
+
+            GetBillingAddressResponse response;
+
+            if (billingAddressDTO == null)
+            {
+                response = new GetBillingAddressResponse(true, ResponseAction.NotFound);
+            }
+            else
+            {
+                response = new GetBillingAddressResponse(true, ResponseAction.Found, billingAddressDTO);
+            }
+
+
+            await context.RespondAsync(response);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,73,0],[16,9,16,10,0],[17,13,17,30,0],[18,13,18,34,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,43,0],[25,13,25,85,0],[27,13,27,56,0],[28,13,28,31,0],[29,13,29,14,0],[30,17,30,89,0],[31,13,31,14,0],[35,13,35,43,0],[36,13,36,14,0],[37,17,37,89,0],[38,13,38,14,0],[40,13,40,14,0],[41,17,41,105,0],[42,13,42,14,0],[45,13,45,50,0],[46,9,46,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\services\productservice.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+  
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks; 
+using Product.DTO;
+using Shared.Service;
+
+namespace Taxology.Site.Services
+{ 
+    public interface IProductService
+    {
+        Task&lt;IEnumerable&lt;ProductDTO&gt;&gt; GetProducts();
+        Task&lt;IEnumerable&lt;ProductDTO&gt;&gt; SearchForProducts(string name);
+    }
+    public class ProductService : IProductService
+    {
+        private readonly IRestClient client; 
+        private readonly ProductServiceRoutingConfig routing;
+
+        public ProductService(IRestClient client, RoutingConfig routingConfig)
+        {
+            this.client = client; 
+            this.routing = routingConfig.ProductService;
+        }
+
+        public async Task&lt;IEnumerable&lt;ProductDTO&gt;&gt; GetProducts()
+        { 
+            IEnumerable&lt;ProductDTO&gt; products = new List&lt;ProductDTO&gt;();
+
+            await client.Get&lt;GetAllProductsResponse&gt;(routing.URL, routing.GetAllProducts,
+                success: (response) =&gt; { products = response.Products; },
+            error: (error) =&gt;
+            {
+                //do something
+            },
+            headerAccept:  HeaderAccept.None);
+
+
+            return products;
+
+        }
+         
+        public async Task&lt;IEnumerable&lt;ProductDTO&gt;&gt; SearchForProducts(string name)
+        {
+            if (name == null) return new List&lt;ProductDTO&gt;();
+            var products = await GetProducts();
+
+            return products.Where(x =&gt;
+                x.Name.ToLower().Equals(name.ToLower())
+                || x.Name.ToLower().Contains(name.ToLower())
+                || x.Description.ToLower().Contains(name.ToLower())
+            );
+        } 
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,79,0],[21,9,21,10,0],[22,13,22,34,0],[23,13,23,57,0],[24,9,24,10,0],[27,9,27,10,0],[28,13,28,71,0],[30,13,31,40,0],[31,40,31,41,0],[31,41,31,42,0],[31,42,31,71,0],[31,71,31,72,0],[31,72,31,73,0],[31,73,33,13,0],[33,13,33,14,0],[33,14,35,13,0],[35,13,35,14,0],[35,14,36,47,0],[30,13,36,47,0],[39,13,39,29,0],[41,9,41,10,0],[44,9,44,10,0],[45,13,45,30,0],[45,31,45,61,0],[46,13,46,48,0],[48,13,49,17,0],[49,17,51,68,0],[51,68,52,15,0],[48,13,52,15,0],[53,9,53,10,0]]);
+    </script>
+  </body>
+</html>

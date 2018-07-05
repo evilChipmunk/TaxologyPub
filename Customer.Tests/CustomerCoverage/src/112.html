@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.persistency\migrations\20180608042342_v1.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+namespace Order.Persistency.Migrations
+{
+    public partial class v1 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: &quot;orders&quot;);
+
+            migrationBuilder.CreateTable(
+                name: &quot;Customer&quot;,
+                schema: &quot;orders&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;Guid&gt;(nullable: false),
+                    FirstName = table.Column&lt;string&gt;(nullable: true),
+                    LastName = table.Column&lt;string&gt;(nullable: true),
+                    FullName = table.Column&lt;string&gt;(nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Customer&quot;, x =&gt; x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;Order&quot;,
+                schema: &quot;orders&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;Guid&gt;(nullable: false),
+                    OrderDate = table.Column&lt;DateTime&gt;(nullable: false),
+                    CustomerId = table.Column&lt;Guid&gt;(nullable: false),
+                    Exchange = table.Column&lt;string&gt;(nullable: true),
+                    OrderStatus = table.Column&lt;int&gt;(nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Order&quot;, x =&gt; x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;BillingAddress&quot;,
+                schema: &quot;orders&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;Guid&gt;(nullable: false),
+                    Phone = table.Column&lt;string&gt;(nullable: true),
+                    Address1 = table.Column&lt;string&gt;(nullable: true),
+                    Address2 = table.Column&lt;string&gt;(nullable: true),
+                    ZipCode = table.Column&lt;string&gt;(nullable: true),
+                    StateAbbreviation = table.Column&lt;string&gt;(nullable: true),
+                    Country = table.Column&lt;string&gt;(nullable: true),
+                    OrderId = table.Column&lt;Guid&gt;(nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_BillingAddress&quot;, x =&gt; x.Id);
+                    table.ForeignKey(
+                        name: &quot;FK_BillingAddress_Order_OrderId&quot;,
+                        column: x =&gt; x.OrderId,
+                        principalSchema: &quot;orders&quot;,
+                        principalTable: &quot;Order&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;Product&quot;,
+                schema: &quot;orders&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;Guid&gt;(nullable: false),
+                    Amount = table.Column&lt;double&gt;(nullable: false),
+                    Exchange = table.Column&lt;string&gt;(nullable: true),
+                    Name = table.Column&lt;string&gt;(nullable: true),
+                    OrderId = table.Column&lt;Guid&gt;(nullable: false),
+                    Quantity = table.Column&lt;int&gt;(nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Product&quot;, x =&gt; new { x.Id, x.OrderId });
+                    table.ForeignKey(
+                        name: &quot;FK_Product_Order_OrderId&quot;,
+                        column: x =&gt; x.OrderId,
+                        principalSchema: &quot;orders&quot;,
+                        principalTable: &quot;Order&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;Money&quot;,
+                schema: &quot;orders&quot;,
+                columns: table =&gt; new
+                {
+                    Amount = table.Column&lt;double&gt;(nullable: false),
+                    Exchange = table.Column&lt;string&gt;(nullable: true),
+                    ProductId = table.Column&lt;Guid&gt;(nullable: false),
+                    ProductOrderId = table.Column&lt;Guid&gt;(nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Money&quot;, x =&gt; new { x.ProductId, x.ProductOrderId });
+                    table.ForeignKey(
+                        name: &quot;FK_Money_Product_ProductId_ProductOrderId&quot;,
+                        columns: x =&gt; new { x.ProductId, x.ProductOrderId },
+                        principalSchema: &quot;orders&quot;,
+                        principalTable: &quot;Product&quot;,
+                        principalColumns: new[] { &quot;Id&quot;, &quot;OrderId&quot; },
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_BillingAddress_OrderId&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;BillingAddress&quot;,
+                column: &quot;OrderId&quot;,
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_Product_OrderId&quot;,
+                schema: &quot;orders&quot;,
+                table: &quot;Product&quot;,
+                column: &quot;OrderId&quot;);
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: &quot;BillingAddress&quot;,
+                schema: &quot;orders&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;Customer&quot;,
+                schema: &quot;orders&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;Money&quot;,
+                schema: &quot;orders&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;Product&quot;,
+                schema: &quot;orders&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;Order&quot;,
+                schema: &quot;orders&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,9,9,10,0],[10,13,11,33,0],[13,13,16,35,0],[16,35,22,18,0],[22,18,24,17,0],[24,17,24,18,0],[24,18,25,21,0],[25,21,25,64,0],[25,64,26,17,0],[26,17,26,18,0],[26,18,26,20,0],[13,13,26,20,0],[28,13,31,35,0],[31,35,38,18,0],[38,18,40,17,0],[40,17,40,18,0],[40,18,41,21,0],[41,21,41,61,0],[41,61,42,17,0],[42,17,42,18,0],[42,18,42,20,0],[28,13,42,20,0],[44,13,47,35,0],[47,35,57,18,0],[57,18,59,17,0],[59,17,59,18,0],[59,18,60,21,0],[60,21,60,70,0],[60,70,61,21,0],[61,21,67,62,0],[67,62,68,17,0],[68,17,68,18,0],[68,18,68,20,0],[44,13,68,20,0],[70,13,73,35,0],[73,35,81,18,0],[81,18,83,17,0],[83,17,83,18,0],[83,18,84,21,0],[84,21,84,82,0],[84,82,85,21,0],[85,21,91,62,0],[91,62,92,17,0],[92,17,92,18,0],[92,18,92,20,0],[70,13,92,20,0],[94,13,97,35,0],[97,35,103,18,0],[103,18,105,17,0],[105,17,105,18,0],[105,18,106,21,0],[106,21,106,94,0],[106,94,107,21,0],[107,21,113,62,0],[113,62,114,17,0],[114,17,114,18,0],[114,18,114,20,0],[94,13,114,20,0],[116,13,121,31,0],[123,13,127,36,0],[128,9,128,10,0],[131,9,131,10,0],[132,13,134,35,0],[136,13,138,35,0],[140,13,142,35,0],[144,13,146,35,0],[148,13,150,35,0],[151,9,151,10,0]]);
+    </script>
+  </body>
+</html>

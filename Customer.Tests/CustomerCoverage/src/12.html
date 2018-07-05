@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\services\orderrestservice.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
+using Order.DTO;
+using Shared.Service;
+using ShoppingCart.DTO;
+using Taxology.Site.Models;
+
+namespace Taxology.Site.Services
+{
+    public interface IOrderRestService
+    {
+        Task&lt;BillingAddressDTO&gt; GetDefaultBilling(Guid customerId);
+        Task&lt;OrderDTO&gt; CreateOrder(Customer.DTO.CustomerDTO customer, ShoppingCartDTO cart, BillingAddressDTO billing);
+        Task&lt;bool&gt; CompleteOrder(Guid orderId);
+        Task&lt;OrderDTO&gt; GetOpenOrderForCustomer(Guid customerId);
+        Task&lt;IEnumerable&lt;OrderDTO&gt;&gt; GetCustomerOrders(Guid customerId);
+        Task&lt;OrderDTO&gt; GetOrder(Guid orderId);
+    }
+
+    public class OrderRestService : IOrderRestService
+    {
+        private readonly IRestClient client;
+        private readonly OrderServiceRoutingConfig routingConfig;
+        private readonly IMapper mapper;
+
+        public OrderRestService(IRestClient client, RoutingConfig routingConfig, IMapper mapper)
+        {
+            this.client = client;
+            this.routingConfig = routingConfig.OrderService;
+            this.mapper = mapper;
+        }
+         
+        public async Task&lt;BillingAddressDTO&gt; GetDefaultBilling(Guid customerId)
+        {
+            BillingAddressDTO billing = null;
+      
+            await client.Get&lt;GetBillingAddressResponse&gt;(routingConfig.URL,
+                routingConfig.GetBillingAddress, customerId,
+                success: (response) =&gt; { billing = response.BillingAddress; },
+                error: (error) =&gt;
+                {
+                    if (error.Response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        //no problem
+                    }
+                },
+                headerAccept: HeaderAccept.Json);
+
+            return billing;
+        }
+         
+        public async Task&lt;OrderDTO&gt; CreateOrder(Customer.DTO.CustomerDTO customer, ShoppingCartDTO cart, BillingAddressDTO billing)
+        {
+            var request = new CreateOrderRequest();
+             
+            request.Customer = mapper.Map&lt;OrderCustomerDTO&gt;(customer);
+            request.BillingAddress = billing; 
+            request.Products = mapper.Map&lt;IEnumerable&lt;ProductDTO&gt;&gt;(cart.Products);
+
+            var response = await client.Post&lt;CreateOrderRequest, CreateOrderResponse&gt;(
+                routingConfig.URL,
+                routingConfig.CreateOrder, request, HeaderAccept.Json);
+
+            return response.Order;
+        }
+         
+        public async Task&lt;bool&gt; CompleteOrder(Guid orderId)
+        {
+            var request = new CompleteOrderRequest();
+            request.OrderId = orderId;
+
+
+            var response = await client.Post&lt;CompleteOrderRequest, CompleteOrderResponse&gt;(routingConfig.URL,
+                routingConfig.CompleteOrder, request, HeaderAccept.Json);
+
+            return response.IsSuccess;
+        }
+
+
+        public async Task&lt;OrderDTO&gt; GetOpenOrderForCustomer(Guid customerId)
+        {
+            OrderDTO order = null;
+               
+            await client.Get&lt;GetOpenOrderResponse&gt;(routingConfig.URL, routingConfig.GetOpenOrder,
+                customerId,
+                success: (response) =&gt;
+                {
+                    order = response.Order;
+                },
+                error: (error) =&gt;
+                {
+
+                },
+                headerAccept: HeaderAccept.Json
+            );
+
+            return order;
+        }
+
+        public async Task&lt;IEnumerable&lt;OrderDTO&gt;&gt; GetCustomerOrders(Guid customerId)
+        {
+            IEnumerable &lt; OrderDTO &gt; orders = null;
+             
+            await client.Get&lt;GetCustomerOrdersResponse&gt;(routingConfig.URL, routingConfig.GetCustomerOrders,
+                customerId,
+                success: (response) =&gt;
+                {
+                    orders = response.Orders;
+                },
+                error: (error) =&gt;
+                {
+
+                },
+                headerAccept: HeaderAccept.Json
+            );
+
+            return orders;
+        }
+
+        public async Task&lt;OrderDTO&gt; GetOrder(Guid orderId)
+        {
+            OrderDTO order = null;
+
+            await client.Get&lt;GetOrderResponse&gt;(routingConfig.URL, routingConfig.GetOrder,
+                orderId,
+                success: (response) =&gt;
+                {
+                    order = response.Order;
+                },
+                error: (error) =&gt;
+                {
+
+                },
+                headerAccept: HeaderAccept.Json
+            );
+
+            return order;
+        }
+
+        public async Task&lt;bool&gt; CancelOrder(Guid orderId)
+        {
+            var request = new CancelOrderRequest();
+            request.OrderId = orderId;
+
+
+            var response = await client.Post&lt;CancelOrderRequest, CancelOrderResponse&gt;(routingConfig.URL,
+                routingConfig.CompleteOrder, request, HeaderAccept.Json);
+
+            return response.IsSuccess;
+        }
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[29,9,29,97,0],[30,9,30,10,0],[31,13,31,34,0],[32,13,32,61,0],[33,13,33,34,0],[34,9,34,10,0],[37,9,37,10,0],[38,13,38,46,0],[40,13,42,40,0],[42,40,42,41,0],[42,41,42,42,0],[42,42,42,76,0],[42,76,42,77,0],[42,77,42,78,0],[42,78,44,17,0],[44,17,44,18,0],[44,18,45,21,0],[45,21,45,78,0],[45,78,46,21,0],[46,21,46,22,0],[46,22,48,21,0],[48,21,48,22,0],[48,22,49,17,0],[49,17,49,18,0],[49,18,50,50,0],[40,13,50,50,0],[52,13,52,28,0],[53,9,53,10,0],[56,9,56,10,0],[57,13,57,52,0],[59,13,59,71,0],[60,13,60,46,0],[61,13,61,83,0],[63,13,65,72,0],[67,13,67,35,0],[68,9,68,10,0],[71,9,71,10,0],[72,13,72,54,0],[73,13,73,39,0],[76,13,77,74,0],[79,13,79,39,0],[80,9,80,10,0],[84,9,84,10,0],[85,13,85,35,0],[87,13,90,17,0],[90,17,90,18,0],[90,18,91,21,0],[91,21,91,44,0],[91,44,92,17,0],[92,17,92,18,0],[92,18,94,17,0],[94,17,94,18,0],[94,18,96,17,0],[96,17,96,18,0],[96,18,98,15,0],[87,13,98,15,0],[100,13,100,26,0],[101,9,101,10,0],[104,9,104,10,0],[105,13,105,52,0],[107,13,110,17,0],[110,17,110,18,0],[110,18,111,21,0],[111,21,111,46,0],[111,46,112,17,0],[112,17,112,18,0],[112,18,114,17,0],[114,17,114,18,0],[114,18,116,17,0],[116,17,116,18,0],[116,18,118,15,0],[107,13,118,15,0],[120,13,120,27,0],[121,9,121,10,0],[124,9,124,10,0],[125,13,125,35,0],[127,13,130,17,0],[130,17,130,18,0],[130,18,131,21,0],[131,21,131,44,0],[131,44,132,17,0],[132,17,132,18,0],[132,18,134,17,0],[134,17,134,18,0],[134,18,136,17,0],[136,17,136,18,0],[136,18,138,15,0],[127,13,138,15,0],[140,13,140,26,0],[141,9,141,10,0],[144,9,144,10,0],[145,13,145,52,0],[146,13,146,39,0],[149,13,150,74,0],[152,13,152,39,0],[153,9,153,10,0]]);
+    </script>
+  </body>
+</html>

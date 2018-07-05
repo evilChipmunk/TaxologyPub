@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\controllers\orderscontroler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Order.DTO;
+using Shared.Service;
+using Taxology.WebAPI;
+
+namespace Order.Service.Controllers
+{
+    public class Routing
+    {
+        public const string CreateOrder = &quot;createorder&quot;;
+        public const string GetOrder = &quot;getorders&quot;;
+        public const string GetCustomerOrders = &quot;customerorders&quot;;
+        public const string GetOpenOrder = &quot;openorder&quot;;
+        public const string GetBilling = &quot;billingaddress&quot;;
+        public const string Complete = &quot;complete&quot;;
+        public const string Cancel = &quot;cancel&quot;;
+    }
+    [Route(&quot;api/orders&quot;)]
+    public class OrdersControler : BaseApiController
+    {
+        private readonly IRequestClientFactory getClientFactory; 
+
+        public OrdersControler(ILoggerFactory loggerFactory
+            , IRequestClientFactory getClientFactory) : base(loggerFactory)
+        {
+            this.getClientFactory = getClientFactory; 
+        }
+        protected override ILogger CreateLogger()
+        {
+            return loggerFactory.CreateLogger&lt;OrdersControler&gt;();
+        }
+
+        [HttpPost(Name = Routing.CreateOrder)]
+        [Route(&quot;create&quot;)]
+        public async Task&lt;IActionResult&gt; Create([FromBody] CreateOrderRequest request)
+        {
+
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;CreateOrderRequest, CreateOrderResponse&gt;();
+
+                var response = await client.Request(request);
+                response.RequestUri = Url.Link(Routing.GetOrder, new { id = response.Order.Id});
+                return response;
+            });
+        }
+
+        [HttpPut(Name = Routing.Complete)]
+        [Route(&quot;complete&quot;)]
+        public async Task&lt;IActionResult&gt; Complete([FromBody] CompleteOrderRequest request)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;CompleteOrderRequest, CompleteOrderResponse&gt;();
+                return await client.Request(request); 
+            });
+        }
+
+
+        [HttpPut(Name = Routing.Cancel)]
+        [Route(&quot;cancel&quot;)]
+        public async Task&lt;IActionResult&gt; Cancel([FromBody] CancelOrderRequest request)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;CancelOrderRequest, CancelOrderResponse&gt;();
+                return await client.Request(request); 
+            });
+        }
+         
+
+
+        [HttpGet(Name = Routing.GetBilling)]
+        [Route(&quot;billingaddress&quot;)]
+        public async Task&lt;IActionResult&gt; GetBillingAddress(Guid customerId)
+        { 
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;GetBillingAddressRequest, GetBillingAddressResponse&gt;();
+                return await client.Request(new GetBillingAddressRequest(customerId)); 
+            });
+        }
+
+
+        [HttpGet(Name = Routing.GetOrder)]
+        [Route(&quot;{orderId}&quot;)]
+        public async Task&lt;IActionResult&gt; Get(Guid orderId)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;GetOrderRequest, GetOrderResponse&gt;();
+                return await client.Request(new GetOrderRequest(orderId));
+            });
+        }
+
+
+        [HttpGet(Name = Routing.GetOpenOrder)]
+        [Route(&quot;open/{customerId}&quot;)]
+        public async Task&lt;IActionResult&gt; GetOpenOrder(Guid customerId)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;GetOpenOrderRequest, GetOpenOrderResponse&gt;();
+                return await client.Request(new GetOpenOrderRequest(customerId)); 
+            });
+        }
+
+
+        [HttpGet(Name = Routing.GetCustomerOrders)]
+        [Route(&quot;customerorders/{customerId}&quot;)]
+        public async Task&lt;IActionResult&gt; GetCustomerOrders(Guid customerId)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = getClientFactory.Create&lt;GetCustomerOrdersRequest, GetCustomerOrdersResponse&gt;();
+                return await client.Request(new GetCustomerOrdersRequest(customerId)); 
+            });
+        }
+
+
+        //        [HttpGet]
+        //        [Route(&quot;list&quot;)]
+        //        public async Task&lt;IActionResult&gt; GetAllCustomerOrders(Guid customerId)
+        //        {
+        //            return await HandleAsync(() =&gt; await service.)
+        //        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,57,27,76,0],[28,9,28,10,0],[29,13,29,54,0],[30,9,30,10,0],[32,9,32,10,0],[33,13,33,66,0],[34,9,34,10,0],[39,9,39,10,0],[41,13,42,13,0],[42,13,42,14,0],[42,14,43,17,0],[43,17,43,97,0],[43,97,45,17,0],[45,17,45,62,0],[45,62,46,17,0],[46,17,46,97,0],[46,97,47,17,0],[47,17,47,33,0],[47,33,48,13,0],[48,13,48,14,0],[48,14,48,16,0],[41,13,48,16,0],[49,9,49,10,0],[54,9,54,10,0],[55,13,56,13,0],[56,13,56,14,0],[56,14,57,17,0],[57,17,57,101,0],[57,101,58,17,0],[58,17,58,54,0],[58,54,59,13,0],[59,13,59,14,0],[59,14,59,16,0],[55,13,59,16,0],[60,9,60,10,0],[66,9,66,10,0],[67,13,68,13,0],[68,13,68,14,0],[68,14,69,17,0],[69,17,69,97,0],[69,97,70,17,0],[70,17,70,54,0],[70,54,71,13,0],[71,13,71,14,0],[71,14,71,16,0],[67,13,71,16,0],[72,9,72,10,0],[79,9,79,10,0],[80,13,81,13,0],[81,13,81,14,0],[81,14,82,17,0],[82,17,82,109,0],[82,109,83,17,0],[83,17,83,87,0],[83,87,84,13,0],[84,13,84,14,0],[84,14,84,16,0],[80,13,84,16,0],[85,9,85,10,0],[91,9,91,10,0],[92,13,93,13,0],[93,13,93,14,0],[93,14,94,17,0],[94,17,94,91,0],[94,91,95,17,0],[95,17,95,75,0],[95,75,96,13,0],[96,13,96,14,0],[96,14,96,16,0],[92,13,96,16,0],[97,9,97,10,0],[103,9,103,10,0],[104,13,105,13,0],[105,13,105,14,0],[105,14,106,17,0],[106,17,106,99,0],[106,99,107,17,0],[107,17,107,82,0],[107,82,108,13,0],[108,13,108,14,0],[108,14,108,16,0],[104,13,108,16,0],[109,9,109,10,0],[115,9,115,10,0],[116,13,117,13,0],[117,13,117,14,0],[117,14,118,17,0],[118,17,118,109,0],[118,109,119,17,0],[119,17,119,87,0],[119,87,120,13,0],[120,13,120,14,0],[120,14,120,16,0],[116,13,120,16,0],[121,9,121,10,0]]);
+    </script>
+  </body>
+</html>

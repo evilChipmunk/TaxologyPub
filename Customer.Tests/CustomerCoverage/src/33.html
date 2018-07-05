@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\controllers\accountcontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Shared.Authentication;
+using Taxology.Site.Models.AccountViewModels;
+using Taxology.Site.Services;
+
+namespace Taxology.Site.Controllers
+{
+    [Authorize]
+    public class AccountController : Controller
+    {
+        private readonly UserManager&lt;SiteUser&gt; _userManager;
+        private readonly SignInManager&lt;SiteUser&gt; _signInManager;
+
+        private readonly IShoppingCartService shoppingCartService;
+        //   private IMailService _mailService;
+
+        public AccountController(
+            UserManager&lt;SiteUser&gt; userManager,
+            SignInManager&lt;SiteUser&gt; signInManager, IShoppingCartService shoppingCartService,
+            ILogger&lt;AccountController&gt; logger)
+         //   ,
+         ////   IMailService mailService,
+         //   ICodeCampRepository repo)// : base(repo, logger)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            this.shoppingCartService = shoppingCartService;
+            //  _mailService = mailService;
+        }
+
+        //
+        // GET: /Account/Login
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login(string returnUrl = null)
+        {
+            ViewData[&quot;ReturnUrl&quot;] = returnUrl;
+            return View();
+        }
+
+        //
+        // POST: /Account/Login
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task&lt;IActionResult&gt; Login(LoginViewModel model, string returnUrl = null)
+        {
+            ViewData[&quot;ReturnUrl&quot;] = returnUrl;
+
+            if (ModelState.IsValid)
+            {
+                var anonCart = await shoppingCartService.GetShoppingCart();
+
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                   // _logger.LogInformation(1, &quot;User logged in.&quot;);
+
+                    var user = await _signInManager.UserManager.FindByEmailAsync(model.Email);
+
+                    var loggedInCart = await shoppingCartService.GetShoppingCart(user);
+
+                    foreach (var product in anonCart.Products)
+                    { 
+                        await shoppingCartService.AddProduct(loggedInCart, product);
+                    }
+
+
+                    return RedirectToLocal(returnUrl);
+                }
+                else
+                {
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+//                    if (user != null &amp;&amp; !user.EmailConfirmed)
+//                    {
+//                        ModelState.AddModelError(string.Empty, &quot;You must confirm your email address before logging in.&quot;);
+//                    }
+//                    else
+//                    {
+//                        ModelState.AddModelError(string.Empty, &quot;Invalid login attempt.&quot;);
+//                    }
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        //
+        // GET: /Account/Join
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Join(string returnUrl = null)
+        {
+            ViewData[&quot;ReturnUrl&quot;] = returnUrl;
+            return View();
+        }
+
+        //
+        // POST: /Account/Join
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task&lt;IActionResult&gt; Join(RegisterViewModel model, string returnUrl = null)
+        {
+            ViewData[&quot;ReturnUrl&quot;] = returnUrl;
+            if (ModelState.IsValid)
+            {
+                var user = new SiteUser { UserName = model.Email, Email = model.Email, Name = model.Name };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //var callbackUrl = Url.Action(&quot;ConfirmEmail&quot;, &quot;Account&quot;, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    //if (!(await _mailService.SendTemplateMailAsync(&quot;ConfirmEmail&quot;, new AccountConfirmModel()
+                    //{
+                    //    Name = model.Name,
+                    //    Email = model.Email,
+                    //    Subject = &quot;Confirm your account&quot;,
+                    //    Callback = callbackUrl
+                    //})))
+                    //{
+                    //    _logger.LogError($&quot;Failed to send out confirmation email, user created but can&#39;t confirm the account.&quot;);
+                    //    ModelState.AddModelError(&quot;&quot;, &quot;Could not send out confirmation email, please contact us at codecamp@live.com for help.&quot;);
+                    //}
+                    //_logger.LogInformation(3, &quot;User created a new account with password.&quot;);
+                   // return View(&quot;ResendConfirmEmailSent&quot;);
+                    return RedirectToAction(&quot;Index&quot;, &quot;Home&quot;);
+                }
+                AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task&lt;IActionResult&gt; LogOff()
+        {
+            await _signInManager.SignOutAsync();
+          //  _logger.LogInformation(4, &quot;User logged out.&quot;);
+            return RedirectToAction(&quot;Index&quot;, &quot;Home&quot;);
+        }
+
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult ResendConfirmEmail()
+        //{
+        //    return View();
+        //}
+
+//        [HttpPost]
+//        [AllowAnonymous]
+//        public async Task&lt;IActionResult&gt; ResendConfirmEmail(string email)
+//        {
+//            if (ModelState.IsValid)
+//            {
+//                var user = await _userManager.FindByEmailAsync(email);
+
+//                if (user != null)
+//                {
+//                    if (user.EmailConfirmed)
+//                    {
+//                        ModelState.AddModelError(&quot;&quot;, &quot;Account already confirmed, please just login&quot;);
+//                        return View();
+//                    }
+//                    else
+//                    {
+//                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+//                        var callbackUrl = Url.Action(&quot;ConfirmEmail&quot;, &quot;Account&quot;, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+////                        await _mailService.SendTemplateMailAsync(&quot;ConfirmEmail&quot;, new AccountConfirmModel()
+////                        {
+////                            Email = email,
+////                            Subject = &quot;Confirm your account&quot;,
+////                            Callback = callbackUrl
+////                        });
+
+//                        return View(&quot;ResendConfirmEmailSent&quot;);
+//                    }
+//                }
+//                else
+//                {
+//                    ModelState.AddModelError(&quot;&quot;, &quot;No such email, please register.&quot;);
+//                    return View();
+//                }
+//            }
+
+//            return View(&quot;Error&quot;);
+//        }
+
+
+//        // GET: /Account/ConfirmEmail
+//        [HttpGet]
+//        [AllowAnonymous]
+//        public async Task&lt;IActionResult&gt; ConfirmEmail(string userId, string code)
+//        {
+//            if (userId == null || code == null)
+//            {
+//                return View(&quot;ResendConfirmCode&quot;);
+//            }
+//            var user = await _userManager.FindByIdAsync(userId);
+//            if (user == null)
+//            {
+//                return View(&quot;ResendConfirmCode&quot;);
+//            }
+//            var result = await _userManager.ConfirmEmailAsync(user, code);
+//            return View(result.Succeeded ? &quot;ConfirmEmail&quot; : &quot;ResendConfirmCode&quot;);
+//        }
+
+//        //
+//        // GET: /Account/ForgotPassword
+//        [HttpGet]
+//        [AllowAnonymous]
+//        public IActionResult ForgotPassword()
+//        {
+//            return View();
+//        }
+
+        //
+        // POST: /Account/ForgotPassword
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task&lt;IActionResult&gt; ForgotPassword(ForgotPasswordViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = await _userManager.FindByNameAsync(model.Email);
+        //        if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+        //        {
+        //            // Don&#39;t reveal that the user does not exist or is not confirmed
+        //            return View(&quot;ResendConfirmEmail&quot;);
+        //        }
+
+        //        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+        //        // Send an email with this link
+        //        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //        var callbackUrl = Url.Action(&quot;ResetPassword&quot;, &quot;Account&quot;, new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+        //        if (!await _mailService.SendTemplateMailAsync(&quot;ResetPassword&quot;, new AccountConfirmModel()
+        //        {
+        //            Email = model.Email,
+        //            Subject = &quot;Forgot Your Password&quot;,
+        //            Callback = callbackUrl
+        //        }))
+        //        {
+        //            ModelState.AddModelError(&quot;&quot;, &quot;Failed to send email. Please send an email to codecamp@live.com and we&#39;ll fix the issue.&quot;);
+        //            return View();
+        //        }
+        //        return View(&quot;ForgotPasswordConfirmation&quot;);
+        //    }
+
+        //    // If we got this far, something failed, redisplay form
+        //    return View(model);
+        //}
+
+        //
+        // GET: /Account/ForgotPasswordConfirmation
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult ForgotPasswordConfirmation()
+        //{
+        //    return View();
+        //}
+
+        //
+        // GET: /Account/ResetPassword
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult ResetPassword(string code = null)
+        //{
+        //    return code == null ? View(&quot;Error&quot;) : View();
+        //}
+
+        //
+        // POST: /Account/ResetPassword
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task&lt;IActionResult&gt; ResetPassword(ResetPasswordViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(model);
+        //    }
+        //    var user = await _userManager.FindByNameAsync(model.Email);
+        //    if (user == null)
+        //    {
+        //        // Don&#39;t reveal that the user does not exist
+        //        return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), &quot;Account&quot;);
+        //    }
+        //    var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+        //    if (result.Succeeded)
+        //    {
+        //        return RedirectToAction(nameof(AccountController.ResetPasswordConfirmation), &quot;Account&quot;);
+        //    }
+        //    AddErrors(result);
+        //    return View();
+        //}
+
+        //
+        // GET: /Account/ResetPasswordConfirmation
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult ResetPasswordConfirmation()
+        //{
+        //    return View();
+        //}
+
+
+        #region Helpers
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+        }
+
+        private Task&lt;SiteUser&gt; GetCurrentUserAsync()
+        {
+            return _userManager.GetUserAsync(HttpContext.User);
+        }
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(&quot;Index&quot;, &quot;Home&quot;);
+            }
+        }
+
+        #endregion
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,25,47,0],[29,9,29,10,0],[30,13,30,40,0],[31,13,31,44,0],[32,13,32,60,0],[34,9,34,10,0],[41,9,41,10,0],[42,13,42,47,0],[43,13,43,27,0],[44,9,44,10,0],[52,9,52,10,0],[53,13,53,47,0],[55,13,55,36,0],[56,13,56,14,0],[57,17,57,76,0],[59,17,59,143,0],[60,17,60,38,0],[61,17,61,18,0],[64,21,64,95,0],[66,21,66,88,0],[68,21,68,28,0],[68,30,68,41,0],[68,42,68,44,0],[68,45,68,62,0],[69,21,69,22,0],[70,25,70,85,0],[71,21,71,22,0],[74,21,74,55,0],[77,17,77,18,0],[78,21,78,81,0],[87,17,87,18,0],[88,13,88,14,0],[91,13,91,32,0],[92,9,92,10,0],[99,9,99,10,0],[100,13,100,47,0],[101,13,101,27,0],[102,9,102,10,0],[110,9,110,10,0],[111,13,111,47,0],[112,13,112,36,0],[113,13,113,14,0],[114,17,114,108,0],[115,17,115,83,0],[116,17,116,38,0],[117,17,117,18,0],[118,21,118,93,0],[133,21,133,62,0],[135,17,135,35,0],[136,13,136,14,0],[139,13,139,32,0],[140,9,140,10,0],[144,9,144,10,0],[145,13,145,49,0],[147,13,147,54,0],[148,9,148,10,0],[318,9,318,10,0],[319,13,319,20,0],[319,22,319,31,0],[319,32,319,34,0],[319,35,319,48,0],[320,13,320,14,0],[321,17,321,75,0],[322,13,322,14,0],[323,9,323,10,0],[326,9,326,10,0],[327,13,327,64,0],[328,9,328,10,0],[331,9,331,10,0],[332,13,332,43,0],[333,13,333,14,0],[334,17,334,44,0],[337,13,337,14,0],[338,17,338,58,0],[340,9,340,10,0]]);
+    </script>
+  </body>
+</html>

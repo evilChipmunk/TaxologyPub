@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.domain\customercreatedevent.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Shared.Domain;
+
+namespace Customer.Domain
+{
+    public class CustomerCreatedEvent : IDomainEvent
+    {
+        public CustomerCreatedEvent(Customer customer)
+        {
+            this.CustomerId = customer.Id;
+            DateTimeEventOccurred = DateTime.Now;
+            Customer = customer;
+        }
+
+        public Guid CustomerId { get; }
+        public DateTime DateTimeEventOccurred { get; }
+
+        public Customer Customer { get; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,55,1],[9,9,9,10,1],[10,13,10,43,1],[11,13,11,50,1],[12,13,12,33,1],[13,9,13,10,1],[15,34,15,38,0],[16,49,16,53,0],[18,36,18,40,0]]);
+    </script>
+  </body>
+</html>

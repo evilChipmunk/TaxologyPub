@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.webapi\controllers\shoppingcartscontroller.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Shared.DTO;
+using Shared.Service;
+using ShoppingCart.DTO;
+using Taxology.WebAPI;
+
+namespace ShoppingCart.Service.Controllers
+{ 
+    [Produces(&quot;application/json&quot;)]
+    [Route(&quot;api/ShoppingCarts&quot;)]
+    public class ShoppingCartsController : BaseApiController
+    {
+        private readonly IRequestClientFactory clientFactory;
+
+        public ShoppingCartsController(ILoggerFactory loggerFactory, IRequestClientFactory clientFactory) : base(loggerFactory)
+        {
+            this.clientFactory = clientFactory; 
+        }
+
+        protected override ILogger CreateLogger()
+        {
+           return base.loggerFactory.CreateLogger&lt;ShoppingCartsController&gt;();
+        }
+
+
+
+        [HttpGet(&quot;{customerId}&quot;)]
+        public async Task&lt;IActionResult&gt; Get(Guid customerId)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = clientFactory.Create&lt;GetShoppingCartByCustomerRequest, GetShoppingCartResponse&gt;();
+                return await client.Request(new GetShoppingCartByCustomerRequest(customerId));
+            });
+        }
+
+
+        //[HttpPost(Name = &quot;/carts/{ipAddress}&quot;)]
+        //public async Task&lt;IActionResult&gt; CreateCart(string ipAddress)
+        //{
+        //    return await HandleAsync(async () =&gt;
+        //        await service.CreateCartAsync(new CreateAnonShoppingCartRequest {IpAddress = ipAddress}));
+        //}
+
+
+        [HttpPut]
+        [Route(&quot;addproduct&quot;)]
+        public async Task&lt;IActionResult&gt; AddProduct([FromBody] AddProductRequest request)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = clientFactory.Create&lt;AddProductRequest, AddProductResponse&gt;();
+                return await client.Request(request); 
+            });
+        }
+
+
+        [HttpDelete]
+        [Route(&quot;removeproduct&quot;)]
+        public async Task&lt;IActionResult&gt; RemoveProduct([FromBody] RemoveProductRequest request)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = clientFactory.Create&lt;RemoveProductRequest, RemoveProductResponse&gt;();
+                return await client.Request(request);
+            });
+        }
+
+        [HttpPut(Name = &quot;clear&quot;)]
+      //  [Route(&quot;clearcart/{cartId}/{orderId}&quot;)]
+        [Route(&quot;clear&quot;)]
+        //   public async Task&lt;IActionResult&gt; ClearCart(Guid cartId, Guid orderId)
+        public async Task&lt;IActionResult&gt; ClearCart([FromBody] ClearCartRequest request)
+        {
+            return await HandleAsync(async () =&gt;
+            {
+                var client = clientFactory.Create&lt;ClearCartRequest, ClearCartResponse&gt;();
+                return await client.Request(request);
+            });
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,109,20,128,0],[21,9,21,10,0],[22,13,22,48,0],[23,9,23,10,0],[26,9,26,10,0],[27,12,27,78,0],[28,9,28,10,0],[34,9,34,10,0],[35,13,36,13,0],[36,13,36,14,0],[36,14,37,17,0],[37,17,37,112,0],[37,112,38,17,0],[38,17,38,95,0],[38,95,39,13,0],[39,13,39,14,0],[39,14,39,16,0],[35,13,39,16,0],[40,9,40,10,0],[54,9,54,10,0],[55,13,56,13,0],[56,13,56,14,0],[56,14,57,17,0],[57,17,57,92,0],[57,92,58,17,0],[58,17,58,54,0],[58,54,59,13,0],[59,13,59,14,0],[59,14,59,16,0],[55,13,59,16,0],[60,9,60,10,0],[66,9,66,10,0],[67,13,68,13,0],[68,13,68,14,0],[68,14,69,17,0],[69,17,69,98,0],[69,98,70,17,0],[70,17,70,54,0],[70,54,71,13,0],[71,13,71,14,0],[71,14,71,16,0],[67,13,71,16,0],[72,9,72,10,0],[79,9,79,10,0],[80,13,81,13,0],[81,13,81,14,0],[81,14,82,17,0],[82,17,82,90,0],[82,90,83,17,0],[83,17,83,54,0],[83,54,84,13,0],[84,13,84,14,0],[84,14,84,16,0],[80,13,84,16,0],[85,9,85,10,0]]);
+    </script>
+  </body>
+</html>

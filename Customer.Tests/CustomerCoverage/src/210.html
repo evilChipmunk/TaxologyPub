@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\domainevents.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+
+namespace Shared.Domain
+{
+    public static class DomainEvents
+    {
+        [ThreadStatic]
+        private static List&lt;Delegate&gt; _actions;
+
+        private static readonly List&lt;IHandle&lt;IDomainEvent&gt;&gt; Handlers;
+         
+
+        static DomainEvents()
+        { 
+            Handlers = new List&lt;IHandle&lt;IDomainEvent&gt;&gt;();
+        }
+
+        public static void SetHandlers&lt;T&gt;(IEnumerable&lt;IHandle&lt;IDomainEvent&gt;&gt; handlers) where T : IDomainEvent
+        {
+            Handlers.AddRange(handlers);
+        }
+         
+        public static void Register&lt;T&gt;(Action&lt;T&gt; callback) where T : IDomainEvent
+        {
+            if (_actions == null)
+            {
+                _actions = new List&lt;Delegate&gt;();
+            }
+            _actions.Add(callback);
+        }
+
+        public static void ClearCallbacks()
+        {
+            _actions = null;
+        }
+
+        public static void Raise&lt;T&gt;(T args) where T : IDomainEvent
+        {
+            foreach (var handler in Handlers)
+            {
+                handler.Handle(args);
+            }
+
+
+            //foreach (var handler in Container.GetAllInstances&lt;IHandle&lt;T&gt;&gt;())
+            //{
+            //    handler.Handle(args);
+            //}
+
+            if (_actions != null)
+            {
+                foreach (var action in _actions)
+                {
+                    if (action is Action&lt;T&gt;)
+                    {
+                        ((Action&lt;T&gt;)action)(args);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    public static class DomainToAppEvents
+    {
+        [ThreadStatic]
+        private static List&lt;Delegate&gt; _actions;
+
+        private static readonly List&lt;IHandle&lt;IDomainEvent&gt;&gt; Handlers;
+
+
+        static DomainToAppEvents()
+        {
+            Handlers = new List&lt;IHandle&lt;IDomainEvent&gt;&gt;();
+        }
+
+        public static void SetHandlers&lt;T&gt;(IEnumerable&lt;IHandle&lt;IDomainEvent&gt;&gt; handlers) where T : IDomainEvent
+        {
+            Handlers.AddRange(handlers);
+        }
+
+        public static void Register&lt;T&gt;(Action&lt;T&gt; callback) where T : IDomainEvent
+        {
+            if (_actions == null)
+            {
+                _actions = new List&lt;Delegate&gt;();
+            }
+            _actions.Add(callback);
+        }
+
+        public static void ClearCallbacks()
+        {
+            _actions = null;
+        }
+
+        public static void Raise&lt;T&gt;(T args) where T : IDomainEvent
+        {
+            foreach (var handler in Handlers)
+            {
+                handler.Handle(args);
+            }
+
+
+            //foreach (var handler in Container.GetAllInstances&lt;IHandle&lt;T&gt;&gt;())
+            //{
+            //    handler.Handle(args);
+            //}
+
+            if (_actions != null)
+            {
+                foreach (var action in _actions)
+                {
+                    if (action is Action&lt;T&gt;)
+                    {
+                        ((Action&lt;T&gt;)action)(args);
+                    }
+                }
+            }
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,10,0],[16,13,16,58,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,21,41,0],[22,9,22,10,0],[25,9,25,10,0],[26,13,26,34,0],[27,13,27,14,0],[28,17,28,49,0],[29,13,29,14,0],[30,13,30,36,0],[31,9,31,10,0],[34,9,34,10,0],[35,13,35,29,0],[36,9,36,10,0],[39,9,39,10,0],[40,13,40,20,0],[40,22,40,33,0],[40,34,40,36,0],[40,37,40,45,0],[41,13,41,14,0],[42,17,42,38,0],[43,13,43,14,0],[51,13,51,34,0],[52,13,52,14,0],[53,17,53,24,0],[53,26,53,36,0],[53,37,53,39,0],[53,40,53,48,0],[54,17,54,18,0],[55,21,55,45,0],[56,21,56,22,0],[57,25,57,51,0],[58,21,58,22,0],[59,17,59,18,0],[60,13,60,14,0],[61,9,61,10,0],[75,9,75,10,0],[76,13,76,58,0],[77,9,77,10,0],[80,9,80,10,0],[81,13,81,41,0],[82,9,82,10,0],[85,9,85,10,0],[86,13,86,34,0],[87,13,87,14,0],[88,17,88,49,0],[89,13,89,14,0],[90,13,90,36,0],[91,9,91,10,0],[94,9,94,10,0],[95,13,95,29,0],[96,9,96,10,0],[99,9,99,10,0],[100,13,100,20,0],[100,22,100,33,0],[100,34,100,36,0],[100,37,100,45,0],[101,13,101,14,0],[102,17,102,38,0],[103,13,103,14,0],[111,13,111,34,0],[112,13,112,14,0],[113,17,113,24,0],[113,26,113,36,0],[113,37,113,39,0],[113,40,113,48,0],[114,17,114,18,0],[115,21,115,45,0],[116,21,116,22,0],[117,25,117,51,0],[118,21,118,22,0],[119,17,119,18,0],[120,13,120,14,0],[121,9,121,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.persistency\shoppingcartcontext.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Shared.Domain;
+using Shared.Persistency;
+
+namespace ShoppingCart.Persistency
+{
+    public class ShoppingCartContext : BaseContext
+    {
+        public ShoppingCartContext() : base(&quot;shoppingcarts&quot;, null)
+        {
+
+        }
+        public ShoppingCartContext(IMediator mediator) : base(&quot;shoppingcarts&quot;, mediator)
+        {
+        }
+
+        public override Task EnsureSeedData()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity&lt;Domain.ShoppingCartProduct&gt;().OwnsOne(c =&gt; c.Price);
+          //  modelBuilder.Entity&lt;Domain.ShoppingCart&gt;().OwnsOne(c =&gt; c.Total);
+            modelBuilder.Entity&lt;Domain.ShoppingCart&gt;().Ignore(x =&gt; x.Total);
+             
+           // DbContextOptionsBuilder.EnableSensitiveDataLogging();
+
+
+           //modelBuilder.Entity&lt;Domain.ShoppingCart&gt;().Ignore(x =&gt; x.State);
+           //modelBuilder.Entity&lt;Domain.ShoppingCartProduct&gt;().Ignore(x =&gt; x.State);
+
+
+           
+
+        }
+
+        public DbSet&lt;ShoppingCart.Domain.ShoppingCart&gt; ShoppingCarts { get; set; } 
+
+        
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,40,11,67,0],[12,9,12,10,0],[14,9,14,10,0],[15,58,15,89,0],[16,9,16,10,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,21,39,0],[22,9,22,10,0],[25,9,25,10,0],[26,13,26,48,0],[27,13,27,85,0],[29,13,29,77,0],[40,9,40,10,0],[42,72,42,76,0],[42,77,42,81,0]]);
+    </script>
+  </body>
+</html>

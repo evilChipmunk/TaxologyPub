@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shared.domain\valueobject.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+namespace Shared.Domain
+{
+    public abstract class ValueObject&lt;T&gt; : IEquatable&lt;T&gt;
+        where T : ValueObject&lt;T&gt;
+    {
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+
+            var other = obj as T;
+
+            return Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            var fields = GetFields(this);
+
+            var startValue = 17;
+            var multiplier = 59;
+
+            return fields
+                .Select(field =&gt; field.GetValue(this))
+                .Where(value =&gt; value != null)
+                .Aggregate(
+                    startValue,
+                    (current, value) =&gt; current * multiplier + value.GetHashCode());
+        }
+
+        public virtual bool Equals(T other)
+        {
+            if (other == null)
+                return false;
+
+            var t = GetType();
+            var otherType = other.GetType();
+
+            if (t != otherType)
+                return false;
+
+            var fields = GetFields(this);
+
+            foreach (var field in fields)
+            {
+                var value1 = field.GetValue(other);
+                var value2 = field.GetValue(this);
+
+                if (value1 == null)
+                {
+                    if (value2 != null)
+                        return false;
+                }
+                else if (!value1.Equals(value2))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static IEnumerable&lt;FieldInfo&gt; GetFields(object obj)
+        {
+            var t = obj.GetType();
+
+            var fields = new List&lt;FieldInfo&gt;();
+
+            while (t != typeof(object))
+            {
+                if (t == null) continue;
+                fields.AddRange(t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public));
+
+                t = t.BaseType;
+            }
+
+            return fields;
+        }
+
+        public static bool operator ==(ValueObject&lt;T&gt; x, ValueObject&lt;T&gt; y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (((object)x == null) || ((object)y == null))
+            {
+                return false;
+            }
+
+            return x.Equals(y);
+        }
+
+        public static bool operator !=(ValueObject&lt;T&gt; x, ValueObject&lt;T&gt; y)
+        {
+            return !(x == y);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,0],[13,13,13,29,0],[14,17,14,30,0],[16,13,16,34,0],[18,13,18,34,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,42,0],[25,13,25,33,0],[26,13,26,33,0],[28,13,29,34,0],[29,34,29,54,0],[29,54,30,33,0],[30,33,30,46,0],[30,46,33,41,0],[33,41,33,83,0],[33,83,33,85,0],[28,13,33,85,0],[34,9,34,10,0],[37,9,37,10,0],[38,13,38,31,0],[39,17,39,30,0],[41,13,41,31,0],[42,13,42,45,0],[44,13,44,32,0],[45,17,45,30,0],[47,13,47,42,0],[49,13,49,20,0],[49,22,49,31,0],[49,32,49,34,0],[49,35,49,41,0],[50,13,50,14,0],[51,17,51,52,0],[52,17,52,51,0],[54,17,54,36,0],[55,17,55,18,0],[56,21,56,40,0],[57,25,57,38,0],[58,17,58,18,0],[59,22,59,49,0],[60,21,60,34,0],[61,13,61,14,0],[63,13,63,25,0],[64,9,64,10,0],[67,9,67,10,0],[68,13,68,35,0],[70,13,70,48,0],[72,13,72,40,0],[73,13,73,14,0],[74,17,74,31,0],[74,32,74,41,0],[75,17,75,116,0],[77,17,77,32,0],[78,13,78,14,0],[80,13,80,27,0],[81,9,81,10,0],[84,9,84,10,0],[85,13,85,39,0],[86,13,86,14,0],[87,17,87,29,0],[90,13,90,60,0],[91,13,91,14,0],[92,17,92,30,0],[95,13,95,32,0],[96,9,96,10,0],[99,9,99,10,0],[100,13,100,30,0],[101,9,101,10,0]]);
+    </script>
+  </body>
+</html>

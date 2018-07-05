@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\shoppingcart.console.service\consumers\clearcartconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using MassTransit;
+using Shared.DTO;
+using ShoppingCart.DTO;
+using ShoppingCart.Persistency;
+
+namespace ShoppingCart.Service.Consumers
+{
+    public class ClearCartConsumer : IConsumer&lt;ClearCartRequest&gt;
+    {
+        private readonly IShoppingCartRepository repo;
+
+        public ClearCartConsumer(IShoppingCartRepository repo)
+        {
+            this.repo = repo;
+        }
+        public async Task Consume(ConsumeContext&lt;ClearCartRequest&gt; context)
+        {
+            var request = context.Message;
+             
+            var cart = await repo.GetCartByIdAsync(request.CartId);
+            cart.UpdateOrder(request.OrderId);
+            await repo.SaveAsync(cart);
+
+            var response = new ClearCartResponse(true, ResponseAction.Updated);
+
+            await context.RespondAsync(response);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,63,0],[14,9,14,10,0],[15,13,15,30,0],[16,9,16,10,0],[18,9,18,10,0],[19,13,19,43,0],[21,13,21,68,0],[22,13,22,47,0],[23,13,23,40,0],[25,13,25,80,0],[27,13,27,50,0],[28,9,28,10,0]]);
+    </script>
+  </body>
+</html>

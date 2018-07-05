@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\taxology.site\models\purchasemodel.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+
+namespace Taxology.Site.Models
+{
+    [Serializable]
+    public class PurchaseModel
+    {
+        public PurchaseModel()
+        {
+            Billing = new BillingInfoModel();
+            Order = new OrderModel();
+        }
+        public Guid CustomerId { get; set; }
+
+        public BillingInfoModel Billing { get; set; }
+
+        public Guid CartId { get; set; } 
+
+        public OrderModel Order { get; set; }
+
+        public int Step { get; set; }
+         
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,31,0],[9,9,9,10,0],[10,13,10,46,0],[11,13,11,38,0],[12,9,12,10,0],[13,34,13,38,0],[13,39,13,43,0],[15,43,15,47,0],[15,48,15,52,0],[17,30,17,34,0],[17,35,17,39,0],[19,35,19,39,0],[19,40,19,44,0],[21,27,21,31,0],[21,32,21,36,0]]);
+    </script>
+  </body>
+</html>

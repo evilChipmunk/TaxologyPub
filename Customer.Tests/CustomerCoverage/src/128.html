@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\order.console.service\consumers\cancelorderconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using Order.DTO;
+using Order.Persistency;
+using Shared.DTO;
+
+namespace Order.Service.Consumers
+{
+    public class CancelOrderConsumer : IConsumer&lt;CancelOrderRequest&gt;
+    {
+        private readonly IOrderRepository repo;
+        private readonly IMapper mapper;
+
+        public CancelOrderConsumer(IOrderRepository repo, IMapper mapper)
+        {
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+
+        public async Task Consume(ConsumeContext&lt;CancelOrderRequest&gt; context)
+        {
+            var request = context.Message;
+
+            Domain.Order order = await repo.GetOrder(request.OrderId);
+            order.Cancel();
+            order = await repo.SaveAsync(order);
+
+            var response = new CancelOrderResponse(true, ResponseAction.Updated);
+
+            await context.RespondAsync(response);
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,74,0],[16,9,16,10,0],[17,13,17,30,0],[18,13,18,34,0],[19,9,19,10,0],[22,9,22,10,0],[23,13,23,43,0],[25,13,25,71,0],[26,13,26,28,0],[27,13,27,49,0],[29,13,29,82,0],[31,13,31,50,0],[32,9,32,10,0]]);
+    </script>
+  </body>
+</html>

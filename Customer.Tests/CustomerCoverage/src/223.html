@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\customer.tests\framework\categories\categorydiscoverer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Collections.Generic;
+using System.Linq;
+using Xunit.Abstractions;
+using Xunit.Sdk;
+
+namespace Domain.Tests.Framework.Categories
+{
+    internal class CategoryDiscoverer : ITraitDiscoverer
+    {
+        /// &lt;summary&gt;
+        ///     Gets the trait values from the Category attribute.
+        /// &lt;/summary&gt;
+        /// &lt;param name=&quot;traitAttribute&quot;&gt;The trait attribute containing the trait values.&lt;/param&gt;
+        /// &lt;returns&gt;The trait values.&lt;/returns&gt;
+        public IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt; GetTraits(IAttributeInfo traitAttribute)
+        {
+            var ctorArgs = traitAttribute.GetConstructorArguments().ToList();
+            yield return new KeyValuePair&lt;string, string&gt;(&quot;Category&quot;, ctorArgs[0].ToString());
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,10,0],[17,13,17,78,0],[18,13,18,95,0],[19,9,19,10,0]]);
+    </script>
+  </body>
+</html>

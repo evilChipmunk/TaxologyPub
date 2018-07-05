@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\customer.console.service\consumers\savecustomerconsumer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Threading.Tasks;
+using AutoMapper;
+using Customer.DTO;
+using Customer.Persistency;
+using MassTransit;
+using Shared.DTO;
+
+namespace Customer.Service
+{
+    public class SaveCustomerConsumer : IConsumer&lt;ISaveCustomerRequest&gt;
+    {
+
+        private readonly ICustomerBuilder builder;
+        private readonly ICustomerRepository repo;
+        private readonly IMapper mapper;
+
+        public SaveCustomerConsumer(ICustomerBuilder builder, ICustomerRepository repo, IMapper mapper)
+        {
+            this.builder = builder;
+            this.repo = repo;
+            this.mapper = mapper;
+        }
+
+        public async Task Consume(ConsumeContext&lt;ISaveCustomerRequest&gt; context)
+        {
+
+            var request = context.Message;
+            var customer = builder.Build(request.Customer);
+
+            customer.UpdateAddress(request.Customer.Address1, request.Customer.Address2, request.Customer.ZipCode,
+                request.Customer.Country, request.Customer.StateAbbreviation);
+
+            customer = await this.repo.SaveAsync(customer);
+            var dto = mapper.Map&lt;CustomerDTO&gt;(customer);
+
+
+            var response = mapper.Map&lt;SaveCustomerResponse&gt;(dto);
+            response.ResponseAction = ResponseAction.Updated;
+         
+            await context.RespondAsync(response);
+
+        }
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,104,0],[18,9,18,10,0],[19,13,19,36,0],[20,13,20,30,0],[21,13,21,34,0],[22,9,22,10,0],[25,9,25,10,0],[27,13,27,43,0],[28,13,28,60,0],[30,13,31,79,0],[33,13,33,60,0],[34,13,34,57,0],[37,13,37,66,0],[38,13,38,62,0],[40,13,40,50,0],[42,9,42,10,0]]);
+    </script>
+  </body>
+</html>

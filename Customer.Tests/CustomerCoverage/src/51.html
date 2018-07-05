@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>c:\users\mwest\documents\wgu\courses\capstone\task two\taxology\product.persistency\migrations\20180608041747_v1.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+using System;
+using System.Collections.Generic;
+
+namespace Product.Persistency.Migrations
+{
+    public partial class v1 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: &quot;products&quot;);
+
+            migrationBuilder.CreateTable(
+                name: &quot;Product&quot;,
+                schema: &quot;products&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;Guid&gt;(nullable: false),
+                    Category = table.Column&lt;int&gt;(nullable: false),
+                    ImageLink = table.Column&lt;string&gt;(nullable: true),
+                    Name = table.Column&lt;string&gt;(nullable: true),
+                    Price_Amount = table.Column&lt;double&gt;(nullable: false),
+                    Price_Exchange = table.Column&lt;string&gt;(nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Product&quot;, x =&gt; x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: &quot;Product&quot;,
+                schema: &quot;products&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,0],[11,13,12,35,0],[14,13,17,35,0],[17,35,25,18,0],[25,18,27,17,0],[27,17,27,18,0],[27,18,28,21,0],[28,21,28,63,0],[28,63,29,17,0],[29,17,29,18,0],[29,18,29,20,0],[14,13,29,20,0],[30,9,30,10,0],[33,9,33,10,0],[34,13,36,37,0],[37,9,37,10,0]]);
+    </script>
+  </body>
+</html>
