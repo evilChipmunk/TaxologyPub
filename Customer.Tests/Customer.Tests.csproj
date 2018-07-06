@@ -10,6 +10,8 @@
     <PackageReference Include="AutoFixture" Version="4.4.0" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.4.0" />
     <PackageReference Include="AutoFixture.Xunit2" Version="4.4.0" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="MassTransit" Version="5.1.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0" />
     <PackageReference Include="Moq" Version="4.8.3" />
     <PackageReference Include="xunit" Version="2.3.1" />
@@ -18,7 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Customer.Console.Service\Customer.Console.Service.csproj" />
     <ProjectReference Include="..\Customer.Domain\Customer.Domain.csproj" />
+    <ProjectReference Include="..\Customer.DTO\Customer.DTO.csproj" />
+    <ProjectReference Include="..\Customer.Persistency\Customer.Persistency.csproj" />
     <ProjectReference Include="..\Shared.Domain\Shared.Domain.csproj" />
   </ItemGroup>
 

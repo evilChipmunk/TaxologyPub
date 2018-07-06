@@ -39,12 +39,12 @@ namespace Customer.Tests
         public class CustomerCreate
         {
             [Theory, AutoMoqData]
-            public void Create_Produces_Customer(string firstname, string lastName, string email, 
+            public void Create_Produces_Customer(string firstname, string lastName, string email,
                 Guid anonymousId)
-            { 
+            {
                 var sut = Customer.Domain.Customer.Create(firstname, lastName, email, anonymousId);
 
-                Assert.NotNull(sut); 
+                Assert.NotNull(sut);
             }
 
             [Theory, AutoMoqData]
@@ -54,7 +54,7 @@ namespace Customer.Tests
                 var sut = Customer.Domain.Customer.Create(firstname, lastName, email, anonymousId);
 
                 Assert.NotEmpty(sut.Events);
-                Assert.NotNull(sut.Events.FirstOrDefault(x => x is CustomerCreatedEvent)); 
+                Assert.NotNull(sut.Events.FirstOrDefault(x => x is CustomerCreatedEvent));
             }
 
             [Theory, AutoMoqData]
@@ -73,7 +73,7 @@ namespace Customer.Tests
                 Exception emailMissing = Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
                     Domain.Customer.Create(firstname, lastName, null, anonymousId);
-                }); 
+                });
                 Exception anonIdMissing = Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
                     Domain.Customer.Create(firstname, lastName, email, Guid.Empty);
@@ -149,5 +149,6 @@ namespace Customer.Tests
                 });
             }
         }
+
     }
 }
